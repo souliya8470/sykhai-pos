@@ -1008,8 +1008,8 @@
         <option value="logout">ອອກຈາກລະບົບ</option>
       </select>
       <select id="alFilterDateMode" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="renderActivityLog()">
-        <option value="all" selected>ທັງໝົດ</option>
-        <option value="today">ວັນນີ້</option>
+        <option value="all">ທັງໝົດ</option>
+        <option value="today" selected>ວັນນີ້</option>
         <option value="yesterday">ເມື່ອວານນີ້</option>
         <option value="today_yesterday">ວັນນີ້ ແລະ ເມື່ອວານນີ້</option>
         <option value="7d">7 ວັນທີ່ຜ່ານມາ</option>
@@ -1680,7 +1680,11 @@ function viewActivityDetail(idx){
 // ຕາຕະລາງໃໝ່ pos_stocktake_rounds (ຮອບເປີດໄດ້ 1 ຮອບ/ຮ້ານ). ເມື່ອເປີດຮອບ: ຊ່ອງເຫດຜົນໃນ modal ນັບສາງເປັນຊື່ຮອບອັດຕະໂນມັດ (ແທນຄ່າ hardcode
 // ຂອງ v2.44), ທຸກການນັບບັນທຶກ detail.round_id/round_name, ນັບແລ້ວຍອດກົງກັນກໍບັນທຶກ "ນັບແລ້ວ ຖືກຕ້ອງ" (delta 0), banner ສະແດງ ນັບແລ້ວ X/ທັງໝົດ,
 // ປຸ່ມ 📊 ສະຫຼຸບ (ແກ້ກີ່ລາຍການ, ເພີ່ມ/ຫຼຸດລວມ, ລາຍການທີ່ຍັງບໍ່ໄດ້ນັບ), ⏹️ ປິດຮອບ, 📜 ປະຫວັດຮອບ. ເບິ່ງ summary ຜ່ານ loadStocktakeRound/openStocktakeSummary.
-const APP_VERSION = 'v2.45';
+// v2.46 (Tar 2026-10-10): 1) "ບິນລ່າສຸດ" ໜ້າຂາຍ ຄົ້ນຫາໄດ້ບິນເກົ່າ — ເມື່ອພິມຄົ້ນຫາ ລະບົບດຶງຈາກຖານຂໍ້ມູນໂດຍກົງ (searchBillsFromServer:
+// ເລກບິນ/ຊື່ລູກຄ້າ/ຊື່ພະນັກງານ, ສູງສຸດ 100 ບິນ) ແລ້ວລວມກັບ 20 ບິນລ່າສຸດ (ເມື່ອກ່ອນຄົ້ນໄດ້ແຕ່ 20 ບິນລ່າສຸດ ຂາຍຫຼາຍບິນແລ້ວຫາບິນເກົ່າບໍ່ເຫັນ);
+// 2) ຕົວກອງວັນທີ່ (ລາຍງານ + ປະຫວັດການກະທຳ) ຄ່າເລີ່ມຕົ້ນ = "ວັນນີ້" ແລະ ຣີເຊັດກັບເປັນ "ວັນນີ້" ທຸກຄັ້ງທີ່ຍ້າຍແທັບ/ປ່ຽນໜ້າ/ເຂົ້າລະບົບໃໝ່.
+// ຕົວກອງເກັບໃນໜ່ວຍຄວາມຈຳຂອງໜ້າເວັບນັ້ນເທົ່ານັ້ນ ບໍ່ບັນທຶກລົງ DB ຫຼື localStorage ຈຶ່ງບໍ່ກະທົບບັນຊີ/ເຄື່ອງອື່ນ.
+const APP_VERSION = 'v2.46';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -1747,6 +1751,7 @@ async function handleSlipUpload(event, txnId, qualifier){
     const { error: updErr } = await sb.from('pos_transactions').update({ payment_slip_url: slipUrl }).eq('id', txnId);
     if (updErr) throw updErr;
     const rb = initialBills.find(b => b.txnId === txnId); if (rb) rb.slipUrl = slipUrl;
+    const sbb = recentSearchBills.find(b => b.txnId === txnId); if (sbb) sbb.slipUrl = slipUrl;
     const pb = reportBills.find(b => b.txnId === txnId); if (pb) pb.slipUrl = slipUrl;
     if (qualifier === 'recent') renderBills(); else renderReport();
     showToast('ອັບໂຫຼດສະລິບສຳເລັດ ✅');
@@ -1763,7 +1768,8 @@ async function removeSlip(txnId, qualifier){
   if (!ok) return;
   const rb = initialBills.find(b => b.txnId === txnId);
   const pb = reportBills.find(b => b.txnId === txnId);
-  const slipUrl = (rb && rb.slipUrl) || (pb && pb.slipUrl);
+  const sbb = recentSearchBills.find(b => b.txnId === txnId);
+  const slipUrl = (rb && rb.slipUrl) || (pb && pb.slipUrl) || (sbb && sbb.slipUrl);
   try{
     const { error } = await sb.from('pos_transactions').update({ payment_slip_url: null }).eq('id', txnId);
     if (error) throw error;
@@ -1773,6 +1779,7 @@ async function removeSlip(txnId, qualifier){
     }
     if (rb) rb.slipUrl = null;
     if (pb) pb.slipUrl = null;
+    if (sbb) sbb.slipUrl = null;
     if (qualifier === 'recent') renderBills(); else renderReport();
     showToast('ລຶບສະລິບສຳເລັດ ✅');
   }catch(err){
@@ -1994,6 +2001,7 @@ let selectedCustomerId = null;
    INIT / LOADING
    ============================================================ */
 async function initApp(){
+  resetReportDateFilter(); resetActivityDateFilter(); // v2.46: ເຂົ້າລະບົບໃໝ່ → ຕົວກອງຂອງບັນຊີກ່ອນໜ້າບໍ່ຕິດມາ
   document.getElementById('appVersionTag').textContent = APP_VERSION;
   showToast('ກຳລັງໂຫຼດຂໍ້ມູນ...');
   try{
@@ -2437,13 +2445,14 @@ function switchView(name, skipHashUpdate, subtab){
   if (name === 'purchase'){ if (subtab) switchPOTab(subtab, true); else renderPOTable(); }
   if (name === 'customers'){ if (subtab) switchCustTab(subtab, true); else renderCustomerTable(); }
   if (name === 'reports'){
+    resetReportDateFilter(); // v2.46: ເຂົ້າໜ້າລາຍງານໃໝ່ທຸກຄັ້ງ → ວັນນີ້
     if (subtab && subtab !== currentReportType){ switchReportTab(subtab, true); }
     else { reportCurrentPage = 1; loadReportBills().then(renderReport); renderReport(); }
   }
   if (name === 'staff') renderStaffTable();
   if (name === 'barcode') initBarcodeProductSelect();
   if (name === 'bills') { renderBillSearch(); }
-  if (name === 'activitylog') loadActivityLog();
+  if (name === 'activitylog'){ resetActivityDateFilter(); loadActivityLog(); } // v2.46: ເຂົ້າໜ້າປະຫວັດ → ວັນນີ້
   if (name === 'sales') updateShiftButton();
   if (name === 'settings' && subtab) switchSettingsTab(subtab, true);
 }
@@ -3949,13 +3958,71 @@ async function confirmPayment(){
 }
 let recentBillSearchQuery = '';
 let recentBillSearchDebounce = null;
+let recentSearchBills = [];      // v2.46: ຜົນຄົ້ນຫາບິນຈາກຖານຂໍ້ມູນ (ລວມບິນເກົ່າທີ່ບໍ່ຢູ່ໃນ 20 ບິນລ່າສຸດ)
+let recentSearchBillsQuery = ''; // ຄຳຄົ້ນຫາທີ່ຜົນຂ້າງເທິງເປັນຂອງ
+let recentSearchSeq = 0;         // ກັນຜົນຄົ້ນຫາເກົ່າມາທັບຜົນໃໝ່ (ພິມໄວ)
+function mapTxnToBill(t, v, qty){
+  return {
+    no: t.transaction_no, txnId: t.id, versionId: v.id,
+    customer: t.pos_customers ? t.pos_customers.name : 'ລູກຄ້າທົ່ວໄປ',
+    qty, total: Number(v.total_amount_kip), totalBaht: Number(v.total_amount_baht)||0, cost: Number(v.total_cost)||0, costBaht: Number(v.total_cost_baht)||0,
+    received: Number(v.received_amount)||Number(v.total_amount_kip), change: Number(v.change_amount)||0,
+    pm: v.payment_channel_key||'cash', staff: v.created_by_name || '-', time: fmtDT(t.created_at),
+    createdAt: t.created_at,
+    note: v.note || '',
+    creditKip: Number(t.credit_amount_kip)||0, creditBaht: Number(t.credit_amount_baht)||0, creditStatus: t.credit_status||null,
+    status: t.current_version_no > 1 ? `ແກ້ໄຂ x${t.current_version_no-1}` : '',
+    labelRef: t.shipping_label_ref || '',
+    slipUrl: t.payment_slip_url || null
+  };
+}
+// v2.46: ຄົ້ນຫາບິນຈາກຖານຂໍ້ມູນໂດຍກົງ (ເລກບິນ / ຊື່ລູກຄ້າ / ຊື່ພະນັກງານ) — ບໍ່ຈຳກັດສະເພາະ 20 ບິນລ່າສຸດ
+async function searchBillsFromServer(q){
+  const safe = q.replace(/[%_,()\\]/g,' ').trim();
+  if (!safe) return [];
+  const like = `%${safe}%`;
+  const sel = '*, pos_customers(name)';
+  const base = () => sb.from('pos_transactions').select(sel).eq('shop_id', SHOP_ID).eq('status','completed');
+  const queries = [ base().ilike('transaction_no', like).order('created_at',{ascending:false}).limit(100) ];
+  const { data: custs } = await sb.from('pos_customers').select('id').eq('shop_id', SHOP_ID).ilike('name', like).limit(200);
+  if (custs && custs.length) queries.push(base().in('customer_id', custs.map(c=>c.id)).order('created_at',{ascending:false}).limit(100));
+  const { data: vstaff } = await sb.from('pos_transaction_versions').select('transaction_id').ilike('created_by_name', like).limit(300);
+  if (vstaff && vstaff.length) queries.push(base().in('id', [...new Set(vstaff.map(v=>v.transaction_id))]).order('created_at',{ascending:false}).limit(100));
+  const results = await Promise.all(queries);
+  const byId = {};
+  results.forEach(r => { if (r.error) throw r.error; (r.data||[]).forEach(t => { byId[t.id] = t; }); });
+  const txns = Object.values(byId).sort((a,b)=> a.created_at < b.created_at ? 1 : -1).slice(0,100);
+  if (!txns.length) return [];
+  const ids = txns.map(t=>t.id);
+  const { data: versions } = await sb.from('pos_transaction_versions').select('*').in('transaction_id', ids);
+  const vIds = (versions||[]).map(v=>v.id);
+  const { data: items } = vIds.length ? await sb.from('pos_transaction_items').select('version_id, qty').in('version_id', vIds) : {data:[]};
+  return txns.map(t => {
+    const v = (versions||[]).find(v=>v.transaction_id===t.id && v.version_no===t.current_version_no);
+    if (!v) return null;
+    const qty = (items||[]).filter(i=>i.version_id===v.id).reduce((s,i)=>s+Number(i.qty),0);
+    return mapTxnToBill(t, v, qty);
+  }).filter(Boolean);
+}
 function onRecentBillSearchInput(val){
   recentBillSearchQuery = val;
   clearTimeout(recentBillSearchDebounce);
-  recentBillSearchDebounce = setTimeout(() => {
-    renderBills();
+  recentBillSearchDebounce = setTimeout(async () => {
+    const q = (val||'').trim();
+    const seq = ++recentSearchSeq;
+    if (!q){ recentSearchBills = []; recentSearchBillsQuery = ''; }
+    renderBills(); // ສະແດງຜົນຈາກ 20 ບິນລ່າສຸດທັນທີ ກ່ອນ
     const el = document.getElementById('recentBillSearchInput');
     if (el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+    if (!q) return;
+    try{
+      const found = await searchBillsFromServer(q);
+      if (seq !== recentSearchSeq) return; // ມີການພິມໃໝ່ແລ້ວ ຖິ້ມຜົນເກົ່າ
+      recentSearchBills = found; recentSearchBillsQuery = recentBillSearchQuery;
+      renderBills();
+      const el2 = document.getElementById('recentBillSearchInput');
+      if (el2 && document.activeElement !== el2){ el2.focus(); el2.setSelectionRange(el2.value.length, el2.value.length); }
+    }catch(e){ console.error('searchBillsFromServer ລົ້ມເຫຼວ', e); showToast('⚠️ ຄົ້ນຫາບິນເກົ່າບໍ່ສຳເລັດ — ສະແດງສະເພາະບິນລ່າສຸດ'); }
   }, 300);
 }
 function renderBillTableHeader(){
@@ -3975,6 +4042,12 @@ function renderBills(){
   if (recentBillSearchQuery){
     const q = recentBillSearchQuery.toLowerCase();
     filtered = filtered.filter(b => b.no.toLowerCase().includes(q) || b.customer.toLowerCase().includes(q) || b.staff.toLowerCase().includes(q));
+    // v2.46: ລວມຜົນຄົ້ນຫາຈາກຖານຂໍ້ມູນ (ບິນເກົ່າ) — ບໍ່ຊ້ຳກັບບິນລ່າສຸດ, ຮຽງໃໝ່→ເກົ່າ
+    if (recentSearchBillsQuery === recentBillSearchQuery && recentSearchBills.length){
+      const seen = new Set(filtered.map(b=>b.txnId));
+      const extra = recentSearchBills.filter(b => !seen.has(b.txnId));
+      filtered = filtered.concat(extra).sort((a,b) => (a.createdAt||'') < (b.createdAt||'') ? 1 : (a.createdAt||'') > (b.createdAt||'') ? -1 : 0);
+    }
   }
   const headerHtml = renderBillTableHeader();
   const rowsHtml = filtered.map(b => {
@@ -6041,9 +6114,15 @@ async function confirmCreditPayment(){
 }
 let reportCurrentPage = 1;
 // ຕົວກອງວັນທີ່ ສຳລັບໜ້າ ກຳໄລ/ຍອດຂາຍລາຍວັນ/ຍອດຂາຍແຍກສິນຄ້າ/ຍອດຂາຍຕາມໝວດໝູ່ (ຄືກັນກັບ ສີໄຄຊອບ)
-let reportDateMode = 'all';
+let reportDateMode = 'today'; // v2.46: ຄ່າເລີ່ມຕົ້ນ = ວັນນີ້ (ເກັບໃນໜ່ວຍຄວາມຈຳຂອງໜ້ານີ້ເທົ່ານັ້ນ ບໍ່ບັນທຶກລົງ DB/localStorage → ບໍ່ຂ້າມບັນຊີ/ເຄື່ອງ)
 let reportDateFromCustom = '';
 let reportDateToCustom = '';
+function resetReportDateFilter(){ reportDateMode = 'today'; reportDateFromCustom = ''; reportDateToCustom = ''; }
+function resetActivityDateFilter(){
+  const m = document.getElementById('alFilterDateMode'); if (m) m.value = 'today';
+  const f = document.getElementById('alFilterDateFrom'); if (f) f.value = '';
+  const t = document.getElementById('alFilterDateTo'); if (t) t.value = '';
+}
 let reportGroupBy = 'day'; // ສະເພາະໜ້າ "ຍອດຂາຍລາຍວັນ": 'day' | 'month' | 'year'
 function getReportDateRange(){
   return resolvePresetDateRange(reportDateMode, reportDateFromCustom, reportDateToCustom);
@@ -6174,7 +6253,7 @@ function numberToLaoWords(num){
 }
 async function printA4Invoice(versionId, billNo){
   const items = await getBillItemsDetail(versionId);
-  const bill = reportBills.find(b=>b.versionId===versionId) || initialBills.find(b=>b.versionId===versionId);
+  const bill = reportBills.find(b=>b.versionId===versionId) || initialBills.find(b=>b.versionId===versionId) || recentSearchBills.find(b=>b.versionId===versionId);
   const shop = SHOP_DATA || {};
   const totalKip = items.filter(i=>i.currency!=='baht').reduce((s,i)=>s+i.total,0);
   const totalBaht = items.filter(i=>i.currency==='baht').reduce((s,i)=>s+i.total,0);
@@ -6274,7 +6353,7 @@ async function copyInvoiceToClipboard(){
 }
 async function printBillReceipt(versionId, billNo){
   const items = await getBillItemsDetail(versionId);
-  const bill = reportBills.find(b=>b.versionId===versionId) || initialBills.find(b=>b.versionId===versionId);
+  const bill = reportBills.find(b=>b.versionId===versionId) || initialBills.find(b=>b.versionId===versionId) || recentSearchBills.find(b=>b.versionId===versionId);
   const r = RECEIPT_DATA || {};
   const shop = SHOP_DATA || {};
   const totalKip = items.filter(i=>i.currency!=='baht').reduce((s,i)=>s+i.total,0);
@@ -6375,6 +6454,7 @@ async function getSalesByProduct(){
   return salesByProductCache;
 }
 async function switchReportTab(type, skipHashUpdate){
+  if (type !== currentReportType) resetReportDateFilter(); // v2.46: ຍ້າຍແທັບລາຍງານ → ຕົວກອງວັນທີ່ກັບເປັນ "ວັນນີ້"
   currentReportType = type;
   reportCurrentPage = 1;
   reportSearchQuery = '';

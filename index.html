@@ -597,6 +597,7 @@
             <a class="navitem" href="#stock/report_in" data-stocktab="report_in" onclick="switchStockTab('report_in');return false;">📈 ລາຍງານສິນຄ້າເຂົ້າ</a>
             <a class="navitem" href="#stock/report_out" data-stocktab="report_out" onclick="switchStockTab('report_out');return false;">📉 ລາຍງານສິນຄ້າອອກ</a>
             <a class="navitem" href="#stock/online" data-stocktab="online" onclick="switchStockTab('online');return false;">🛒 ລາຍການສິນຄ້າອອນລາຍ</a>
+            <a class="navitem" href="#stock/live" data-stocktab="live" onclick="switchStockTab('live');return false;">🔴 ສິນຄ້າໄລ້ສົດ</a>
           </div>
         </div>
 
@@ -720,6 +721,28 @@
             <div class="panel">
               <p style="font-size:16px;font-weight:600;margin:0 0 10px">ລາຍງານສິນຄ້າອອກ (ຈາກການຂາຍ)</p>
               <div id="reportOutList"></div>
+            </div>
+          </div>
+          <div class="stocktab" id="stocktab-live" style="display:none">
+            <div class="panel">
+              <p style="font-size:16px;font-weight:600;margin:0 0 4px">🔴 ສິນຄ້າໄລ້ສົດ (Live CF)</p>
+              <p style="font-size:14px;color:var(--text-muted);margin:0 0 10px">ຕິກເລືອກສິນຄ້າທີ່ຈະຂາຍໃນ Live — ລະບົບໃຫ້ລະຫັດ A1, A2... ເອງ ແລະ ສະແດງໃນ Marketing Studio ທັນທີ. ລູກຄ້າ CF ໄດ້ສະເພາະສິນຄ້າທີ່ເລືອກໄວ້.</p>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
+                <select id="liveSessionSelect" onchange="liveTabSelectSession(this.value)" style="flex:1;min-width:220px;padding:8px"></select>
+                <button class="btn" onclick="renderLiveProductTab()">🔄 ໂຫຼດຄືນ</button>
+                <a class="btn primary" href="https://marketing.touktashop.online/#liveCf" target="_blank" rel="noopener" style="text-decoration:none">🔴 ເປີດໜ້າ Live CF</a>
+              </div>
+              <p id="liveTabInfo" style="font-size:14px;color:var(--text-muted);margin:0 0 10px"></p>
+              <div id="liveTabBody">
+                <div class="search-box" style="margin-bottom:8px"><span>🔍</span><input id="liveProductSearch" placeholder="ຄົ້ນຫາຊື່ ຫຼື ບາໂຄດ" oninput="renderLiveProductRows()"></div>
+                <label style="display:inline-flex;gap:6px;align-items:center;font-size:14px;margin-bottom:10px"><input type="checkbox" id="liveOnlySelected" onchange="renderLiveProductRows()"> ສະແດງສະເພາະທີ່ເລືອກແລ້ວ</label>
+                <div style="overflow-x:auto">
+                <table class="table-bordered">
+                  <thead><tr><th style="width:56px">ເລືອກ</th><th style="width:96px">ລະຫັດ Live</th><th style="width:60px">ຮູບ</th><th>ບາໂຄດ</th><th>ສິນຄ້າ</th><th>ສະຕ໊ອກ</th><th>ລາຄາ</th><th>ຈອງ / ເຫຼືອຂາຍ</th><th style="width:120px">ກຳລັງຂາຍ</th></tr></thead>
+                  <tbody id="liveProductBody"></tbody>
+                </table>
+                </div>
+              </div>
             </div>
           </div>
           <div class="stocktab" id="stocktab-online" style="display:none">
@@ -1684,7 +1707,133 @@ function viewActivityDetail(idx){
 // ເລກບິນ/ຊື່ລູກຄ້າ/ຊື່ພະນັກງານ, ສູງສຸດ 100 ບິນ) ແລ້ວລວມກັບ 20 ບິນລ່າສຸດ (ເມື່ອກ່ອນຄົ້ນໄດ້ແຕ່ 20 ບິນລ່າສຸດ ຂາຍຫຼາຍບິນແລ້ວຫາບິນເກົ່າບໍ່ເຫັນ);
 // 2) ຕົວກອງວັນທີ່ (ລາຍງານ + ປະຫວັດການກະທຳ) ຄ່າເລີ່ມຕົ້ນ = "ວັນນີ້" ແລະ ຣີເຊັດກັບເປັນ "ວັນນີ້" ທຸກຄັ້ງທີ່ຍ້າຍແທັບ/ປ່ຽນໜ້າ/ເຂົ້າລະບົບໃໝ່.
 // ຕົວກອງເກັບໃນໜ່ວຍຄວາມຈຳຂອງໜ້າເວັບນັ້ນເທົ່ານັ້ນ ບໍ່ບັນທຶກລົງ DB ຫຼື localStorage ຈຶ່ງບໍ່ກະທົບບັນຊີ/ເຄື່ອງອື່ນ.
-const APP_VERSION = 'v2.46';
+// v2.47 (Tar 2026-10-11): ແທັບໃໝ່ "🔴 ສິນຄ້າໄລ້ສົດ" ໃນໜ້າ "ຈັດການສິນຄ້າ" — ຕິກເລືອກສິນຄ້າທີ່ຈະຂາຍໃນ Live CF ຈາກຕາຕະລາງ ແທນການຈຳລະຫັດ POS ໄປພິມໃນ Marketing Studio.
+// ຂໍ້ມູນຢູ່ຕາຕະລາງ live_session_products (ແບ່ງປັນກັບ Marketing Studio): ຕິກ = cf_session_add_product (ໃຫ້ລະຫັດ A1, A2... ອັດຕະໂນມັດ), ເອົາຕິກອອກ = ລຶບແຖວ,
+// ແກ້ລະຫັດ/ຕັ້ງ "ກຳລັງຂາຍ" (live_sessions.current_product_id) ໄດ້ຢູ່ນີ້. ເລືອກ Live ໄດ້ສະເພາະທີ່ຍັງບໍ່ຈົບ; ສ້າງ Live ໃໝ່ຍັງເຮັດຢູ່ Marketing Studio.
+let LIVE_TAB = { sessions: [], sessionId: '', lsp: {}, loading: false };
+const liveEsc = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+async function liveReloadLsp(){
+  if (!LIVE_TAB.sessionId){ LIVE_TAB.lsp = {}; return; }
+  const { data, error } = await sb.rpc('cf_session_products', { p_session_id: LIVE_TAB.sessionId });
+  if (error) throw error;
+  const m = {};
+  (data || []).forEach(r => { m[r.product_id] = r; });
+  LIVE_TAB.lsp = m;
+}
+async function renderLiveProductTab(){
+  const info = document.getElementById('liveTabInfo');
+  const sel = document.getElementById('liveSessionSelect');
+  const bodyWrap = document.getElementById('liveTabBody');
+  if (!sel || LIVE_TAB.loading) return;
+  LIVE_TAB.loading = true;
+  if (info) info.textContent = 'ກຳລັງໂຫຼດ...';
+  try{
+    const { data, error } = await sb.from('live_sessions').select('id,title,status,current_product_id,created_at')
+      .eq('shop_id', SHOP_ID).neq('status','ended').order('created_at',{ascending:false}).limit(20);
+    if (error) throw error;
+    LIVE_TAB.sessions = data || [];
+    if (!LIVE_TAB.sessions.find(s => s.id === LIVE_TAB.sessionId)){
+      const pick = LIVE_TAB.sessions.find(s => s.status === 'live') || LIVE_TAB.sessions[0];
+      LIVE_TAB.sessionId = pick ? pick.id : '';
+    }
+    sel.innerHTML = LIVE_TAB.sessions.length
+      ? LIVE_TAB.sessions.map(s => `<option value="${s.id}" ${s.id===LIVE_TAB.sessionId?'selected':''}>${s.status==='live'?'🔴':'⚪'} ${liveEsc(s.title||'(ບໍ່ມີຊື່)')}</option>`).join('')
+      : '<option value="">— ບໍ່ມີ Live —</option>';
+    if (!LIVE_TAB.sessions.length){
+      if (bodyWrap) bodyWrap.style.display = 'none';
+      if (info) info.innerHTML = 'ຍັງບໍ່ມີ Live ທີ່ເປີດຢູ່ — ໄປສ້າງ Live ໃໝ່ໃນ Marketing Studio ກ່ອນ (ກົດ "🔴 ເປີດໜ້າ Live CF" ແລ້ວກົດ "+ ເປີດ Live ໃໝ່") ແລ້ວກັບມາເລືອກສິນຄ້າທີ່ນີ້.';
+      return;
+    }
+    if (bodyWrap) bodyWrap.style.display = '';
+    await liveReloadLsp();
+    renderLiveProductRows();
+  }catch(e){
+    console.error('renderLiveProductTab failed:', e);
+    if (info) info.textContent = '⚠️ ໂຫຼດບໍ່ສຳເລັດ: ' + (e.message || e);
+  }finally{ LIVE_TAB.loading = false; }
+}
+function liveTabSelectSession(id){
+  LIVE_TAB.sessionId = id;
+  liveReloadLsp().then(renderLiveProductRows).catch(e => showToast('⚠️ ' + (e.message || e)));
+}
+function renderLiveProductRows(){
+  const body = document.getElementById('liveProductBody');
+  const info = document.getElementById('liveTabInfo');
+  if (!body) return;
+  const q = (document.getElementById('liveProductSearch')?.value || '').trim().toLowerCase();
+  const onlySel = !!document.getElementById('liveOnlySelected')?.checked;
+  const selCount = Object.keys(LIVE_TAB.lsp).length;
+  const ses = LIVE_TAB.sessions.find(s => s.id === LIVE_TAB.sessionId);
+  if (info) info.innerHTML = `ເລືອກໄວ້ແລ້ວ <b>${selCount}</b> ລາຍການ${ses ? ' · ' + (ses.status==='live' ? '🔴 ກຳລັງ Live' : '⚪ ຮ່າງ (ຍັງບໍ່ເຊື່ອມ Live)') : ''}`;
+  let list = PRODUCTS.filter(p => !onlySel || LIVE_TAB.lsp[p.id]);
+  if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q));
+  list = list.slice().sort((a,b) => (LIVE_TAB.lsp[b.id]?1:0) - (LIVE_TAB.lsp[a.id]?1:0) || a.name.localeCompare(b.name,'lo'));
+  const LIMIT = 150; const total = list.length; list = list.slice(0, LIMIT);
+  body.innerHTML = list.length ? list.map(p => {
+    const r = LIVE_TAB.lsp[p.id];
+    const price = p.onlinePrice || p.p1 || 0;
+    const left = r ? Math.max((Number(r.stock_qty)||0) - (Number(r.reserved_all)||0), 0) : 0;
+    return `<tr${r?' style="background:#fff7ec"':''}>
+      <td style="text-align:center"><input type="checkbox" style="width:20px;height:20px" ${r?'checked':''} onchange="liveToggleProduct('${p.id}',this.checked)"></td>
+      <td>${r ? `<input type="text" value="${liveEsc(r.code)}" style="width:76px;font-weight:700;text-transform:uppercase" onchange="liveSetCode('${r.id}',this.value)">` : '<span style="color:var(--text-muted)">—</span>'}</td>
+      <td style="text-align:center">${p.imageUrl ? `<img src="${liveEsc(p.imageUrl)}" style="width:44px;height:44px;object-fit:cover;border-radius:6px">` : ''}</td>
+      <td>${liveEsc(p.barcode)}</td>
+      <td>${liveEsc(p.name)}</td>
+      <td style="text-align:center">${fmt(p.stock)}</td>
+      <td style="text-align:right">${price ? fmt(price) : '<span style="color:var(--danger)">ບໍ່ມີລາຄາ</span>'}</td>
+      <td style="text-align:center">${r ? `${fmt(r.reserved_all)} / <b>${fmt(left)}</b>` : ''}</td>
+      <td style="text-align:center">${r ? (r.is_current ? '<b>🎯 ກຳລັງຂາຍ</b>' : `<span class="btn" style="padding:4px 8px;white-space:nowrap" onclick="liveSetCurrent('${p.id}')">ຕັ້ງ</span>`) : ''}</td>
+    </tr>`;
+  }).join('') + (total > LIMIT ? `<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">ສະແດງ ${LIMIT} ຈາກ ${total} ລາຍການ — ພິມຄົ້ນຫາເພື່ອຫາຕື່ມ</td></tr>` : '')
+    : '<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">ບໍ່ພົບສິນຄ້າ</td></tr>';
+}
+async function liveToggleProduct(productId, on){
+  const sid = LIVE_TAB.sessionId; if (!sid) return;
+  try{
+    if (on){
+      const { data, error } = await sb.rpc('cf_session_add_product', { p_session_id: sid, p_product_id: productId, p_code: null });
+      if (error) throw error;
+      if (data.status === 'ok') showToast('➕ ເພີ່ມແລ້ວ — ລະຫັດ ' + data.code);
+      else if (data.status === 'exists') showToast('ສິນຄ້ານີ້ຢູ່ໃນລາຍການແລ້ວ (ລະຫັດ ' + data.code + ')');
+      else showToast('⚠️ ຜົນ: ' + data.status);
+    } else {
+      const r = LIVE_TAB.lsp[productId]; if (!r) return;
+      if (Number(r.buyers) > 0 && !await showConfirmModal(`ສິນຄ້ານີ້ມີ ${r.buyers} ຄົນ CF ແລ້ວ. ຍັງຈະເອົາອອກຈາກລາຍການ Live ບໍ? (ອໍເດີທີ່ຈອງໄປແລ້ວບໍ່ຖືກກະທົບ)`)){
+        renderLiveProductRows(); return;
+      }
+      const { error } = await sb.from('live_session_products').delete().eq('id', r.id);
+      if (error) throw error;
+      if (r.is_current) await sb.from('live_sessions').update({ current_product_id: null }).eq('id', sid);
+      showToast('ເອົາອອກຈາກລາຍການແລ້ວ');
+    }
+  }catch(e){ showToast('⚠️ ' + (e.message || e)); }
+  try{ await liveReloadLsp(); }catch(e){}
+  renderLiveProductRows();
+}
+async function liveSetCode(rowId, raw){
+  const code = String(raw||'').trim().toUpperCase();
+  if (!/^[A-Z0-9][A-Z0-9\-_.]{0,19}$/.test(code) || !(/[A-Z]/.test(code) || /^\d{3,}$/.test(code))){
+    showToast('⚠️ ລະຫັດຕ້ອງມີຕົວອັກສອນ ເຊັ່ນ A1 (ເລກ 1-2 ໂຕ ໃຊ້ບໍ່ໄດ້ ເພາະ CF 2 ໝາຍເຖິງຈຳນວນ 2)');
+    renderLiveProductRows(); return;
+  }
+  try{
+    const { error } = await sb.from('live_session_products').update({ code }).eq('id', rowId);
+    if (error) throw error;
+    showToast('✅ ປ່ຽນລະຫັດເປັນ ' + code + ' ແລ້ວ');
+  }catch(e){ showToast(/duplicate|unique/i.test(e.message||'') ? '⚠️ ລະຫັດນີ້ຖືກໃຊ້ແລ້ວ' : '⚠️ ' + (e.message || e)); }
+  try{ await liveReloadLsp(); }catch(e){}
+  renderLiveProductRows();
+}
+async function liveSetCurrent(productId){
+  try{
+    const { error } = await sb.from('live_sessions').update({ current_product_id: productId }).eq('id', LIVE_TAB.sessionId);
+    if (error) throw error;
+    showToast('🎯 ຕັ້ງສິນຄ້າກຳລັງຂາຍແລ້ວ');
+  }catch(e){ showToast('⚠️ ' + (e.message || e)); }
+  try{ await liveReloadLsp(); }catch(e){}
+  renderLiveProductRows();
+}
+const APP_VERSION = 'v2.47';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -4380,6 +4529,7 @@ function switchStockTab(tab, skipHashUpdate){
   if (tab === 'report_in') renderReportInList();
   if (tab === 'report_out') renderReportOutList();
   if (tab === 'online') renderOnlineProductList();
+  if (tab === 'live') renderLiveProductTab();
 }
 function renderCategoryList(){
   const cats = [...new Set(PRODUCTS.map(p=>p.cat))];

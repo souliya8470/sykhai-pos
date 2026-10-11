@@ -726,7 +726,7 @@
           <div class="stocktab" id="stocktab-live" style="display:none">
             <div class="panel">
               <p style="font-size:16px;font-weight:600;margin:0 0 4px">🔴 ສິນຄ້າໄລ້ສົດ (Live CF)</p>
-              <p style="font-size:14px;color:var(--text-muted);margin:0 0 10px">ຕິກເລືອກສິນຄ້າທີ່ຈະຂາຍໃນ Live — ລະບົບໃຫ້ລະຫັດ A1, A2... ເອງ ແລະ ສະແດງໃນ Marketing Studio ທັນທີ. ລູກຄ້າ CF ໄດ້ສະເພາະສິນຄ້າທີ່ເລືອກໄວ້.</p>
+              <p style="font-size:14px;color:var(--text-muted);margin:0 0 10px">ຕິກເລືອກສິນຄ້າທີ່ຈະຂາຍໃນ Live — ລະບົບໃຫ້ລະຫັດ A1, A2... ເອງ ແລະ ສະແດງໃນ Marketing Studio ທັນທີ. ລູກຄ້າພິມລະຫັດຢ່າງດຽວ ເຊັ່ນ A1 (ຫຼື CF A1) ກໍຈອງໄດ້ ສະເພາະສິນຄ້າທີ່ເລືອກໄວ້.</p>
               <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
                 <select id="liveSessionSelect" onchange="liveTabSelectSession(this.value)" style="flex:1;min-width:220px;padding:8px"></select>
                 <button class="btn" onclick="renderLiveProductTab()">🔄 ໂຫຼດຄືນ</button>
@@ -1833,7 +1833,8 @@ async function liveSetCurrent(productId){
   try{ await liveReloadLsp(); }catch(e){}
   renderLiveProductRows();
 }
-const APP_VERSION = 'v2.47';
+// v2.48 (Tar 2026-10-11): ຄຳອະທິບາຍແທັບ "ສິນຄ້າໄລ້ສົດ" ບອກວ່າລູກຄ້າພິມລະຫັດຢ່າງດຽວ (A1) ກໍຈອງໄດ້ ບໍ່ຕ້ອງພິມ CF (ຮອງຮັບຢູ່ Marketing Studio v8.23).
+const APP_VERSION = 'v2.48';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ

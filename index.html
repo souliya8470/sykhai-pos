@@ -1455,7 +1455,17 @@
       <div class="field grow"><label>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</label><input type="text" id="recvCost" placeholder="70000"></div>
       <div class="field grow"><label>🇹🇭 ຕົ້ນທຶນ/ໜ່ວຍ (ບາດ, ຖ້າມີ)</label><input type="text" id="recvCostBaht" placeholder="0"></div>
     </div>
-    <div class="field"><label>ວັນໝົດອາຍຸ (ຖ້າມີ)</label><input type="text" id="recvExpiry" placeholder="dd/mm/yyyy"></div>
+    <div class="field"><label>ວັນໝົດອາຍຸ (ຖ້າມີ) — ກົດເລືອກຈາກປະຕິທິນ</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <input type="date" id="recvExpiry" onchange="recvExpiryChanged()" onclick="try{this.showPicker()}catch(e){}" style="height:38px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px;font-size:16px">
+        <button type="button" class="btn" onclick="recvExpiryQuick(6,'m')">+6 ເດືອນ</button>
+        <button type="button" class="btn" onclick="recvExpiryQuick(1,'y')">+1 ປີ</button>
+        <button type="button" class="btn" onclick="recvExpiryQuick(2,'y')">+2 ປີ</button>
+        <button type="button" class="btn" onclick="recvExpiryQuick(3,'y')">+3 ປີ</button>
+        <button type="button" class="btn" onclick="recvExpiryQuick(0,'clear')">ລ້າງ</button>
+      </div>
+      <div id="recvExpiryText" style="margin-top:6px;font-size:15px;font-weight:700;color:var(--text-muted)">ບໍ່ມີວັນໝົດອາຍຸ</div>
+    </div>
     <p style="font-size:14px;color:var(--text-muted);margin:0 0 12px">ການຮັບເຂົ້ານີ້ຈະສ້າງ LOT ໃໝ່ ບໍ່ແກ້ຕົ້ນທຶນເກົ່າ — ຕົ້ນທຶນສະເລ່ຍຈະຄິດຄືນອັດຕະໂນມັດ</p>
     <button class="confirm-btn" onclick="confirmReceive()">ບັນທຶກ LOT ໃໝ່</button>
   </div>
@@ -1842,7 +1852,8 @@ async function liveSetCurrent(productId){
 // v2.49 (Tar 2026-10-12): ຫຼັງກົດຮັບເງິນສຳເລັດ (ທັງ online ແລະ offline) ແລະຫຼັງ "ພັກບິນ" ລ້າງລູກຄ້າທີ່ເລືອກໄວ້ກັບຄືນເປັນ "ລູກຄ້າທົ່ວໄປ" ທັນທີ (resetCustomerForNextSale) — ກ່ອນໜ້ານີ້ລູກຄ້າ VIP ຄົນເກົ່າຄ້າງໃນບິນຖັດໄປ ພະນັກງານອາດຂາຍໃຫ້ຜູ້ເກົ່າຊ້ຳໂດຍບໍ່ຕັ້ງໃຈ. ປຸ່ມ "ຍົກເລີກ" ລ້າງກະຕ່າຄືເກົ່າ ບໍ່ແຕະຕ້ອງລູກຄ້າ.
 // v2.50 (Tar 2026-10-12): ໜ້າ "ຮັບເຄື່ອງເຂົ້າ (ສ້າງ LOT ໃໝ່)" ເພີ່ມຊ່ອງ 🔍 ຄົ້ນຫາສິນຄ້າ (ຊື່/ບາໂຄດ — ກອງລາຍການດ້ານລຸ່ມທັນທີ, Enter = ເລືອກອັນທຳອິດ) ແລະ ຊ່ອງ ▤ ຍິງບາໂຄດ (ຍິງແລ້ວເລືອກສິນຄ້າໃຫ້ເອງ ແລ້ວໂດດໄປຊ່ອງຈຳນວນ) — ກ່ອນໜ້ານີ້ເປັນ dropdown ຢ່າງດຽວ ຕ້ອງເລື່ອນຊອກຍາກເມື່ອມີສິນຄ້າຫຼາຍ. ສະແດງບາໂຄດ/ສະຕ໊ອກປັດຈຸບັນຂອງສິນຄ້າທີ່ເລືອກ.
 // v2.51 (Tar 2026-10-12, "ກົດເລືອກແລ້ວ ບໍ່ແນ່ໃຈວ່າກົດແລ້ວບໍ່ — ຢາກໃຫ້ຊື່ເດັ້ງຂຶ້ນມາ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ເມື່ອເລືອກສິນຄ້າ (ກົດໃນລາຍການ / ຍິງບາໂຄດ / Enter) ຂຶ້ນກອບສີຂຽວຂະໜາດໃຫຍ່ "✅ ເລືອກແລ້ວ: ຊື່ສິນຄ້າ" + toast ແລະລາຍການພັບກັບ; ຍັງບໍ່ເລືອກ = ກອບເຕືອນສີສົ້ມ ແລະ ປຸ່ມບັນທຶກບໍ່ເຮັດວຽກ (ກ່ອນໜ້ານີ້ສິນຄ້າອັນທຳອິດຖືກເລືອກໄວ້ເປັນຄ່າເລີ່ມຕົ້ນ ອາດບັນທຶກຜິດສິນຄ້າໂດຍບໍ່ຮູ້ຕົວ).
-const APP_VERSION = 'v2.51';
+// v2.52 (Tar 2026-10-12, "ວັນໝົດອາຍຸ ເຮັດເປັນປະຕິທິນເລືອກ ຍ້ານພະນັກງານສະລັບຊ່ອງເດືອນ/ວັນ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ຊ່ອງວັນໝົດອາຍຸປ່ຽນຈາກພິມ dd/mm/yyyy ເປັນປະຕິທິນ (input type=date) ກົດເລືອກວັນ + ປຸ່ມລັດ +6 ເດືອນ/+1/+2/+3 ປີ + ຂໍ້ຄວາມຢືນຢັນເປັນພາສາລາວ (ເຊັ່ນ "15 ມັງກອນ 2027") ໃຫ້ເຫັນຊັດວ່າວັນ/ເດືອນຖືກບໍ່. ແກ້ບັກ: ເມື່ອກີ້ວັນໝົດອາຍຸທີ່ພິມບໍ່ຖືກບັນທຶກລົງ LOT ເລີຍ (confirmReceive ບໍ່ອ່ານຊ່ອງນີ້) — ຕອນນີ້ບັນທຶກ pos_product_lots.expiry_date; ຖ້າເລືອກວັນທີ່ຜ່ານມາແລ້ວຈະຖາມຢືນຢັນກ່ອນ.
+const APP_VERSION = 'v2.52';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -5463,6 +5474,24 @@ function recvSearchKey(e){
   const first = PRODUCTS.find(p => String(p.name||'').toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q));
   if (first) recvPick(first); else showToast('⚠️ ບໍ່ພົບສິນຄ້າ');
 }
+// v2.52: ຊ່ອງວັນໝົດອາຍຸແບບປະຕິທິນ
+const LAO_MONTHS = ['ມັງກອນ','ກຸມພາ','ມີນາ','ເມສາ','ພຶດສະພາ','ມິຖຸນາ','ກໍລະກົດ','ສິງຫາ','ກັນຍາ','ຕຸລາ','ພະຈິກ','ທັນວາ'];
+function recvExpiryChanged(){
+  const v = document.getElementById('recvExpiry').value; // yyyy-mm-dd
+  const el = document.getElementById('recvExpiryText');
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');
+  if (!m){ el.textContent = 'ບໍ່ມີວັນໝົດອາຍຸ'; el.style.color = 'var(--text-muted)'; return; }
+  el.textContent = `ໝົດອາຍຸ: ວັນທີ ${parseInt(m[3],10)} ${LAO_MONTHS[parseInt(m[2],10)-1]} ${m[1]}`;
+  el.style.color = '#14532d';
+}
+function recvExpiryQuick(n, unit){
+  const inp = document.getElementById('recvExpiry');
+  if (unit === 'clear'){ inp.value = ''; recvExpiryChanged(); return; }
+  const d = new Date();
+  if (unit === 'm') d.setMonth(d.getMonth() + n); else d.setFullYear(d.getFullYear() + n);
+  inp.value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  recvExpiryChanged();
+}
 function openReceiveModal(){
   recvPickedId = null;
   document.getElementById('recvSearch').value = '';
@@ -5471,7 +5500,7 @@ function openReceiveModal(){
   document.getElementById('recvQty').value='';
   document.getElementById('recvCost').value='';
   document.getElementById('recvCostBaht').value='';
-  document.getElementById('recvExpiry').value='';
+  document.getElementById('recvExpiry').value=''; recvExpiryChanged();
   document.getElementById('receiveOverlay').classList.add('open');
   setTimeout(()=>{ const s = document.getElementById('recvScan'); if (s) s.focus(); }, 50); // ພ້ອມຍິງບາໂຄດທັນທີ
 }
@@ -5484,9 +5513,14 @@ async function confirmReceive(){
   if (!qty || !cost){ showToast('ກະລຸນາໃສ່ຈຳນວນ ແລະ ຕົ້ນທຶນ (ກີບ)'); return; }
   const p = PRODUCTS.find(x=>x.id===id);
   if (!id || !p){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
+  const expiry = document.getElementById('recvExpiry').value || null; // yyyy-mm-dd ຈາກປະຕິທິນ
+  if (expiry){
+    const now = new Date(); const todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    if (expiry < todayStr && !await showConfirmModal('ວັນໝົດອາຍຸທີ່ເລືອກ ' + expiry + ' ແມ່ນວັນທີ່ຜ່ານມາແລ້ວ — ຢືນຢັນບັນທຶກແທ້ບໍ?')) return;
+  }
   try{
     const { data: lot, error: e1 } = await sb.from('pos_product_lots').insert({
-      shop_id: SHOP_ID, product_id: id, received_qty: qty, remaining_qty: qty, cost_per_unit: cost, cost_per_unit_baht: costBaht
+      shop_id: SHOP_ID, product_id: id, received_qty: qty, remaining_qty: qty, cost_per_unit: cost, cost_per_unit_baht: costBaht, expiry_date: expiry
     }).select().single();
     if (e1) throw e1;
     await sb.from('pos_stock_movements').insert({ shop_id: SHOP_ID, product_id: id, lot_id: lot.id, movement_type:'receive', qty_change: qty });

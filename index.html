@@ -1834,7 +1834,8 @@ async function liveSetCurrent(productId){
   renderLiveProductRows();
 }
 // v2.48 (Tar 2026-10-11): ຄຳອະທິບາຍແທັບ "ສິນຄ້າໄລ້ສົດ" ບອກວ່າລູກຄ້າພິມລະຫັດຢ່າງດຽວ (A1) ກໍຈອງໄດ້ ບໍ່ຕ້ອງພິມ CF (ຮອງຮັບຢູ່ Marketing Studio v8.23).
-const APP_VERSION = 'v2.48';
+// v2.49 (Tar 2026-10-12): ຫຼັງກົດຮັບເງິນສຳເລັດ (ທັງ online ແລະ offline) ແລະຫຼັງ "ພັກບິນ" ລ້າງລູກຄ້າທີ່ເລືອກໄວ້ກັບຄືນເປັນ "ລູກຄ້າທົ່ວໄປ" ທັນທີ (resetCustomerForNextSale) — ກ່ອນໜ້ານີ້ລູກຄ້າ VIP ຄົນເກົ່າຄ້າງໃນບິນຖັດໄປ ພະນັກງານອາດຂາຍໃຫ້ຜູ້ເກົ່າຊ້ຳໂດຍບໍ່ຕັ້ງໃຈ. ປຸ່ມ "ຍົກເລີກ" ລ້າງກະຕ່າຄືເກົ່າ ບໍ່ແຕະຕ້ອງລູກຄ້າ.
+const APP_VERSION = 'v2.49';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -3301,6 +3302,13 @@ function setPriceDirect(idx, val){
   renderCart();
 }
 function removeItem(idx){ cart.splice(idx,1); renderCart(); }
+// v2.49: ເລີ່ມບິນໃໝ່ສະອາດ — ລ້າງລູກຄ້າທີ່ເລືອກ (ກັນຂາຍຊ້ຳໃຫ້ລູກຄ້າຄົນເກົ່າ). ເອີ້ນຫຼັງບັນທຶກບິນ/ພັກບິນສຳເລັດເທົ່ານັ້ນ.
+function resetCustomerForNextSale(){
+  selectedCustomerId = null;
+  if (orderTabs[activeTabIdx]) orderTabs[activeTabIdx].customerId = null;
+  updateCustSearchDisplay();
+  const dd = document.getElementById('custSearchDropdown'); if (dd) dd.style.display = 'none';
+}
 function clearCart(){
   if (editingBillContext){ cancelBillEditMode(); return; } // "ຍົກເລີກ" ໃນໂໝດແກ້ໄຂ = ອອກຈາກໂໝດແກ້ໄຂພ້ອມ
   cart = [];
@@ -3386,7 +3394,7 @@ async function holdBill(){
     const { error: e3 } = await sb.from('pos_transaction_items').insert(itemRows);
     if (e3) throw e3;
     // ໝາຍເຫດ: ບິນພັກໄວ້ ບໍ່ຕັດສະຕ໊ອກ ຈົນກວ່າຈະຮັບເງິນຈິງ
-    clearCart();
+    clearCart(); resetCustomerForNextSale();
     await loadHeldBills();
     showToast('ພັກບິນແລ້ວ — ໄປໜ້າ "ບິນພັກໄວ້" ເພື່ອກັບມາຂາຍຄືນ');
   }catch(err){ showToast('⚠️ ພັກບິນບໍ່ສຳເລັດ: ' + (err.message||'')); }
@@ -3962,7 +3970,7 @@ function queueOfflineSale(payload){
   addPendingOfflineSaleRow(tempNo, payload, new Date().toISOString());
   renderBills();
   updateOfflineBanner();
-  closePayModal(); clearCart();
+  closePayModal(); clearCart(); resetCustomerForNextSale();
   showToast(`✅ ບັນທຶກແບບ offline ແລ້ວ (${tempNo}) — ຈະ Sync ອັດຕະໂນມັດເມື່ອເນັດກັບມາ`);
   setTimeout(syncOfflineQueue, 1500); // ລອງ sync ທັນທີ ເຜື່ອເນັດຫາກໍ່ກັບມາຊົ່ວຄາວ
 }
@@ -4095,7 +4103,7 @@ async function confirmPayment(){
       await loadRecentBills();
       await Promise.all([loadTodayStats(), loadTodayTopProducts(), loadExpiringLots()]);
       renderGrid(); renderStockTable(); renderHomeSidebar(); renderCustSelect(); renderBills();
-      closePayModal(); clearCart(); // clearCart() ລ້າງ pendingLabelRef ນຳ
+      closePayModal(); clearCart(); resetCustomerForNextSale(); // clearCart() ລ້າງ pendingLabelRef ນຳ; v2.49 ລ້າງລູກຄ້າດ້ວຍ
       showToast('ບັນທຶກບິນສຳເລັດ');
     })(), 20000, 'ການບັນທຶກບິນ');
   }catch(err){

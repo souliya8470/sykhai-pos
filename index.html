@@ -1442,8 +1442,13 @@
 <div class="overlay" id="receiveOverlay">
   <div class="modal wide">
     <div class="modal-head"><span>ຮັບເຄື່ອງເຂົ້າ (ສ້າງ LOT ໃໝ່)</span><span class="x" onclick="closeReceiveModal()">✕</span></div>
-    <div class="field"><label>ສິນຄ້າ</label>
-      <select id="recvProduct" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px"></select>
+    <div class="row">
+      <div class="field grow"><label>▤ ຍິງບາໂຄດ</label><input type="text" id="recvScan" placeholder="ຍິງບາໂຄດທີ່ນີ້ ແລ້ວກົດ Enter" autocomplete="off" onkeydown="recvScanKey(event)"></div>
+      <div class="field grow"><label>🔍 ຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ)</label><input type="text" id="recvSearch" placeholder="ພິມຊື່ສິນຄ້າ..." autocomplete="off" oninput="recvFilterProducts()" onkeydown="recvSearchKey(event)"></div>
+    </div>
+    <div class="field"><label>ສິນຄ້າ <span id="recvMatchCount" style="font-weight:400;color:var(--text-muted)"></span></label>
+      <select id="recvProduct" onchange="recvShowInfo()" style="width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px;height:36px"></select>
+      <div id="recvProductInfo" style="font-size:14px;color:var(--text-muted);margin-top:4px"></div>
     </div>
     <div class="row">
       <div class="field grow"><label>ຈຳນວນຮັບເຂົ້າ</label><input type="text" id="recvQty" placeholder="100"></div>
@@ -1835,7 +1840,8 @@ async function liveSetCurrent(productId){
 }
 // v2.48 (Tar 2026-10-11): ຄຳອະທິບາຍແທັບ "ສິນຄ້າໄລ້ສົດ" ບອກວ່າລູກຄ້າພິມລະຫັດຢ່າງດຽວ (A1) ກໍຈອງໄດ້ ບໍ່ຕ້ອງພິມ CF (ຮອງຮັບຢູ່ Marketing Studio v8.23).
 // v2.49 (Tar 2026-10-12): ຫຼັງກົດຮັບເງິນສຳເລັດ (ທັງ online ແລະ offline) ແລະຫຼັງ "ພັກບິນ" ລ້າງລູກຄ້າທີ່ເລືອກໄວ້ກັບຄືນເປັນ "ລູກຄ້າທົ່ວໄປ" ທັນທີ (resetCustomerForNextSale) — ກ່ອນໜ້ານີ້ລູກຄ້າ VIP ຄົນເກົ່າຄ້າງໃນບິນຖັດໄປ ພະນັກງານອາດຂາຍໃຫ້ຜູ້ເກົ່າຊ້ຳໂດຍບໍ່ຕັ້ງໃຈ. ປຸ່ມ "ຍົກເລີກ" ລ້າງກະຕ່າຄືເກົ່າ ບໍ່ແຕະຕ້ອງລູກຄ້າ.
-const APP_VERSION = 'v2.49';
+// v2.50 (Tar 2026-10-12): ໜ້າ "ຮັບເຄື່ອງເຂົ້າ (ສ້າງ LOT ໃໝ່)" ເພີ່ມຊ່ອງ 🔍 ຄົ້ນຫາສິນຄ້າ (ຊື່/ບາໂຄດ — ກອງລາຍການດ້ານລຸ່ມທັນທີ, Enter = ເລືອກອັນທຳອິດ) ແລະ ຊ່ອງ ▤ ຍິງບາໂຄດ (ຍິງແລ້ວເລືອກສິນຄ້າໃຫ້ເອງ ແລ້ວໂດດໄປຊ່ອງຈຳນວນ) — ກ່ອນໜ້ານີ້ເປັນ dropdown ຢ່າງດຽວ ຕ້ອງເລື່ອນຊອກຍາກເມື່ອມີສິນຄ້າຫຼາຍ. ສະແດງບາໂຄດ/ສະຕ໊ອກປັດຈຸບັນຂອງສິນຄ້າທີ່ເລືອກ.
+const APP_VERSION = 'v2.50';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -5395,14 +5401,62 @@ async function confirmStockAdjust(){
     showToast(delta === 0 ? `✅ ນັບແລ້ວ ຍອດຖືກຕ້ອງ: ${p.name} (${newQty})` : `ປັບປຸງສະຕ໊ອກແລ້ວ: ${p.name} ${delta>0?'+':''}${delta} → ${newQty}`);
   }catch(err){ showToast('⚠️ ປັບປຸງບໍ່ສຳເລັດ: ' + (err.message||'')); }
 }
-function openReceiveModal(){
+// v2.50: ຄົ້ນຫາ/ຍິງບາໂຄດ ເລືອກສິນຄ້າໃນໜ້າຮັບເຄື່ອງເຂົ້າ
+function recvFilterProducts(keepId){
   const sel = document.getElementById('recvProduct');
-  sel.innerHTML = PRODUCTS.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  const q = (document.getElementById('recvSearch').value||'').trim().toLowerCase();
+  const list = q ? PRODUCTS.filter(p => String(p.name||'').toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q)) : PRODUCTS;
+  sel.innerHTML = list.length
+    ? list.map(p=>`<option value="${escAttr(p.id)}">${escAttr(p.name)}${p.barcode?' · '+escAttr(p.barcode):''}</option>`).join('')
+    : '<option value="">— ບໍ່ພົບສິນຄ້າ —</option>';
+  if (keepId && list.some(p=>p.id===keepId)) sel.value = keepId;
+  sel.size = (q && list.length > 1) ? Math.min(7, list.length) : 1; // ກຳລັງຄົ້ນຫາ: ສະແດງເປັນລາຍການໃຫ້ເຫັນຫຼາຍອັນພ້ອມກັນ
+  sel.style.height = sel.size > 1 ? 'auto' : '36px';
+  document.getElementById('recvMatchCount').textContent = q ? `(ພົບ ${list.length} ລາຍການ)` : '';
+  recvShowInfo();
+}
+function recvShowInfo(){
+  const el = document.getElementById('recvProductInfo');
+  const p = PRODUCTS.find(x=>x.id===document.getElementById('recvProduct').value);
+  el.textContent = p ? `ບາໂຄດ ${p.barcode||'-'} · ຄົງເຫຼືອປັດຈຸບັນ ${p.stock==null?'-':p.stock}` : '';
+}
+function recvPick(p){
+  document.getElementById('recvSearch').value = '';
+  recvFilterProducts(p.id);
+  document.getElementById('recvProduct').value = p.id;
+  recvShowInfo();
+  const q = document.getElementById('recvQty'); q.focus(); q.select();
+}
+function recvScanKey(e){
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const code = e.target.value.trim().toLowerCase();
+  if (!code) return;
+  const p = PRODUCTS.find(x => String(x.barcode||'').toLowerCase() === code);
+  e.target.value = '';
+  if (!p){ showToast('⚠️ ບໍ່ພົບສິນຄ້າທີ່ມີບາໂຄດ ' + code); e.target.focus(); return; }
+  recvPick(p);
+}
+function recvSearchKey(e){
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) return;
+  const exact = PRODUCTS.find(x => String(x.barcode||'').toLowerCase() === q);
+  if (exact){ recvPick(exact); return; }
+  const first = PRODUCTS.find(p => String(p.name||'').toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q));
+  if (first) recvPick(first); else showToast('⚠️ ບໍ່ພົບສິນຄ້າ');
+}
+function openReceiveModal(){
+  document.getElementById('recvSearch').value = '';
+  document.getElementById('recvScan').value = '';
+  recvFilterProducts();
   document.getElementById('recvQty').value='';
   document.getElementById('recvCost').value='';
   document.getElementById('recvCostBaht').value='';
   document.getElementById('recvExpiry').value='';
   document.getElementById('receiveOverlay').classList.add('open');
+  setTimeout(()=>{ const s = document.getElementById('recvScan'); if (s) s.focus(); }, 50); // ພ້ອມຍິງບາໂຄດທັນທີ
 }
 function closeReceiveModal(){ document.getElementById('receiveOverlay').classList.remove('open'); }
 async function confirmReceive(){
@@ -5412,6 +5466,7 @@ async function confirmReceive(){
   const costBaht = parseFloat(document.getElementById('recvCostBaht').value||'0');
   if (!qty || !cost){ showToast('ກະລຸນາໃສ່ຈຳນວນ ແລະ ຕົ້ນທຶນ (ກີບ)'); return; }
   const p = PRODUCTS.find(x=>x.id===id);
+  if (!id || !p){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
   try{
     const { data: lot, error: e1 } = await sb.from('pos_product_lots').insert({
       shop_id: SHOP_ID, product_id: id, received_qty: qty, remaining_qty: qty, cost_per_unit: cost, cost_per_unit_baht: costBaht

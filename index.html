@@ -1285,7 +1285,7 @@
   </div>
 </div>
 
-<div class="overlay" id="confirmOverlay">
+<div class="overlay" id="confirmOverlay" style="z-index:200"><!-- v2.53: ສູງກວ່າ overlay ອື່ນ (100) ເພື່ອໃຫ້ຢືນຢັນເດັ້ງຂຶ້ນເທິງໜ້າຮັບເຂົ້າ LOT -->
   <div class="modal" style="width:360px">
     <div class="modal-head"><span id="confirmModalTitle">ຢືນຢັນການດຳເນີນການ</span><span class="x" onclick="closeConfirmModal(false)">✕</span></div>
     <p id="confirmModalMsg" style="font-size:16px;color:var(--text);line-height:1.5;margin:0 0 18px;white-space:pre-line"></p>
@@ -1451,10 +1451,11 @@
       <div id="recvProductInfo" style="margin-top:8px"></div>
     </div>
     <div class="row">
-      <div class="field grow"><label>ຈຳນວນຮັບເຂົ້າ</label><input type="text" id="recvQty" placeholder="100"></div>
-      <div class="field grow"><label>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</label><input type="text" id="recvCost" placeholder="70000"></div>
+      <div class="field grow"><label>ຈຳນວນຮັບເຂົ້າ</label><input type="text" id="recvQty" placeholder="100" oninput="recvPreview()"></div>
+      <div class="field grow"><label>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</label><input type="text" id="recvCost" placeholder="70000" oninput="recvPreview()"></div>
       <div class="field grow"><label>🇹🇭 ຕົ້ນທຶນ/ໜ່ວຍ (ບາດ, ຖ້າມີ)</label><input type="text" id="recvCostBaht" placeholder="0"></div>
     </div>
+    <div id="recvPreview" style="margin:0 0 10px"></div>
     <div class="field"><label>ວັນໝົດອາຍຸ (ຖ້າມີ) — ກົດເລືອກຈາກປະຕິທິນ</label>
       <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
         <input type="date" id="recvExpiry" onchange="recvExpiryChanged()" onclick="try{this.showPicker()}catch(e){}" style="height:38px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px;font-size:16px">
@@ -1853,7 +1854,8 @@ async function liveSetCurrent(productId){
 // v2.50 (Tar 2026-10-12): ໜ້າ "ຮັບເຄື່ອງເຂົ້າ (ສ້າງ LOT ໃໝ່)" ເພີ່ມຊ່ອງ 🔍 ຄົ້ນຫາສິນຄ້າ (ຊື່/ບາໂຄດ — ກອງລາຍການດ້ານລຸ່ມທັນທີ, Enter = ເລືອກອັນທຳອິດ) ແລະ ຊ່ອງ ▤ ຍິງບາໂຄດ (ຍິງແລ້ວເລືອກສິນຄ້າໃຫ້ເອງ ແລ້ວໂດດໄປຊ່ອງຈຳນວນ) — ກ່ອນໜ້ານີ້ເປັນ dropdown ຢ່າງດຽວ ຕ້ອງເລື່ອນຊອກຍາກເມື່ອມີສິນຄ້າຫຼາຍ. ສະແດງບາໂຄດ/ສະຕ໊ອກປັດຈຸບັນຂອງສິນຄ້າທີ່ເລືອກ.
 // v2.51 (Tar 2026-10-12, "ກົດເລືອກແລ້ວ ບໍ່ແນ່ໃຈວ່າກົດແລ້ວບໍ່ — ຢາກໃຫ້ຊື່ເດັ້ງຂຶ້ນມາ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ເມື່ອເລືອກສິນຄ້າ (ກົດໃນລາຍການ / ຍິງບາໂຄດ / Enter) ຂຶ້ນກອບສີຂຽວຂະໜາດໃຫຍ່ "✅ ເລືອກແລ້ວ: ຊື່ສິນຄ້າ" + toast ແລະລາຍການພັບກັບ; ຍັງບໍ່ເລືອກ = ກອບເຕືອນສີສົ້ມ ແລະ ປຸ່ມບັນທຶກບໍ່ເຮັດວຽກ (ກ່ອນໜ້ານີ້ສິນຄ້າອັນທຳອິດຖືກເລືອກໄວ້ເປັນຄ່າເລີ່ມຕົ້ນ ອາດບັນທຶກຜິດສິນຄ້າໂດຍບໍ່ຮູ້ຕົວ).
 // v2.52 (Tar 2026-10-12, "ວັນໝົດອາຍຸ ເຮັດເປັນປະຕິທິນເລືອກ ຍ້ານພະນັກງານສະລັບຊ່ອງເດືອນ/ວັນ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ຊ່ອງວັນໝົດອາຍຸປ່ຽນຈາກພິມ dd/mm/yyyy ເປັນປະຕິທິນ (input type=date) ກົດເລືອກວັນ + ປຸ່ມລັດ +6 ເດືອນ/+1/+2/+3 ປີ + ຂໍ້ຄວາມຢືນຢັນເປັນພາສາລາວ (ເຊັ່ນ "15 ມັງກອນ 2027") ໃຫ້ເຫັນຊັດວ່າວັນ/ເດືອນຖືກບໍ່. ແກ້ບັກ: ເມື່ອກີ້ວັນໝົດອາຍຸທີ່ພິມບໍ່ຖືກບັນທຶກລົງ LOT ເລີຍ (confirmReceive ບໍ່ອ່ານຊ່ອງນີ້) — ຕອນນີ້ບັນທຶກ pos_product_lots.expiry_date; ຖ້າເລືອກວັນທີ່ຜ່ານມາແລ້ວຈະຖາມຢືນຢັນກ່ອນ.
-const APP_VERSION = 'v2.52';
+// v2.53 (Tar 2026-10-13, "ລາຍງານສິນຄ້າເຂົ້າບໍ່ມີ / ບໍ່ເຂົ້າໃຈວິທີຮັບເຂົ້າສິນຄ້າໃໝ່"): (1) ແທັບ "ລາຍງານສິນຄ້າເຂົ້າ" ເມື່ອກີ້ສະແດງສະເພາະໃບສັ່ງຊື້ (purchaseOrders) ຈຶ່ງຫວ່າງ ເຖິງວ່າຮັບເຂົ້າ LOT ແລ້ວ — ຕອນນີ້ອ່ານຈາກ pos_product_lots (ລວມທັງຮັບເຂົ້າ LOT ໂດຍກົງ ແລະ ຮັບຈາກໃບສັ່ງຊື້ ເພາະທັງສອງສ້າງ LOT) ບໍ່ລວມ LOT ຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (ມີ lot_no). (2) ໜ້າຮັບເຂົ້າ LOT ສະແດງຕົວຢ່າງຄຳນວນ "ສະຕ໊ອກ A → B · ຕົ້ນທຶນສະເລ່ຍ X → Y" ແບບສົດ, ປຸ່ມ "ໃຊ້ຕົ້ນທຶນເກົ່າ" (ກໍລະນີຮັບຂອງເກົ່າ ລາຄາເກົ່າ), ແລະ ກ່ອນບັນທຶກຖາມຢືນຢັນ + ເຕືອນຖ້າສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມໃນ 24 ຊົ່ວໂມງທີ່ຜ່ານມາ (ກັນໃສ່ຊ້ຳສອງເທື່ອ). ຊ່ອງຈຳນວນ/ຕົ້ນທຶນຮັບເລກມີຈຸດ , ໄດ້ (ເຊັ່ນ 70,000).
+const APP_VERSION = 'v2.53';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -4634,11 +4636,20 @@ function isOnlineProductTabVisible(){
   const el = document.getElementById('stocktab-online');
   return !!el && el.style.display !== 'none';
 }
-function renderReportInList(){
-  document.getElementById('reportInList').innerHTML = purchaseOrders
-    .filter(po=>po.status==='ຮັບແລ້ວ')
-    .map(po => `<div class="trow"><span>${po.no} · ${po.vendor}</span><span style="color:var(--text-muted)">${po.date} · +${po.items.reduce((s,i)=>s+i.qty,0)} ຊິ້ນ</span></div>`).join('')
-    || '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີການຮັບເຂົ້າ</p>';
+// v2.53: ລາຍງານສິນຄ້າເຂົ້າ ອ່ານຈາກ LOT (ທັງຮັບໂດຍກົງ ແລະ ຈາກໃບສັ່ງຊື້) — ບໍ່ລວມ LOT ຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (ມີ lot_no)
+async function renderReportInList(){
+  const wrap = document.getElementById('reportInList'); if (!wrap) return;
+  wrap.innerHTML = '<p style="font-size:15px;color:var(--text-muted)">ກຳລັງໂຫຼດ...</p>';
+  try{
+    const { data, error } = await sb.from('pos_product_lots').select('*, pos_products(name, barcode)').eq('shop_id', SHOP_ID).is('lot_no', null).order('received_at',{ascending:false}).limit(200);
+    if (error) throw error;
+    const rows = data || [];
+    wrap.innerHTML = rows.length
+      ? `<div style="overflow-x:auto"><table style="width:100%"><thead><tr><th style="text-align:left">ວັນທີ</th><th style="text-align:left">ສິນຄ້າ</th><th>ຈຳນວນຮັບ</th><th>ຄົງເຫຼືອໃນ LOT</th><th>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</th><th>ໝົດອາຍຸ</th></tr></thead><tbody>`
+        + rows.map(l => `<tr><td>${fmtD(l.received_at)} ${new Date(l.received_at).toTimeString().slice(0,5)}</td><td>${escAttr(l.pos_products?l.pos_products.name:'-')}</td><td style="text-align:center;font-weight:700">+${fmt(l.received_qty)}</td><td style="text-align:center">${fmt(l.remaining_qty)}</td><td style="text-align:right">${fmt(l.cost_per_unit)}${Number(l.cost_per_unit_baht)>0?' · ฿'+fmt(l.cost_per_unit_baht):''}</td><td style="text-align:center">${l.expiry_date?fmtD(l.expiry_date):'-'}</td></tr>`).join('')
+        + `</tbody></table></div><p style="font-size:13px;color:var(--text-muted);margin-top:8px">ສະແດງ 200 ລາຍການຫຼ້າສຸດ · ບໍ່ລວມຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (28/07)</p>`
+      : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີການຮັບເຂົ້າ</p>';
+  }catch(e){ wrap.innerHTML = '<p style="font-size:15px;color:var(--danger)">⚠️ ໂຫຼດບໍ່ສຳເລັດ: ' + escAttr(e.message||e) + '</p>'; }
 }
 function renderReportOutList(){
   document.getElementById('reportOutList').innerHTML = initialBills.slice(0,10).map(b => `
@@ -5435,9 +5446,31 @@ function recvShowInfo(){
     ? `<div style="background:#e6f6ea;border:2px solid #2e9e4f;border-radius:8px;padding:10px 12px">
          <div style="font-size:13px;color:#1f7a3a;font-weight:700">✅ ເລືອກແລ້ວ</div>
          <div style="font-size:20px;font-weight:900;color:#14532d;line-height:1.3">${escAttr(p.name)}</div>
-         <div style="font-size:14px;color:#1f7a3a">ບາໂຄດ ${escAttr(p.barcode||'-')} · ຄົງເຫຼືອປັດຈຸບັນ ${p.stock==null?'-':p.stock}</div>
+         <div style="font-size:14px;color:#1f7a3a">ບາໂຄດ ${escAttr(p.barcode||'-')} · ຄົງເຫຼືອປັດຈຸບັນ ${p.stock==null?'-':p.stock} · ຕົ້ນທຶນສະເລ່ຍ ${fmt(p.avgCost)} ກີບ</div>
        </div>`
     : `<div style="background:#fff4e0;border:2px dashed #e0a030;border-radius:8px;padding:8px 12px;font-size:14px;color:#8a5a00">⚠️ ຍັງບໍ່ໄດ້ເລືອກສິນຄ້າ — ຍິງບາໂຄດ ຫຼື ກົດເລືອກຈາກລາຍການ</div>`;
+  recvPreview();
+}
+function recvNum(v){ return parseFloat(String(v||'').replace(/[^0-9.]/g,'')) || 0; }
+function recvPreview(){
+  const el = document.getElementById('recvPreview'); if (!el) return;
+  const p = PRODUCTS.find(x=>x.id===recvPickedId);
+  if (!p){ el.innerHTML = ''; return; }
+  const qty = Math.floor(recvNum(document.getElementById('recvQty').value));
+  const cost = recvNum(document.getElementById('recvCost').value);
+  const oldStock = Number(p.stock)||0, oldAvg = Number(p.avgCost)||0;
+  const btn = `<button type="button" class="btn" onclick="recvUseOldCost()">ໃຊ້ຕົ້ນທຶນເກົ່າ (${fmt(oldAvg)})</button>`;
+  if (!qty || !cost){ el.innerHTML = `<div style="font-size:14px;color:var(--text-muted)">ໃສ່ຈຳນວນ ແລະ ຕົ້ນທຶນ ເພື່ອເບິ່ງຕົວຢ່າງຄຳນວນ ${btn}</div>`; return; }
+  const newStock = oldStock + qty;
+  const newAvg = Math.round(((oldStock*oldAvg) + (qty*cost)) / newStock);
+  el.innerHTML = `<div style="background:#eef3ff;border:1px solid #9db4ee;border-radius:8px;padding:8px 12px;font-size:15px;line-height:1.6">
+    <div>📦 ສະຕ໊ອກ: <b>${fmt(oldStock)}</b> → <b style="color:#1d4ed8">${fmt(newStock)}</b> (+${fmt(qty)})</div>
+    <div>💰 ຕົ້ນທຶນສະເລ່ຍ: <b>${fmt(oldAvg)}</b> → <b style="color:#1d4ed8">${fmt(newAvg)}</b> ກີບ ${btn}</div></div>`;
+}
+function recvUseOldCost(){
+  const p = PRODUCTS.find(x=>x.id===recvPickedId); if (!p) return;
+  document.getElementById('recvCost').value = Math.round(Number(p.avgCost)||0);
+  recvPreview();
 }
 function recvChoose(id, focusQty){
   const p = PRODUCTS.find(x=>x.id===id);
@@ -5507,9 +5540,9 @@ function openReceiveModal(){
 function closeReceiveModal(){ document.getElementById('receiveOverlay').classList.remove('open'); }
 async function confirmReceive(){
   const id = recvPickedId; // v2.51: ຕ້ອງເລືອກສິນຄ້າຈິງ (ບໍ່ໃຊ້ຄ່າເລີ່ມຕົ້ນຂອງ dropdown)
-  const qty = parseInt(document.getElementById('recvQty').value||'0',10);
-  const cost = parseFloat(document.getElementById('recvCost').value||'0');
-  const costBaht = parseFloat(document.getElementById('recvCostBaht').value||'0');
+  const qty = Math.floor(recvNum(document.getElementById('recvQty').value));
+  const cost = recvNum(document.getElementById('recvCost').value);
+  const costBaht = recvNum(document.getElementById('recvCostBaht').value);
   if (!qty || !cost){ showToast('ກະລຸນາໃສ່ຈຳນວນ ແລະ ຕົ້ນທຶນ (ກີບ)'); return; }
   const p = PRODUCTS.find(x=>x.id===id);
   if (!id || !p){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
@@ -5518,6 +5551,17 @@ async function confirmReceive(){
     const now = new Date(); const todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
     if (expiry < todayStr && !await showConfirmModal('ວັນໝົດອາຍຸທີ່ເລືອກ ' + expiry + ' ແມ່ນວັນທີ່ຜ່ານມາແລ້ວ — ຢືນຢັນບັນທຶກແທ້ບໍ?')) return;
   }
+  // v2.53: ເຕືອນຖ້າສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມໃນ 24 ຊົ່ວໂມງຜ່ານມາ (ກັນໃສ່ຈຳນວນດຽວກັນຊ້ຳສອງເທື່ອ) + ສະຫຼຸບກ່ອນບັນທຶກ
+  let recentAdjNote = '';
+  try{
+    const since = new Date(Date.now() - 24*3600*1000).toISOString();
+    const { data: adj } = await sb.from('pos_activity_log').select('created_at, detail').eq('action','stock_adjustment').eq('detail->>product_id', id).gte('created_at', since).order('created_at',{ascending:false}).limit(3);
+    const ups = (adj||[]).filter(a => Number(a.detail && a.detail.delta) > 0);
+    if (ups.length) recentAdjNote = '\n\n⚠️ ສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມ ' + ups.map(a => '+' + a.detail.delta + ' (' + fmtD(a.created_at) + ' ' + new Date(a.created_at).toTimeString().slice(0,5) + ')').join(', ') + ' ໃນ 24 ຊົ່ວໂມງຜ່ານມາ — ຖ້າເປັນຂອງຊຸດດຽວກັນ ຈະເພີ່ມຊ້ຳສອງເທື່ອ!';
+  }catch(e){ /* ເປັນຂໍ້ມູນເຕືອນເສີມ ບໍ່ໃຫ້ລົ້ມການບັນທຶກ */ }
+  const oldStock = Number(p.stock)||0, oldAvg = Number(p.avgCost)||0;
+  const prevAvg = Math.round(((oldStock*oldAvg) + (qty*cost)) / (oldStock+qty));
+  if (!await showConfirmModal(`ຢືນຢັນຮັບເຂົ້າ: ${p.name}\nຈຳນວນ +${fmt(qty)} ຕົ້ນທຶນ ${fmt(cost)} ກີບ/ໜ່ວຍ\nສະຕ໊ອກ ${fmt(oldStock)} → ${fmt(oldStock+qty)}\nຕົ້ນທຶນສະເລ່ຍ ${fmt(oldAvg)} → ${fmt(prevAvg)} ກີບ${recentAdjNote}`, '📥 ຢືນຢັນຮັບເຂົ້າ LOT ໃໝ່')) return;
   try{
     const { data: lot, error: e1 } = await sb.from('pos_product_lots').insert({
       shop_id: SHOP_ID, product_id: id, received_qty: qty, remaining_qty: qty, cost_per_unit: cost, cost_per_unit_baht: costBaht, expiry_date: expiry

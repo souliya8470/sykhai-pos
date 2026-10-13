@@ -1869,7 +1869,8 @@ async function liveSetCurrent(productId){
 // v2.52 (Tar 2026-10-12, "ວັນໝົດອາຍຸ ເຮັດເປັນປະຕິທິນເລືອກ ຍ້ານພະນັກງານສະລັບຊ່ອງເດືອນ/ວັນ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ຊ່ອງວັນໝົດອາຍຸປ່ຽນຈາກພິມ dd/mm/yyyy ເປັນປະຕິທິນ (input type=date) ກົດເລືອກວັນ + ປຸ່ມລັດ +6 ເດືອນ/+1/+2/+3 ປີ + ຂໍ້ຄວາມຢືນຢັນເປັນພາສາລາວ (ເຊັ່ນ "15 ມັງກອນ 2027") ໃຫ້ເຫັນຊັດວ່າວັນ/ເດືອນຖືກບໍ່. ແກ້ບັກ: ເມື່ອກີ້ວັນໝົດອາຍຸທີ່ພິມບໍ່ຖືກບັນທຶກລົງ LOT ເລີຍ (confirmReceive ບໍ່ອ່ານຊ່ອງນີ້) — ຕອນນີ້ບັນທຶກ pos_product_lots.expiry_date; ຖ້າເລືອກວັນທີ່ຜ່ານມາແລ້ວຈະຖາມຢືນຢັນກ່ອນ.
 // v2.53 (Tar 2026-10-13, "ລາຍງານສິນຄ້າເຂົ້າບໍ່ມີ / ບໍ່ເຂົ້າໃຈວິທີຮັບເຂົ້າສິນຄ້າໃໝ່"): (1) ແທັບ "ລາຍງານສິນຄ້າເຂົ້າ" ເມື່ອກີ້ສະແດງສະເພາະໃບສັ່ງຊື້ (purchaseOrders) ຈຶ່ງຫວ່າງ ເຖິງວ່າຮັບເຂົ້າ LOT ແລ້ວ — ຕອນນີ້ອ່ານຈາກ pos_product_lots (ລວມທັງຮັບເຂົ້າ LOT ໂດຍກົງ ແລະ ຮັບຈາກໃບສັ່ງຊື້ ເພາະທັງສອງສ້າງ LOT) ບໍ່ລວມ LOT ຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (ມີ lot_no). (2) ໜ້າຮັບເຂົ້າ LOT ສະແດງຕົວຢ່າງຄຳນວນ "ສະຕ໊ອກ A → B · ຕົ້ນທຶນສະເລ່ຍ X → Y" ແບບສົດ, ປຸ່ມ "ໃຊ້ຕົ້ນທຶນເກົ່າ" (ກໍລະນີຮັບຂອງເກົ່າ ລາຄາເກົ່າ), ແລະ ກ່ອນບັນທຶກຖາມຢືນຢັນ + ເຕືອນຖ້າສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມໃນ 24 ຊົ່ວໂມງທີ່ຜ່ານມາ (ກັນໃສ່ຊ້ຳສອງເທື່ອ). ຊ່ອງຈຳນວນ/ຕົ້ນທຶນຮັບເລກມີຈຸດ , ໄດ້ (ເຊັ່ນ 70,000).
 // v2.54 (Tar 2026-10-13, "ຂະຫຍາຍໜ້າຮັບເຂົ້າ LOT ໃຫ້ໃຫຍ່ ແລະ ສະແດງປະຫວັດການເອົາເຂົ້າ/ແກ້ສະຕ໊ອກຂອງສິນຄ້ານັ້ນ ມື້ໃດ ເວລາໃດ ໂດຍໃຜ"): (1) ໜ້າຮັບເຂົ້າ LOT ໃຫຍ່ຂຶ້ນ (ກວ້າງ ~900px, ຕົວອັກສອນ/ຊ່ອງໃສ່/ປຸ່ມໃຫຍ່ຂຶ້ນ) ເບິ່ງງ່າຍ. (2) ເມື່ອເລືອກສິນຄ້າ ຂຶ້ນກອບ "ປະຫວັດຂອງສິນຄ້ານີ້": ຮັບເຂົ້າຄັ້ງລ່າສຸດ (ວັນທີ+ເວລາ+ໂດຍໃຜ+ຈຳນວນ+ຕົ້ນທຶນ) ແລະ 6 ເຫດການຫຼ້າສຸດ (ຮັບເຂົ້າ LOT / ຮັບຈາກໃບສັ່ງຊື້ / ປັບສະຕ໊ອກ ພ້ອມ ຈາກ→ເປັນ) ອ່ານຈາກ pos_activity_log; ຖ້າມີການເພີ່ມສະຕ໊ອກໃນ 24 ຊົ່ວໂມງຜ່ານມາ ຂຶ້ນກອບເຕືອນສີສົ້ມ.
-const APP_VERSION = 'v2.54';
+// v2.55 (Tar 2026-10-13, "ຢາກໃຫ້ຂາຍຕັດຕາມ LOT ແລະຄິດຕົ້ນທຶນຕາມ LOT ນັ້ນ ບໍ່ແມ່ນຕົ້ນທຶນສະເລ່ຍ"): ລະບົບ FIFO ຕາມ LOT — (1) ສະຕ໊ອກ+ຕົ້ນທຶນໃນຕາຕະລາງ ວັນທີ 13 ຕຸລາ 2026 ຖືເປັນ LOT ເປີດຍອດຂອງທຸກສິນຄ້າ. (2) ຕອນຂາຍ ລະບົບຕັດຈາກ LOT ເກົ່າກ່ອນ ແລະຕົ້ນທຶນໃນບິນ/ລາຍງານກຳໄລ = ຕົ້ນທຶນຂອງ LOT ທີ່ຕັດ (ຖ້າຂາຍຂ້າມ 2 LOT ຄິດຖ່ວງນ້ຳໜັກຕາມຈຳນວນຈິງ); ຕາຕະລາງສິນຄ້າສະແດງຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່ ແລະປ່ຽນເປັນຂອງ LOT ຖັດໄປເອງເມື່ອ LOT ເກົ່າໝົດ. (3) ຮັບເຂົ້າ LOT ໃໝ່ບໍ່ຄິດຕົ້ນທຶນສະເລ່ຍອີກ (ຟັງຊັນ pos_receive_lot ໃນຖານຂໍ້ມູນ ເຮັດຄົບຂັ້ນຕອນໃນຄັ້ງດຽວ). (4) ປັບສະຕ໊ອກ (ວົງມົນສີສົ້ມ) ຫຼຸດ = ຕັດຈາກ LOT ເກົ່າກ່ອນ, ເພີ່ມ = ສ້າງ LOT ປັບຍອດດ້ວຍຕົ້ນທຶນປັດຈຸບັນ. (5) ແກ້ຕົ້ນທຶນໃນຟອມສິນຄ້າ = ແກ້ຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່. (6) ແກ້ບິນເກົ່າ: ຈຳນວນທີ່ຂາຍໄປແລ້ວຮັກສາຕົ້ນທຶນເດີມ, ສະເພາະຈຳນວນທີ່ເພີ່ມໃໝ່ຈຶ່ງຄິດຈາກ LOT ປັດຈຸບັນ; ຈຳນວນທີ່ຫຼຸດ ແລະການຍົກເລີກບິນ ຄືນເຂົ້າ LOT ເດີມຕາມຕົ້ນທຶນທີ່ຂາຍ. ບິນທີ່ຂາຍໄປແລ້ວທັງໝົດບໍ່ປ່ຽນ.
+const APP_VERSION = 'v2.55';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -2412,7 +2413,7 @@ async function loadReportItemsBulk(){
   productSoldAllTimeTotals = {};
   if (productIds.length){
     // ຍອດຮັບເຂົ້າສະສົມ (ຈຳນວນທີ່ເອົາເຂົ້າທຳອິດ) — ຄິດຈາກທຸກ LOT ຂອງແຕ່ລະສິນຄ້າ ບໍ່ຈຳກັດວັນທີ່
-    const { data: lots } = await sb.from('pos_product_lots').select('product_id, received_qty').in('product_id', productIds);
+    const { data: lots } = await sb.from('pos_product_lots').select('product_id, received_qty').in('product_id', productIds).or('lot_no.is.null,lot_no.not.in.(OPEN-20261013,OPEN-AUTO,ADJ,RET)'); // v2.55: ບໍ່ນັບ LOT ເປີດຍອດ/ປັບຍອດ/ຄືນ ເພາະບໍ່ແມ່ນການຮັບເຂົ້າ
     (lots||[]).forEach(l => { productReceivedTotals[l.product_id] = (productReceivedTotals[l.product_id]||0) + Number(l.received_qty); });
     // ຈຳນວນຂາຍທັງໝົດຕະຫຼອດການ — ຄິດຈາກ stock_movements ທັງໝົດ (ບໍ່ຈຳກັດ 500 ບິນລ່າສຸດ) ໃຫ້ບວກ-ລົບກັບສະຕ໊ອກເຂົ້າ ອອກມາກົງກັບສະຕ໊ອກຈິງ
     const { data: movements } = await sb.from('pos_stock_movements').select('product_id, qty_change, movement_type').in('product_id', productIds).in('movement_type', ['sale','sale_edit_add']);
@@ -3797,6 +3798,26 @@ function applyLocalStockDelta(items){ // items: [{id, qty}] qty ບວກ=ຫັ
     if (p) p.stock = Math.max(0, (p.stock||0) - i.qty);
   });
 }
+// v2.55: ຕົ້ນທຶນ FIFO — ຖາມຖານຂໍ້ມູນວ່າຈຳນວນທີ່ຈະຂາຍຈະຖືກຕັດຈາກ LOT ໃດ ແລ້ວເອົາຕົ້ນທຶນຖ່ວງນ້ຳໜັກຂອງຈຳນວນນັ້ນ
+// (ອ່ານຢ່າງດຽວ ບໍ່ຕັດ LOT — ການຕັດຈິງເກີດຕອນເອີ້ນ adjust_product_stock). items: [{id, qty}] → { productId: {kip, baht} }
+async function fifoCostMap(items){
+  const qtyBy = {};
+  items.forEach(i => { qtyBy[i.id] = (qtyBy[i.id]||0) + (Number(i.qty)||0); });
+  const map = {};
+  await Promise.all(Object.keys(qtyBy).map(async pid => {
+    const p = PRODUCTS.find(x=>x.id===pid);
+    let kip = p ? (p.avgCost||0) : 0, baht = p ? (p.costBaht||0) : 0;
+    try{
+      const { data, error } = await sb.rpc('pos_fifo_cost', { p_product_id: pid, p_qty: qtyBy[pid] });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row){ kip = Number(row.cost_kip)||0; baht = Number(row.cost_baht)||0; }
+    }catch(e){ console.error('pos_fifo_cost ລົ້ມເຫຼວ — ໃຊ້ຕົ້ນທຶນໃນຕາຕະລາງແທນ', pid, e); }
+    map[pid] = { kip, baht };
+  }));
+  return map;
+}
+function unitCostOf(map, pid, currency){ const c = map[pid]; if (!c) return 0; return currency === 'baht' ? c.baht : c.kip; }
 // ---- ຂຽນ DB ຈິງ ໃຊ້ຮ່ວມກັນທັງ "ຂາຍສົດ online" ແລະ "sync ບິນ offline ພາຍຫຼັງ" ----
 // payload: {cart, customerId, labelRef, splitPayments, splitPaymentsBaht, noteVal, staffName, isOfflineSync}
 async function executeSaleWrite(payload){
@@ -3814,8 +3835,9 @@ async function executeSaleWrite(payload){
   }).select().single();
   if (e1) throw e1;
 
-  const totalCostKip = pCart.filter(i=>i.currency!=='baht').reduce((s,i)=>{ const p=PRODUCTS.find(x=>x.id===i.id); return p ? s+(p.avgCost||0)*i.qty : s; },0);
-  const totalCostBaht = pCart.filter(i=>i.currency==='baht').reduce((s,i)=>{ const p=PRODUCTS.find(x=>x.id===i.id); return p ? s+(p.costBaht||0)*i.qty : s; },0);
+  const costMap = await fifoCostMap(pCart.map(i=>({id:i.id, qty:i.qty}))); // v2.55: ຕົ້ນທຶນ FIFO ຕາມ LOT
+  const totalCostKip = pCart.filter(i=>i.currency!=='baht').reduce((s,i)=> s + unitCostOf(costMap, i.id, 'kip')*i.qty, 0);
+  const totalCostBaht = pCart.filter(i=>i.currency==='baht').reduce((s,i)=> s + unitCostOf(costMap, i.id, 'baht')*i.qty, 0);
   const paidChannels = Object.entries(sp).filter(([,v])=>v>0);
   const paidChannelsBaht = Object.entries(spB).filter(([,v])=>v>0);
   const primaryChannel = (paidChannels.length+paidChannelsBaht.length) > 1 ? 'mixed'
@@ -3847,7 +3869,7 @@ async function executeSaleWrite(payload){
 
   const itemRows = pCart.map(i => {
     const p = PRODUCTS.find(x=>x.id===i.id);
-    const unitCost = i.currency === 'baht' ? (p?p.costBaht:0) : (p?p.avgCost:0);
+    const unitCost = unitCostOf(costMap, i.id, i.currency); // v2.55: ຕົ້ນທຶນ FIFO/ຕົ້ນທຶນເດີມຂອງບິນ
     return { version_id: version.id, product_id: i.id, qty: i.qty, price_at_sale: i.price, cost_at_sale: unitCost, line_total: i.price*i.qty, currency: i.currency || 'kip' };
   });
   const { error: e3 } = await sb.from('pos_transaction_items').insert(itemRows);
@@ -3917,8 +3939,32 @@ async function executeBillEditWrite(payload){
   }
   const newVersionNo = baseVersionNo + 1;
 
-  const totalCostKip = pCart.filter(i=>i.currency!=='baht').reduce((s,i)=>{ const p=PRODUCTS.find(x=>x.id===i.id); return p ? s+(p.avgCost||0)*i.qty : s; },0);
-  const totalCostBaht = pCart.filter(i=>i.currency==='baht').reduce((s,i)=>{ const p=PRODUCTS.find(x=>x.id===i.id); return p ? s+(p.costBaht||0)*i.qty : s; },0);
+  // v2.55: ຈຳນວນທີ່ຂາຍໄປແລ້ວຮັກສາຕົ້ນທຶນເດີມຂອງບິນ; ສະເພາະຈຳນວນທີ່ເພີ່ມໃໝ່ຈຶ່ງຄິດ FIFO ຈາກ LOT ປັດຈຸບັນ
+  const oldBy = {};
+  ctx.originalItems.forEach(i => {
+    const o = oldBy[i.product_id] || (oldBy[i.product_id] = { qty:0, kipQ:0, kipSum:0, bahtQ:0, bahtSum:0 });
+    o.qty += i.qty;
+    if (i.cost == null) return; // ຄິວ offline ເກົ່າທີ່ບໍ່ມີຕົ້ນທຶນເກັບໄວ້ → ບໍ່ຮູ້ຕົ້ນທຶນເດີມ
+    if (i.currency === 'baht'){ o.bahtQ += i.qty; o.bahtSum += i.qty * i.cost; } else { o.kipQ += i.qty; o.kipSum += i.qty * i.cost; }
+  });
+  const newQtyBy = {}; pCart.forEach(i => { newQtyBy[i.id] = (newQtyBy[i.id]||0) + i.qty; });
+  const extraList = [];
+  Object.keys(newQtyBy).forEach(pid => { const ex = newQtyBy[pid] - ((oldBy[pid]||{}).qty||0); if (ex > 0) extraList.push({ id:pid, qty:ex }); });
+  const extraCost = await fifoCostMap(extraList);
+  const fullCost = await fifoCostMap(pCart.map(i=>({id:i.id, qty:i.qty})));
+  const costMap = {};
+  Object.keys(newQtyBy).forEach(pid => {
+    const o = oldBy[pid] || { qty:0, kipQ:0, kipSum:0, bahtQ:0, bahtSum:0 };
+    const nq = newQtyBy[pid];
+    const retained = Math.min(nq, o.qty), extra = nq - retained;
+    const fb = fullCost[pid] || { kip:0, baht:0 };
+    const ex = extraCost[pid] || fb;
+    const kipOld = o.kipQ > 0 ? o.kipSum / o.kipQ : fb.kip;
+    const bahtOld = o.bahtQ > 0 ? o.bahtSum / o.bahtQ : fb.baht;
+    costMap[pid] = { kip: Math.round(((retained*kipOld + extra*ex.kip) / nq) * 100) / 100, baht: Math.round(((retained*bahtOld + extra*ex.baht) / nq) * 100) / 100 };
+  });
+  const totalCostKip = pCart.filter(i=>i.currency!=='baht').reduce((s,i)=> s + unitCostOf(costMap, i.id, 'kip')*i.qty, 0);
+  const totalCostBaht = pCart.filter(i=>i.currency==='baht').reduce((s,i)=> s + unitCostOf(costMap, i.id, 'baht')*i.qty, 0);
   const paidChannels = Object.entries(sp).filter(([,v])=>v>0);
   const paidChannelsBaht = Object.entries(spB).filter(([,v])=>v>0);
   const primaryChannel = (paidChannels.length+paidChannelsBaht.length) > 1 ? 'mixed'
@@ -3936,7 +3982,7 @@ async function executeBillEditWrite(payload){
 
   const itemRows = pCart.map(i => {
     const p = PRODUCTS.find(x=>x.id===i.id);
-    const unitCost = i.currency === 'baht' ? (p?p.costBaht:0) : (p?p.avgCost:0);
+    const unitCost = unitCostOf(costMap, i.id, i.currency); // v2.55: ຕົ້ນທຶນ FIFO/ຕົ້ນທຶນເດີມຂອງບິນ
     return { version_id: newVersion.id, product_id: i.id, qty: i.qty, price_at_sale: i.price, cost_at_sale: unitCost, line_total: i.price*i.qty, currency: i.currency||'kip' };
   });
   await sb.from('pos_transaction_items').insert(itemRows);
@@ -3982,7 +4028,13 @@ async function executeBillEditWrite(payload){
       shop_id: SHOP_ID, product_id: pid, movement_type: diff>0?'sale_edit_add':'sale_edit_remove',
       qty_change: -diff, ref_transaction_id: ctx.txnId, ref_version_id: newVersion.id
     });
-    await sb.rpc('adjust_product_stock', { p_product_id: pid, p_delta: -diff });
+    if (diff > 0){
+      await sb.rpc('adjust_product_stock', { p_product_id: pid, p_delta: -diff }); // ຕັດ LOT ເກົ່າກ່ອນ (FIFO ໃນຖານຂໍ້ມູນ)
+    } else {
+      const o = oldBy[pid] || {};
+      await sb.rpc('pos_return_stock', { p_product_id: pid, p_qty: -diff,
+        p_cost_kip: o.kipQ > 0 ? o.kipSum / o.kipQ : 0, p_cost_baht: o.bahtQ > 0 ? o.bahtSum / o.bahtQ : 0 }); // ຄືນເຂົ້າ LOT ເດີມຕາມຕົ້ນທຶນທີ່ຂາຍ
+    }
   }
 
   await logActivity('edit_bill', {
@@ -4598,14 +4650,14 @@ function renderZoneList(){
 async function renderReceiveHistList(){
   const wrap = document.getElementById('receiveHistList');
   if (!wrap) return;
-  const { data } = await sb.from('pos_product_lots').select('*, pos_products(name)').eq('shop_id', SHOP_ID).order('received_at', {ascending:false}).limit(15);
+  const { data } = await sb.from('pos_product_lots').select('*, pos_products(name)').eq('shop_id', SHOP_ID).is('lot_no', null).order('received_at', {ascending:false}).limit(15);
   wrap.innerHTML = (data||[]).length ? data.map(l => `
     <div class="trow"><span>${l.pos_products?.name||'-'} +${Number(l.received_qty)}</span><span style="color:var(--text-muted)">${fmtD(l.received_at)} · ຕົ້ນທຶນ ${fmt(l.cost_per_unit)}</span></div>`).join('')
     : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີປະຫວັດການຮັບເຂົ້າ</p>';
 }
 async function renderLotList(){
   const wrap = document.getElementById('lotList');
-  const { data } = await sb.from('pos_product_lots').select('*, pos_products(name)').eq('shop_id', SHOP_ID).gt('remaining_qty', 0).order('received_at', {ascending:false});
+  const { data } = await sb.from('pos_product_lots').select('*, pos_products(name)').eq('shop_id', SHOP_ID).is('lot_no', null).gt('remaining_qty', 0).order('received_at', {ascending:false});
   wrap.innerHTML = (data||[]).length ? data.map(l => `
     <div class="trow"><span>LOT-${l.id.slice(0,8)} · ${l.pos_products?.name||'-'}</span><span style="color:var(--text-muted)">ຄົງເຫຼືອ ${Number(l.remaining_qty)} · ຕົ້ນທຶນ ${fmt(l.cost_per_unit)}</span></div>`).join('')
     : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີ LOT</p>';
@@ -5052,11 +5104,11 @@ async function openProductModal(id, focusFieldId){
 async function renderProductLotsInModal(productId){
   const wrap = document.getElementById('pf-lots-list');
   wrap.innerHTML = '<p style="font-size:15px;color:var(--text-muted)">ກຳລັງໂຫຼດ...</p>';
-  const { data } = await sb.from('pos_product_lots').select('*').eq('product_id', productId).order('received_at', {ascending:false});
+  const { data } = await sb.from('pos_product_lots').select('*').eq('product_id', productId).gt('remaining_qty', 0).order('received_at', {ascending:true}); // v2.55: ສະແດງສະເພາະ LOT ທີ່ຍັງເຫຼືອ ຕາມລຳດັບຂາຍ (ເກົ່າກ່ອນ)
   const lots = data || [];
   wrap.innerHTML = lots.length ? lots.map(l => `
     <div class="row" style="align-items:center;margin-bottom:6px">
-      <span style="font-size:15px;flex:1">LOT-${l.id.slice(0,8)} · ຄົງເຫຼືອ ${Number(l.remaining_qty)}</span>
+      <span style="font-size:15px;flex:1">${(l.lot_no||'').startsWith('OPEN') ? 'ຍອດຍົກມາ' : 'LOT-' + l.id.slice(0,8)} · ຄົງເຫຼືອ ${Number(l.remaining_qty)} · ຕົ້ນທຶນ ${fmt(l.cost_per_unit)}</span>
       <input type="date" id="lot-expiry-${l.id}" value="${l.expiry_date||''}" style="height:32px;border:1px solid var(--border);border-radius:var(--radius);padding:0 6px;font-size:15px">
       <span class="btn" style="padding:4px 10px" onclick="saveLotExpiry('${l.id}')">ບັນທຶກ</span>
     </div>`).join('') : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີ LOT</p>';
@@ -5179,6 +5231,11 @@ async function saveProduct(){
       ] : [];
       const { error } = await sb.from('pos_products').update(data).eq('id', editingProductId);
       if (error) throw error;
+      // v2.55: ແກ້ຕົ້ນທຶນໃນຟອມ = ແກ້ຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່ (LOT ເກົ່າສຸດທີ່ຍັງເຫຼືອ) ເພື່ອໃຫ້ຕົ້ນທຶນໃນ LOT ກົງກັບຕາຕະລາງ
+      if (before && (Number(before.avgCost||0) !== Number(data.avg_cost||0) || Number(before.costBaht||0) !== Number(data.cost_baht||0))){
+        const { error: hcErr } = await sb.rpc('pos_set_head_cost', { p_product_id: editingProductId, p_cost_kip: data.avg_cost||0, p_cost_baht: data.cost_baht||0 });
+        if (hcErr) console.error('pos_set_head_cost ລົ້ມເຫຼວ', hcErr);
+      }
       if (changes.length){
         await logActivity('edit_product', { product_id: editingProductId, product_name: name, changes });
       }
@@ -5507,7 +5564,7 @@ function recvShowInfo(){
     ? `<div style="background:#e6f6ea;border:2px solid #2e9e4f;border-radius:8px;padding:10px 12px">
          <div style="font-size:13px;color:#1f7a3a;font-weight:700">✅ ເລືອກແລ້ວ</div>
          <div style="font-size:20px;font-weight:900;color:#14532d;line-height:1.3">${escAttr(p.name)}</div>
-         <div style="font-size:14px;color:#1f7a3a">ບາໂຄດ ${escAttr(p.barcode||'-')} · ຄົງເຫຼືອປັດຈຸບັນ ${p.stock==null?'-':p.stock} · ຕົ້ນທຶນສະເລ່ຍ ${fmt(p.avgCost)} ກີບ</div>
+         <div style="font-size:14px;color:#1f7a3a">ບາໂຄດ ${escAttr(p.barcode||'-')} · ຄົງເຫຼືອປັດຈຸບັນ ${p.stock==null?'-':p.stock} · ຕົ້ນທຶນປັດຈຸບັນ ${fmt(p.avgCost)} ກີບ</div>
        </div>`
     : `<div style="background:#fff4e0;border:2px dashed #e0a030;border-radius:8px;padding:8px 12px;font-size:14px;color:#8a5a00">⚠️ ຍັງບໍ່ໄດ້ເລືອກສິນຄ້າ — ຍິງບາໂຄດ ຫຼື ກົດເລືອກຈາກລາຍການ</div>`;
   recvPreview();
@@ -5523,10 +5580,11 @@ function recvPreview(){
   const btn = `<button type="button" class="btn" onclick="recvUseOldCost()">ໃຊ້ຕົ້ນທຶນເກົ່າ (${fmt(oldAvg)})</button>`;
   if (!qty || !cost){ el.innerHTML = `<div style="font-size:14px;color:var(--text-muted)">ໃສ່ຈຳນວນ ແລະ ຕົ້ນທຶນ ເພື່ອເບິ່ງຕົວຢ່າງຄຳນວນ ${btn}</div>`; return; }
   const newStock = oldStock + qty;
-  const newAvg = Math.round(((oldStock*oldAvg) + (qty*cost)) / newStock);
+  const shownAfter = oldStock > 0 ? oldAvg : cost;
   el.innerHTML = `<div style="background:#eef3ff;border:1px solid #9db4ee;border-radius:8px;padding:8px 12px;font-size:15px;line-height:1.6">
     <div>📦 ສະຕ໊ອກ: <b>${fmt(oldStock)}</b> → <b style="color:#1d4ed8">${fmt(newStock)}</b> (+${fmt(qty)})</div>
-    <div>💰 ຕົ້ນທຶນສະເລ່ຍ: <b>${fmt(oldAvg)}</b> → <b style="color:#1d4ed8">${fmt(newAvg)}</b> ກີບ ${btn}</div></div>`;
+    <div>💰 ຕົ້ນທຶນທີ່ສະແດງ: <b>${fmt(oldAvg)}</b> → <b style="color:#1d4ed8">${fmt(shownAfter)}</b> ກີບ ${btn}</div>
+    <div style="font-size:14px;color:#1e3a8a">LOT ໃໝ່ ${fmt(qty)} ອັນ ຕົ້ນທຶນ ${fmt(cost)} ກີບ${oldStock > 0 ? ` — ຂາຍ ${fmt(oldStock)} ອັນເກົ່າ (ຕົ້ນທຶນ ${fmt(oldAvg)}) ໝົດກ່ອນ ຕົ້ນທຶນຈຶ່ງຈະປ່ຽນເປັນ ${fmt(cost)}` : ''}</div></div>`;
 }
 function recvUseOldCost(){
   const p = PRODUCTS.find(x=>x.id===recvPickedId); if (!p) return;
@@ -5623,27 +5681,15 @@ async function confirmReceive(){
     if (ups.length) recentAdjNote = '\n\n⚠️ ສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມ ' + ups.map(a => '+' + a.detail.delta + ' (' + fmtD(a.created_at) + ' ' + new Date(a.created_at).toTimeString().slice(0,5) + ')').join(', ') + ' ໃນ 24 ຊົ່ວໂມງຜ່ານມາ — ຖ້າເປັນຂອງຊຸດດຽວກັນ ຈະເພີ່ມຊ້ຳສອງເທື່ອ!';
   }catch(e){ /* ເປັນຂໍ້ມູນເຕືອນເສີມ ບໍ່ໃຫ້ລົ້ມການບັນທຶກ */ }
   const oldStock = Number(p.stock)||0, oldAvg = Number(p.avgCost)||0;
-  const prevAvg = Math.round(((oldStock*oldAvg) + (qty*cost)) / (oldStock+qty));
-  if (!await showConfirmModal(`ຢືນຢັນຮັບເຂົ້າ: ${p.name}\nຈຳນວນ +${fmt(qty)} ຕົ້ນທຶນ ${fmt(cost)} ກີບ/ໜ່ວຍ\nສະຕ໊ອກ ${fmt(oldStock)} → ${fmt(oldStock+qty)}\nຕົ້ນທຶນສະເລ່ຍ ${fmt(oldAvg)} → ${fmt(prevAvg)} ກີບ${recentAdjNote}`, '📥 ຢືນຢັນຮັບເຂົ້າ LOT ໃໝ່')) return;
+  const shownAfter = oldStock > 0 ? oldAvg : cost; // v2.55: ຕົ້ນທຶນໃນຕາຕະລາງຍັງເປັນຂອງ LOT ເກົ່າ ຈົນກວ່າ LOT ເກົ່າຈະຂາຍໝົດ
+  if (!await showConfirmModal(`ຢືນຢັນຮັບເຂົ້າ: ${p.name}\nຈຳນວນ +${fmt(qty)} ຕົ້ນທຶນ LOT ໃໝ່ ${fmt(cost)} ກີບ/ໜ່ວຍ\nສະຕ໊ອກ ${fmt(oldStock)} → ${fmt(oldStock+qty)}\nຕົ້ນທຶນທີ່ສະແດງ ${fmt(oldAvg)} → ${fmt(shownAfter)} ກີບ${oldStock > 0 ? ' (ຂາຍ LOT ເກົ່າໝົດແລ້ວ ຈຶ່ງປ່ຽນເປັນ ' + fmt(cost) + ')' : ''}${recentAdjNote}`, '📥 ຢືນຢັນຮັບເຂົ້າ LOT ໃໝ່')) return;
   try{
-    const { data: lot, error: e1 } = await sb.from('pos_product_lots').insert({
-      shop_id: SHOP_ID, product_id: id, received_qty: qty, remaining_qty: qty, cost_per_unit: cost, cost_per_unit_baht: costBaht, expiry_date: expiry
-    }).select().single();
+    // v2.55: ຮັບເຂົ້າ LOT ແບບອະຕອມໃນຖານຂໍ້ມູນ (ສ້າງ LOT + movement + ສະຕ໊ອກ) — ບໍ່ຄິດຕົ້ນທຶນສະເລ່ຍ; LOT ໃໝ່ຖືກຂາຍຕໍ່ຈາກ LOT ເກົ່າ
+    const { data: lotId, error: e1 } = await sb.rpc('pos_receive_lot', {
+      p_shop_id: SHOP_ID, p_product_id: id, p_qty: qty, p_cost_kip: cost, p_cost_baht: costBaht, p_expiry: expiry
+    });
     if (e1) throw e1;
-    await sb.from('pos_stock_movements').insert({ shop_id: SHOP_ID, product_id: id, lot_id: lot.id, movement_type:'receive', qty_change: qty });
-    // ດຶງສະຕ໊ອກ/ຕົ້ນທຶນສົດໆຈາກຖານຂໍ້ມູນ (ບໍ່ໃຊ້ PRODUCTS cache ໃນເຄື່ອງ) ກ່ອນຄິດຄ່າສະເລ່ຍ ເພື່ອປ້ອງກັນຄ່າເກົ່າຄ້າງ
-    const { data: freshP } = await sb.from('pos_products').select('stock_qty, avg_cost, cost_baht').eq('id', id).single();
-    const curStock = Number(freshP.stock_qty)||0, curAvg = Number(freshP.avg_cost)||0, curCostBaht = Number(freshP.cost_baht)||0;
-    const newAvg = ((curStock*curAvg) + (qty*cost)) / (curStock+qty);
-    const updateData = { avg_cost: Math.round(newAvg) };
-    if (costBaht > 0){
-      // ຄິດຖົວສະເລ່ຍຕົ້ນທຶນບາດ ຄືກັນກັບກີບ (ຖ້າຂອງເກົ່າຍັງບໍ່ມີຕົ້ນທຶນບາດ ໃຫ້ໃຊ້ຄ່າໃໝ່ໄປເລີຍ)
-      const newAvgBaht = curCostBaht > 0 ? (((curStock*curCostBaht) + (qty*costBaht)) / (curStock+qty)) : costBaht;
-      updateData.cost_baht = Math.round(newAvgBaht);
-    }
-    const { error: e2 } = await sb.from('pos_products').update(updateData).eq('id', id);
-    if (e2) throw e2;
-    await sb.rpc('adjust_product_stock', { p_product_id: id, p_delta: qty });
+    const lot = { id: lotId };
     await logActivity('receive_stock', { product_id: id, product_name: p.name, qty, cost_kip: cost, cost_baht: costBaht, lot_id: lot.id });
     delete recvHistCache[id];
     await loadProducts();
@@ -5873,15 +5919,9 @@ async function receivePO(id){
     for (const item of po.items){
       const p = PRODUCTS.find(x=>x.id===item.id);
       if (!p) continue;
-      const { data: lot } = await sb.from('pos_product_lots').insert({
-        shop_id: SHOP_ID, product_id: item.id, received_qty: item.qty, remaining_qty: item.qty, cost_per_unit: item.cost
-      }).select().single();
-      await sb.from('pos_stock_movements').insert({ shop_id: SHOP_ID, product_id: item.id, lot_id: lot?.id, movement_type:'receive', qty_change: item.qty });
-      const { data: freshP } = await sb.from('pos_products').select('stock_qty, avg_cost').eq('id', item.id).single();
-      const curStock = Number(freshP.stock_qty)||0, curAvg = Number(freshP.avg_cost)||0;
-      const newAvg = ((curStock*curAvg) + (item.qty*item.cost)) / (curStock+item.qty);
-      await sb.from('pos_products').update({ avg_cost: Math.round(newAvg) }).eq('id', item.id);
-      await sb.rpc('adjust_product_stock', { p_product_id: item.id, p_delta: item.qty });
+      // v2.55: ຮັບເຂົ້າ LOT ແບບອະຕອມ (ບໍ່ຄິດຕົ້ນທຶນສະເລ່ຍ)
+      const { error: recvErr } = await sb.rpc('pos_receive_lot', { p_shop_id: SHOP_ID, p_product_id: item.id, p_qty: item.qty, p_cost_kip: item.cost, p_cost_baht: 0, p_expiry: null });
+      if (recvErr) throw recvErr;
       receivedItems.push({ product_id: item.id, product_name: p.name, qty: item.qty, cost_kip: item.cost });
     }
     await sb.from('pos_purchase_orders').update({ status:'ຮັບແລ້ວ', received_at: new Date().toISOString() }).eq('id', id);
@@ -6087,7 +6127,9 @@ async function confirmCancelBill(){
         shop_id: SHOP_ID, product_id: i.product_id, movement_type: 'cancel', qty_change: Number(i.qty),
         ref_transaction_id: editingTxn.id, ref_version_id: curVersion.id
       });
-      await sb.rpc('adjust_product_stock', { p_product_id: i.product_id, p_delta: Number(i.qty) });
+      const isBahtLine = i.currency === 'baht', lineCost = Number(i.cost_at_sale)||0;
+      await sb.rpc('pos_return_stock', { p_product_id: i.product_id, p_qty: Number(i.qty),
+        p_cost_kip: isBahtLine ? 0 : lineCost, p_cost_baht: isBahtLine ? lineCost : 0 }); // v2.55: ຄືນເຂົ້າ LOT ເດີມຕາມຕົ້ນທຶນທີ່ຂາຍ
     }
 
     // ປ່ຽນສະຖານະບິນເປັນ cancelled — ຫາຍອອກຈາກລາຍງານທັນທີ (ທຸກ query ອິງ status='completed')
@@ -6131,7 +6173,7 @@ async function openBillEdit(no){
   editingBillContext = {
     txnId: txn.id, transactionNo: txn.transaction_no, currentVersionNo: txn.current_version_no,
     originalStaffName: (versions.find(v=>v.is_original) || versions[0])?.created_by_name || null,
-    originalItems: (items||[]).map(i => ({ product_id: i.product_id, qty: Number(i.qty) })),
+    originalItems: (items||[]).map(i => ({ product_id: i.product_id, qty: Number(i.qty), currency: i.currency || 'kip', cost: Number(i.cost_at_sale) })),
     customerId: txn.customer_id || null,
     prevCreditKip: Number(txn.credit_amount_kip)||0, prevCreditBaht: Number(txn.credit_amount_baht)||0,
     prevCreditStatus: txn.credit_status || null,

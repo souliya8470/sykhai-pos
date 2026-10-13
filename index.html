@@ -273,6 +273,18 @@
   .np-grid button{height:38px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;font-size:17px}
   .np-grid button.quick{background:var(--accent-soft);color:var(--accent-text);font-size:14px;border:none}
   .np-grid button.clear{color:var(--danger)}
+  /* v2.54: ໜ້າຮັບເຂົ້າ LOT ຂະໜາດໃຫຍ່ ເບິ່ງງ່າຍ */
+  #receiveOverlay .modal{width:min(920px,96vw);max-height:94vh;padding:26px 32px}
+  #receiveOverlay .modal-head span{font-size:26px}
+  #receiveOverlay .modal-head .x{font-size:30px}
+  #receiveOverlay .field{margin-bottom:16px}
+  #receiveOverlay .field label{font-size:18px;font-weight:600;margin-bottom:6px}
+  #receiveOverlay .field input[type=text]{height:54px;font-size:22px;padding:0 14px}
+  #receiveOverlay .field input[type=date]{height:54px !important;font-size:20px !important}
+  #receiveOverlay select{font-size:20px;min-height:54px;height:54px}
+  #receiveOverlay .btn{font-size:17px;min-height:44px;padding:0 16px}
+  #receiveOverlay .row{gap:16px}
+  #receiveOverlay .confirm-btn{height:60px;font-size:22px}
   .confirm-btn{width:100%;height:44px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:17px;font-weight:700}
   .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:#171a21;color:#fff;padding:16px 28px;border-radius:var(--radius-lg);font-size:17px;font-weight:600;z-index:400;display:none;box-shadow:0 16px 48px rgba(0,0,0,.4);text-align:center;max-width:min(86vw,480px);line-height:1.4}
   .toast.show{display:block;animation:toastPop .16s ease-out}
@@ -1449,6 +1461,7 @@
     <div class="field"><label>ສິນຄ້າ <span id="recvMatchCount" style="font-weight:400;color:var(--text-muted)"></span></label>
       <select id="recvProduct" onchange="recvSelChange()" onclick="recvSelClick()" onkeydown="recvSelKey(event)" style="width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px;height:36px"></select>
       <div id="recvProductInfo" style="margin-top:8px"></div>
+      <div id="recvHistory" style="margin-top:10px"></div>
     </div>
     <div class="row">
       <div class="field grow"><label>ຈຳນວນຮັບເຂົ້າ</label><input type="text" id="recvQty" placeholder="100" oninput="recvPreview()"></div>
@@ -1855,7 +1868,8 @@ async function liveSetCurrent(productId){
 // v2.51 (Tar 2026-10-12, "ກົດເລືອກແລ້ວ ບໍ່ແນ່ໃຈວ່າກົດແລ້ວບໍ່ — ຢາກໃຫ້ຊື່ເດັ້ງຂຶ້ນມາ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ເມື່ອເລືອກສິນຄ້າ (ກົດໃນລາຍການ / ຍິງບາໂຄດ / Enter) ຂຶ້ນກອບສີຂຽວຂະໜາດໃຫຍ່ "✅ ເລືອກແລ້ວ: ຊື່ສິນຄ້າ" + toast ແລະລາຍການພັບກັບ; ຍັງບໍ່ເລືອກ = ກອບເຕືອນສີສົ້ມ ແລະ ປຸ່ມບັນທຶກບໍ່ເຮັດວຽກ (ກ່ອນໜ້ານີ້ສິນຄ້າອັນທຳອິດຖືກເລືອກໄວ້ເປັນຄ່າເລີ່ມຕົ້ນ ອາດບັນທຶກຜິດສິນຄ້າໂດຍບໍ່ຮູ້ຕົວ).
 // v2.52 (Tar 2026-10-12, "ວັນໝົດອາຍຸ ເຮັດເປັນປະຕິທິນເລືອກ ຍ້ານພະນັກງານສະລັບຊ່ອງເດືອນ/ວັນ"): ໜ້າຮັບເຄື່ອງເຂົ້າ — ຊ່ອງວັນໝົດອາຍຸປ່ຽນຈາກພິມ dd/mm/yyyy ເປັນປະຕິທິນ (input type=date) ກົດເລືອກວັນ + ປຸ່ມລັດ +6 ເດືອນ/+1/+2/+3 ປີ + ຂໍ້ຄວາມຢືນຢັນເປັນພາສາລາວ (ເຊັ່ນ "15 ມັງກອນ 2027") ໃຫ້ເຫັນຊັດວ່າວັນ/ເດືອນຖືກບໍ່. ແກ້ບັກ: ເມື່ອກີ້ວັນໝົດອາຍຸທີ່ພິມບໍ່ຖືກບັນທຶກລົງ LOT ເລີຍ (confirmReceive ບໍ່ອ່ານຊ່ອງນີ້) — ຕອນນີ້ບັນທຶກ pos_product_lots.expiry_date; ຖ້າເລືອກວັນທີ່ຜ່ານມາແລ້ວຈະຖາມຢືນຢັນກ່ອນ.
 // v2.53 (Tar 2026-10-13, "ລາຍງານສິນຄ້າເຂົ້າບໍ່ມີ / ບໍ່ເຂົ້າໃຈວິທີຮັບເຂົ້າສິນຄ້າໃໝ່"): (1) ແທັບ "ລາຍງານສິນຄ້າເຂົ້າ" ເມື່ອກີ້ສະແດງສະເພາະໃບສັ່ງຊື້ (purchaseOrders) ຈຶ່ງຫວ່າງ ເຖິງວ່າຮັບເຂົ້າ LOT ແລ້ວ — ຕອນນີ້ອ່ານຈາກ pos_product_lots (ລວມທັງຮັບເຂົ້າ LOT ໂດຍກົງ ແລະ ຮັບຈາກໃບສັ່ງຊື້ ເພາະທັງສອງສ້າງ LOT) ບໍ່ລວມ LOT ຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (ມີ lot_no). (2) ໜ້າຮັບເຂົ້າ LOT ສະແດງຕົວຢ່າງຄຳນວນ "ສະຕ໊ອກ A → B · ຕົ້ນທຶນສະເລ່ຍ X → Y" ແບບສົດ, ປຸ່ມ "ໃຊ້ຕົ້ນທຶນເກົ່າ" (ກໍລະນີຮັບຂອງເກົ່າ ລາຄາເກົ່າ), ແລະ ກ່ອນບັນທຶກຖາມຢືນຢັນ + ເຕືອນຖ້າສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມໃນ 24 ຊົ່ວໂມງທີ່ຜ່ານມາ (ກັນໃສ່ຊ້ຳສອງເທື່ອ). ຊ່ອງຈຳນວນ/ຕົ້ນທຶນຮັບເລກມີຈຸດ , ໄດ້ (ເຊັ່ນ 70,000).
-const APP_VERSION = 'v2.53';
+// v2.54 (Tar 2026-10-13, "ຂະຫຍາຍໜ້າຮັບເຂົ້າ LOT ໃຫ້ໃຫຍ່ ແລະ ສະແດງປະຫວັດການເອົາເຂົ້າ/ແກ້ສະຕ໊ອກຂອງສິນຄ້ານັ້ນ ມື້ໃດ ເວລາໃດ ໂດຍໃຜ"): (1) ໜ້າຮັບເຂົ້າ LOT ໃຫຍ່ຂຶ້ນ (ກວ້າງ ~900px, ຕົວອັກສອນ/ຊ່ອງໃສ່/ປຸ່ມໃຫຍ່ຂຶ້ນ) ເບິ່ງງ່າຍ. (2) ເມື່ອເລືອກສິນຄ້າ ຂຶ້ນກອບ "ປະຫວັດຂອງສິນຄ້ານີ້": ຮັບເຂົ້າຄັ້ງລ່າສຸດ (ວັນທີ+ເວລາ+ໂດຍໃຜ+ຈຳນວນ+ຕົ້ນທຶນ) ແລະ 6 ເຫດການຫຼ້າສຸດ (ຮັບເຂົ້າ LOT / ຮັບຈາກໃບສັ່ງຊື້ / ປັບສະຕ໊ອກ ພ້ອມ ຈາກ→ເປັນ) ອ່ານຈາກ pos_activity_log; ຖ້າມີການເພີ່ມສະຕ໊ອກໃນ 24 ຊົ່ວໂມງຜ່ານມາ ຂຶ້ນກອບເຕືອນສີສົ້ມ.
+const APP_VERSION = 'v2.54';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -5426,6 +5440,53 @@ async function confirmStockAdjust(){
 }
 // v2.50/v2.51: ຄົ້ນຫາ/ຍິງບາໂຄດ ເລືອກສິນຄ້າໃນໜ້າຮັບເຄື່ອງເຂົ້າ — ສິນຄ້າທີ່ເລືອກຈິງເກັບໃນ recvPickedId (ບໍ່ແມ່ນຄ່າເລີ່ມຕົ້ນຂອງ dropdown)
 let recvPickedId = null;
+let recvHistCache = {}, recvHistSeq = 0;
+function recvHistTime(iso){ const d = new Date(iso); return fmtD(iso) + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+function recvHistWhat(a, pid){
+  const d = a.detail || {};
+  if (a.action === 'stock_adjustment'){
+    const dl = Number(d.delta)||0;
+    return `✏️ ປັບສະຕ໊ອກ <b>${fmt(d.old_qty)} → ${fmt(d.new_qty)}</b> (${dl>0?'+':''}${fmt(dl)})${d.reason && d.reason!=='-' ? ' · ' + escAttr(d.reason) : ''}`;
+  }
+  if (d.po_no){
+    const it = (d.items||[]).find(x=>x.product_id===pid) || {};
+    return `📥 ຮັບເຂົ້າຈາກໃບສັ່ງຊື້ ${escAttr(d.po_no)} <b>+${fmt(it.qty)}</b> · ຕົ້ນທຶນ ${fmt(it.cost_kip)}`;
+  }
+  return `📥 ຮັບເຂົ້າ LOT <b>+${fmt(d.qty)}</b> · ຕົ້ນທຶນ ${fmt(d.cost_kip)}${Number(d.cost_baht)>0?' + ฿'+fmt(d.cost_baht):''}`;
+}
+function recvHistHtml(rows, pid){
+  if (!rows.length) return `<div style="border:1px dashed #bbb;border-radius:8px;padding:10px 14px;font-size:16px;color:var(--text-muted)">🕘 ສິນຄ້ານີ້ຍັງບໍ່ມີປະຫວັດການຮັບເຂົ້າ/ປັບສະຕ໊ອກ ໃນລະບົບ</div>`;
+  const lastRecv = rows.find(a => a.action === 'receive_stock');
+  const head = lastRecv
+    ? `<div style="font-size:18px;font-weight:800;color:#1e3a8a">📥 ຮັບເຂົ້າຄັ້ງລ່າສຸດ: ${recvHistTime(lastRecv.created_at)} · ໂດຍ ${escAttr(lastRecv.user_name||'-')}</div>`
+    : `<div style="font-size:16px;color:var(--text-muted)">📥 ຍັງບໍ່ເຄີຍບັນທຶກ "ຮັບເຂົ້າ LOT" ຂອງສິນຄ້ານີ້</div>`;
+  const dayAgo = Date.now() - 24*3600*1000;
+  const recentUp = rows.filter(a => new Date(a.created_at).getTime() >= dayAgo && (a.action==='receive_stock' || Number((a.detail||{}).delta) > 0));
+  const warn = recentUp.length
+    ? `<div style="background:#fff4e0;border:2px solid #e0a030;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:16px;color:#8a5a00;font-weight:700">⚠️ ມີການເພີ່ມສະຕ໊ອກຂອງສິນຄ້ານີ້ໃນ 24 ຊົ່ວໂມງຜ່ານມາ (${recentUp.map(a=>recvHistTime(a.created_at)+' ໂດຍ '+escAttr(a.user_name||'-')).join(', ')}) — ກວດໃຫ້ແນ່ໃຈວ່າບໍ່ແມ່ນຂອງຊຸດດຽວກັນ ກ່ອນບັນທຶກ</div>` : '';
+  const list = rows.slice(0,6).map(a => `<tr><td style="white-space:nowrap;padding:5px 8px">${recvHistTime(a.created_at)}</td><td style="padding:5px 8px;white-space:nowrap">👤 ${escAttr(a.user_name||'-')}</td><td style="padding:5px 8px">${recvHistWhat(a, pid)}</td></tr>`).join('');
+  return `<div style="background:#f3f6ff;border:1px solid #b8c6f0;border-radius:10px;padding:12px 14px">${head}${warn}
+    <div style="font-size:14px;color:var(--text-muted);margin:6px 0 2px">ປະຫວັດຫຼ້າສຸດຂອງສິນຄ້ານີ້ (ເວລາ · ໂດຍໃຜ · ເຮັດຫຍັງ)</div>
+    <table style="width:100%;font-size:16px;border-collapse:collapse"><tbody>${list}</tbody></table></div>`;
+}
+async function recvLoadHistory(id){
+  const el = document.getElementById('recvHistory'); if (!el) return;
+  if (!id){ el.innerHTML = ''; return; }
+  if (recvHistCache[id]){ el.innerHTML = recvHistHtml(recvHistCache[id], id); return; }
+  el.innerHTML = '<div style="font-size:15px;color:var(--text-muted)">ກຳລັງໂຫຼດປະຫວັດ...</div>';
+  const seq = ++recvHistSeq;
+  try{
+    const [a, b] = await Promise.all([
+      sb.from('pos_activity_log').select('created_at, action, user_name, detail').in('action',['receive_stock','stock_adjustment']).eq('detail->>product_id', id).order('created_at',{ascending:false}).limit(10),
+      sb.from('pos_activity_log').select('created_at, action, user_name, detail').eq('action','receive_stock').contains('detail', { items: [{ product_id: id }] }).order('created_at',{ascending:false}).limit(5)
+    ]);
+    if (a.error) throw a.error;
+    const rows = [...(a.data||[]), ...((b && b.data)||[])].sort((x,y) => x.created_at < y.created_at ? 1 : -1);
+    recvHistCache[id] = rows;
+    if (seq !== recvHistSeq || recvPickedId !== id) return;
+    el.innerHTML = recvHistHtml(rows, id);
+  }catch(e){ if (seq === recvHistSeq) el.innerHTML = '<div style="font-size:15px;color:var(--danger)">⚠️ ໂຫຼດປະຫວັດບໍ່ສຳເລັດ: ' + escAttr(e.message||e) + '</div>'; }
+}
 function recvFilterProducts(){
   const sel = document.getElementById('recvProduct');
   const q = (document.getElementById('recvSearch').value||'').trim().toLowerCase();
@@ -5480,6 +5541,7 @@ function recvChoose(id, focusQty){
   recvFilterProducts();                       // ພັບລາຍການກັບເປັນ dropdown ປົກກະຕິ
   document.getElementById('recvProduct').value = id;
   recvShowInfo();
+  recvLoadHistory(id);
   showToast('✅ ເລືອກ: ' + p.name);
   if (focusQty){ const q = document.getElementById('recvQty'); q.focus(); q.select(); }
 }
@@ -5526,7 +5588,8 @@ function recvExpiryQuick(n, unit){
   recvExpiryChanged();
 }
 function openReceiveModal(){
-  recvPickedId = null;
+  recvPickedId = null; recvHistCache = {};
+  const hEl = document.getElementById('recvHistory'); if (hEl) hEl.innerHTML = '';
   document.getElementById('recvSearch').value = '';
   document.getElementById('recvScan').value = '';
   recvFilterProducts();
@@ -5582,6 +5645,7 @@ async function confirmReceive(){
     if (e2) throw e2;
     await sb.rpc('adjust_product_stock', { p_product_id: id, p_delta: qty });
     await logActivity('receive_stock', { product_id: id, product_name: p.name, qty, cost_kip: cost, cost_baht: costBaht, lot_id: lot.id });
+    delete recvHistCache[id];
     await loadProducts();
     closeReceiveModal();
     renderStockTable(); renderHomeSidebar();

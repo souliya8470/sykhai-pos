@@ -1870,7 +1870,8 @@ async function liveSetCurrent(productId){
 // v2.53 (Tar 2026-10-13, "ລາຍງານສິນຄ້າເຂົ້າບໍ່ມີ / ບໍ່ເຂົ້າໃຈວິທີຮັບເຂົ້າສິນຄ້າໃໝ່"): (1) ແທັບ "ລາຍງານສິນຄ້າເຂົ້າ" ເມື່ອກີ້ສະແດງສະເພາະໃບສັ່ງຊື້ (purchaseOrders) ຈຶ່ງຫວ່າງ ເຖິງວ່າຮັບເຂົ້າ LOT ແລ້ວ — ຕອນນີ້ອ່ານຈາກ pos_product_lots (ລວມທັງຮັບເຂົ້າ LOT ໂດຍກົງ ແລະ ຮັບຈາກໃບສັ່ງຊື້ ເພາະທັງສອງສ້າງ LOT) ບໍ່ລວມ LOT ຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (ມີ lot_no). (2) ໜ້າຮັບເຂົ້າ LOT ສະແດງຕົວຢ່າງຄຳນວນ "ສະຕ໊ອກ A → B · ຕົ້ນທຶນສະເລ່ຍ X → Y" ແບບສົດ, ປຸ່ມ "ໃຊ້ຕົ້ນທຶນເກົ່າ" (ກໍລະນີຮັບຂອງເກົ່າ ລາຄາເກົ່າ), ແລະ ກ່ອນບັນທຶກຖາມຢືນຢັນ + ເຕືອນຖ້າສິນຄ້ານີ້ຖືກ "ປັບສະຕ໊ອກ" ເພີ່ມໃນ 24 ຊົ່ວໂມງທີ່ຜ່ານມາ (ກັນໃສ່ຊ້ຳສອງເທື່ອ). ຊ່ອງຈຳນວນ/ຕົ້ນທຶນຮັບເລກມີຈຸດ , ໄດ້ (ເຊັ່ນ 70,000).
 // v2.54 (Tar 2026-10-13, "ຂະຫຍາຍໜ້າຮັບເຂົ້າ LOT ໃຫ້ໃຫຍ່ ແລະ ສະແດງປະຫວັດການເອົາເຂົ້າ/ແກ້ສະຕ໊ອກຂອງສິນຄ້ານັ້ນ ມື້ໃດ ເວລາໃດ ໂດຍໃຜ"): (1) ໜ້າຮັບເຂົ້າ LOT ໃຫຍ່ຂຶ້ນ (ກວ້າງ ~900px, ຕົວອັກສອນ/ຊ່ອງໃສ່/ປຸ່ມໃຫຍ່ຂຶ້ນ) ເບິ່ງງ່າຍ. (2) ເມື່ອເລືອກສິນຄ້າ ຂຶ້ນກອບ "ປະຫວັດຂອງສິນຄ້ານີ້": ຮັບເຂົ້າຄັ້ງລ່າສຸດ (ວັນທີ+ເວລາ+ໂດຍໃຜ+ຈຳນວນ+ຕົ້ນທຶນ) ແລະ 6 ເຫດການຫຼ້າສຸດ (ຮັບເຂົ້າ LOT / ຮັບຈາກໃບສັ່ງຊື້ / ປັບສະຕ໊ອກ ພ້ອມ ຈາກ→ເປັນ) ອ່ານຈາກ pos_activity_log; ຖ້າມີການເພີ່ມສະຕ໊ອກໃນ 24 ຊົ່ວໂມງຜ່ານມາ ຂຶ້ນກອບເຕືອນສີສົ້ມ.
 // v2.55 (Tar 2026-10-13, "ຢາກໃຫ້ຂາຍຕັດຕາມ LOT ແລະຄິດຕົ້ນທຶນຕາມ LOT ນັ້ນ ບໍ່ແມ່ນຕົ້ນທຶນສະເລ່ຍ"): ລະບົບ FIFO ຕາມ LOT — (1) ສະຕ໊ອກ+ຕົ້ນທຶນໃນຕາຕະລາງ ວັນທີ 13 ຕຸລາ 2026 ຖືເປັນ LOT ເປີດຍອດຂອງທຸກສິນຄ້າ. (2) ຕອນຂາຍ ລະບົບຕັດຈາກ LOT ເກົ່າກ່ອນ ແລະຕົ້ນທຶນໃນບິນ/ລາຍງານກຳໄລ = ຕົ້ນທຶນຂອງ LOT ທີ່ຕັດ (ຖ້າຂາຍຂ້າມ 2 LOT ຄິດຖ່ວງນ້ຳໜັກຕາມຈຳນວນຈິງ); ຕາຕະລາງສິນຄ້າສະແດງຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່ ແລະປ່ຽນເປັນຂອງ LOT ຖັດໄປເອງເມື່ອ LOT ເກົ່າໝົດ. (3) ຮັບເຂົ້າ LOT ໃໝ່ບໍ່ຄິດຕົ້ນທຶນສະເລ່ຍອີກ (ຟັງຊັນ pos_receive_lot ໃນຖານຂໍ້ມູນ ເຮັດຄົບຂັ້ນຕອນໃນຄັ້ງດຽວ). (4) ປັບສະຕ໊ອກ (ວົງມົນສີສົ້ມ) ຫຼຸດ = ຕັດຈາກ LOT ເກົ່າກ່ອນ, ເພີ່ມ = ສ້າງ LOT ປັບຍອດດ້ວຍຕົ້ນທຶນປັດຈຸບັນ. (5) ແກ້ຕົ້ນທຶນໃນຟອມສິນຄ້າ = ແກ້ຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່. (6) ແກ້ບິນເກົ່າ: ຈຳນວນທີ່ຂາຍໄປແລ້ວຮັກສາຕົ້ນທຶນເດີມ, ສະເພາະຈຳນວນທີ່ເພີ່ມໃໝ່ຈຶ່ງຄິດຈາກ LOT ປັດຈຸບັນ; ຈຳນວນທີ່ຫຼຸດ ແລະການຍົກເລີກບິນ ຄືນເຂົ້າ LOT ເດີມຕາມຕົ້ນທຶນທີ່ຂາຍ. ບິນທີ່ຂາຍໄປແລ້ວທັງໝົດບໍ່ປ່ຽນ.
-const APP_VERSION = 'v2.55';
+// v2.56 (Tar 2026-10-26, "ໜ້າຍອດຂາຍລາຍວັນ ເລືອກ 1-26 ຕຸລາ ແຕ່ສະແດງພຽງ ~7 ວັນ"): ແກ້ບັກລາຍງານດຶງສະເພາະ 500 ບິນລ່າສຸດ (ຮ້ານມີ ~70 ບິນ/ວັນ ຈຶ່ງໄດ້ພຽງ ~7 ວັນ) ເຮັດໃຫ້ທຸກລາຍງານທີ່ເລືອກຊ່ວງເກີນ ~7 ວັນ (ຍອດຂາຍ/ກຳໄລ/ແຍກສິນຄ້າ/ໝວດໝູ່/ຊ່ອງທາງຊຳລະ/ເຄິ່ງກະ) ຂາດຂໍ້ມູນ ແລະຍອດລວມຕ່ຳກວ່າຈິງ. ຕອນນີ້ດຶງບິນທັງໝົດຕາມຊ່ວງວັນທີ່ທີ່ເລືອກ (ແບ່ງໜ້າ 1000 ແຖວ + ແບ່ງຊຸດ id ກັນ URL ຍາວເກີນ), ປ່ຽນຊ່ວງວັນທີ່ຈະດຶງຂໍ້ມູນເພີ່ມອັດຕະໂນມັດຖ້າຊ່ວງໃໝ່ກວ້າງກວ່າທີ່ໂຫຼດໄວ້, ເຂົ້າໜ້າລາຍງານດຶງສະເພາະວັນນີ້ (ໄວຂຶ້ນ).
+const APP_VERSION = 'v2.56';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -2259,6 +2260,19 @@ async function fetchAllRows(queryFn){
   }
   return all;
 }
+// v2.56: ດຶງແຖວຕາມລາຍການ id ຫຼາຍພັນອັນ — .in() ຍາວເກີນຈະເກີນຄວາມຍາວ URL ແລະ Supabase ຕັດງຽບໆທີ 1000 ແຖວ ຈຶ່ງແບ່ງຊຸດ id ລະ 100 ແລະແບ່ງໜ້າໃນແຕ່ລະຊຸດ (ເຮັດພ້ອມກັນເທື່ອລະ 5 ຊຸດ)
+async function fetchByIds(table, select, col, ids, size){
+  size = size || 100;
+  const chunks = [];
+  for (let i = 0; i < ids.length; i += size) chunks.push(ids.slice(i, i + size));
+  const out = [];
+  for (let i = 0; i < chunks.length; i += 5){
+    const parts = await Promise.all(chunks.slice(i, i + 5).map(part =>
+      fetchAllRows((from,to) => sb.from(table).select(select).in(col, part).order('id').range(from,to))));
+    parts.forEach(rows => { for (const r of rows) out.push(r); });
+  }
+  return out;
+}
 async function loadProducts(){
   const data = await fetchAllRows((from,to) => sb.from('pos_products').select('*').eq('shop_id', SHOP_ID).eq('is_active', true).order('created_at').order('id').range(from,to));
   PRODUCTS = (data||[]).map(mapProductRow);
@@ -2361,18 +2375,45 @@ async function loadRecentBills(){
   }).filter(Boolean);
 }
 let reportBills = [];
-async function loadReportBills(){
-  const { data: txns, error } = await sb.from('pos_transactions').select('*, pos_customers(name)').eq('shop_id', SHOP_ID).eq('status','completed').order('created_at', {ascending:false}).limit(500);
-  if (error) { reportBills = []; return; }
-  const txnIds = (txns||[]).map(t=>t.id);
-  if (!txnIds.length){ reportBills = []; return; }
-  const { data: versions } = await sb.from('pos_transaction_versions').select('*').in('transaction_id', txnIds);
-  const versionIds = (versions||[]).map(v=>v.id);
-  const { data: items } = versionIds.length ? await sb.from('pos_transaction_items').select('version_id, qty').in('version_id', versionIds) : {data:[]};
+let reportLoadedRange = null; // v2.56: ຊ່ວງວັນທີ່ທີ່ຖືກໂຫຼດໃສ່ reportBills ຢູ່ຕອນນີ້ {from,to} ('' = ບໍ່ຈຳກັດ); null = ຍັງບໍ່ໄດ້ໂຫຼດ
+function reportRangeCovered(r){
+  const L = reportLoadedRange;
+  if (!L) return false;
+  const fromOk = !L.from || (!!r.from && r.from >= L.from);
+  const toOk = !L.to || (!!r.to && r.to <= L.to);
+  return fromOk && toOk;
+}
+// v2.56: ດຶງບິນທັງໝົດຕາມຊ່ວງວັນທີ່ທີ່ເລືອກ (ເມື່ອກີ້ດຶງແຕ່ 500 ບິນລ່າສຸດ ຈຶ່ງໄດ້ພຽງ ~7 ວັນ). ຄືນ true ຖ້າໂຫຼດໃໝ່ແທ້, false ຖ້າຂໍ້ມູນທີ່ມີຢູ່ຄຸມຊ່ວງນີ້ແລ້ວ. force=true ບັງຄັບໂຫຼດໃໝ່ (ຫຼັງລຶບ/ແກ້ບິນ).
+async function loadReportBills(force){
+  const range = getReportDateRange();
+  if (!force && reportRangeCovered(range)) return false;
+  let txns, versions, items;
+  try{
+    const fromIso = range.from ? new Date(range.from + 'T00:00:00+07:00').toISOString() : null;
+    const toIso = range.to ? new Date(new Date(range.to + 'T00:00:00+07:00').getTime() + 86400000).toISOString() : null;
+    txns = await fetchAllRows((from,to) => {
+      let q = sb.from('pos_transactions').select('*, pos_customers(name)').eq('shop_id', SHOP_ID).eq('status','completed');
+      if (fromIso) q = q.gte('created_at', fromIso);
+      if (toIso) q = q.lt('created_at', toIso);
+      return q.order('created_at', {ascending:false}).order('id').range(from,to);
+    });
+    const txnIds = txns.map(t=>t.id);
+    versions = await fetchByIds('pos_transaction_versions', '*', 'transaction_id', txnIds);
+    items = await fetchByIds('pos_transaction_items', 'id, version_id, qty', 'version_id', versions.map(v=>v.id));
+  }catch(err){
+    console.error('loadReportBills ລົ້ມເຫຼວ', err);
+    showToast('⚠️ ໂຫຼດລາຍງານບໍ່ສຳເລັດ: ' + (err.message||''));
+    reportBills = []; reportLoadedRange = null; return true;
+  }
+  reportLoadedRange = { from: range.from || '', to: range.to || '' };
+  const itemQtyByVersion = {};
+  items.forEach(i => { itemQtyByVersion[i.version_id] = (itemQtyByVersion[i.version_id]||0) + Number(i.qty); });
+  const versionByKey = {};
+  versions.forEach(v => { versionByKey[v.transaction_id + '#' + v.version_no] = v; });
   reportBills = (txns||[]).map(t => {
-    const v = (versions||[]).find(v=>v.transaction_id===t.id && v.version_no===t.current_version_no);
+    const v = versionByKey[t.id + '#' + t.current_version_no];
     if (!v) return null;
-    const qty = (items||[]).filter(i=>i.version_id===v.id).reduce((s,i)=>s+Number(i.qty),0);
+    const qty = itemQtyByVersion[v.id] || 0;
     return {
       no: t.transaction_no, txnId: t.id, versionId: v.id,
       customer: t.pos_customers ? t.pos_customers.name : 'ລູກຄ້າທົ່ວໄປ',
@@ -2387,6 +2428,7 @@ async function loadReportBills(){
       slipUrl: t.payment_slip_url || null
     };
   }).filter(Boolean);
+  return true;
 }
 const billItemsDetailCache = {}; // { versionId: [items] }
 // ດຶງລາຍການສິນຄ້າທັງໝົດຈາກ reportBills ພ້ອມກັນເທື່ອດຽວ (ໃຊ້ສຳລັບລາຍງານແຍກລາຍການ/ໝວດໝູ່)
@@ -2397,7 +2439,7 @@ async function loadReportItemsBulk(){
   const versionIds = reportBills.map(b=>b.versionId);
   const versionDateMap = {}; reportBills.forEach(b => versionDateMap[b.versionId] = b.createdAt);
   if (!versionIds.length){ reportItemsCache = []; productReceivedTotals = {}; productSoldAllTimeTotals = {}; return; }
-  const { data } = await sb.from('pos_transaction_items').select('*, pos_products(name, category, barcode)').in('version_id', versionIds);
+  const data = await fetchByIds('pos_transaction_items', '*, pos_products(name, category, barcode)', 'version_id', versionIds);
   reportItemsCache = (data||[]).map(i => ({
     productId: i.product_id, name: i.pos_products?i.pos_products.name:'(ສິນຄ້າຖືກລົບ)',
     barcode: i.pos_products?i.pos_products.barcode:'-',
@@ -2467,11 +2509,9 @@ async function loadShiftReport(){
   const list = shifts || [];
   if (!list.length){ shiftReportData = []; return; }
   const earliestOpen = list[list.length-1].opened_at;
-  const { data: txns } = await sb.from('pos_transactions').select('id, current_version_no, created_at').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', earliestOpen);
-  const txnList = txns || [];
+  const txnList = await fetchAllRows((from,to) => sb.from('pos_transactions').select('id, current_version_no, created_at').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', earliestOpen).order('created_at').order('id').range(from,to));
   const txnIds = txnList.map(t=>t.id);
-  const { data: versions } = txnIds.length ? await sb.from('pos_transaction_versions').select('*').in('transaction_id', txnIds) : {data:[]};
-  const verList = versions || [];
+  const verList = txnIds.length ? await fetchByIds('pos_transaction_versions', '*', 'transaction_id', txnIds) : [];
   const currentVersions = verList.filter(v => {
     const t = txnList.find(x=>x.id===v.transaction_id);
     return t && t.current_version_no === v.version_no;
@@ -2505,7 +2545,7 @@ async function loadPaymentChannelReport(){
   const versionIds = reportBills.map(b=>b.versionId);
   const versionDateMap = {}; reportBills.forEach(b => versionDateMap[b.versionId] = b.createdAt);
   if (!versionIds.length){ paymentChannelRawCache = []; return; }
-  const { data } = await sb.from('pos_transaction_payments').select('*').in('version_id', versionIds);
+  const data = await fetchByIds('pos_transaction_payments', '*', 'version_id', versionIds);
   paymentChannelRawCache = (data||[]).map(p => {
     const isBaht = p.currency === 'baht' || p.channel_key === 'cash_baht'; // ຮອງຮັບຂໍ້ມູນເກົ່າ (ກ່ອນມີ currency column) ນຳ
     const channelKey = p.channel_key === 'cash_baht' ? 'cash' : p.channel_key;
@@ -2633,7 +2673,7 @@ function switchView(name, skipHashUpdate, subtab){
   if (name === 'reports'){
     resetReportDateFilter(); // v2.46: ເຂົ້າໜ້າລາຍງານໃໝ່ທຸກຄັ້ງ → ວັນນີ້
     if (subtab && subtab !== currentReportType){ switchReportTab(subtab, true); }
-    else { reportCurrentPage = 1; loadReportBills().then(renderReport); renderReport(); }
+    else { reportCurrentPage = 1; loadReportBills(true).then(() => loadReportTypeData(currentReportType)).then(renderReport); renderReport(); }
   }
   if (name === 'staff') renderStaffTable();
   if (name === 'barcode') initBarcodeProductSelect();
@@ -4449,8 +4489,8 @@ function openExpiryModal(){
 }
 async function goToTodayReport(){
   switchView('reports');
-  await loadReportBills();
   reportDateMode = 'today';
+  await loadReportBills();
   reportCurrentPage = 1;
   switchReportTab('sales_full');
 }
@@ -6156,7 +6196,7 @@ async function confirmCancelBill(){
     await loadProducts();
     await loadRecentBills();
     await Promise.all([loadTodayStats(), loadTodayTopProducts(), loadExpiringLots()]);
-    if (reportBills.length) { await loadReportBills(); renderReport(); } // ຮັບປະກັນວ່າໜ້າ "ລາຍງານ" ອັບເດດນຳ ຖ້າລຶບຈາກໜ້ານັ້ນ (ຫຼືເຄີຍໂຫຼດໄວ້)
+    if (reportLoadedRange) { await loadReportBills(true); await loadReportTypeData(currentReportType); renderReport(); } // ຮັບປະກັນວ່າໜ້າ "ລາຍງານ" ອັບເດດນຳ ຖ້າລຶບຈາກໜ້ານັ້ນ (ຫຼືເຄີຍໂຫຼດໄວ້)
     renderStockTable(); renderHomeSidebar(); renderBills(); renderHomeStats();
     renderBillSearch();
     showToast('ຍົກເລີກບິນສຳເລັດ — ຄືນສະຕ໊ອກ ແລະ ຕັດອອກຈາກລາຍງານແລ້ວ');
@@ -6553,7 +6593,7 @@ function inDateRange(dateInput, range){
 function renderReportDateFilterBar(showGroupBy){
   const isCustom = reportDateMode === 'custom';
   return `<div class="row" style="margin-bottom:14px;gap:8px;flex-wrap:wrap;align-items:center">
-    <select id="reportDateModeSel" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportDateMode=this.value; renderReport()">
+    <select id="reportDateModeSel" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportDateMode=this.value; reportRangeChanged()">
       <option value="all" ${reportDateMode==='all'?'selected':''}>ທັງໝົດ</option>
       <option value="today" ${reportDateMode==='today'?'selected':''}>ວັນນີ້</option>
       <option value="yesterday" ${reportDateMode==='yesterday'?'selected':''}>ມື້ວານນີ້</option>
@@ -6567,9 +6607,9 @@ function renderReportDateFilterBar(showGroupBy){
       <option value="last_month" ${reportDateMode==='last_month'?'selected':''}>ເດືອນແລ້ວ</option>
       <option value="custom" ${isCustom?'selected':''}>ກຳນົດເອງ</option>
     </select>
-    <input type="date" id="reportDateFromInp" value="${reportDateFromCustom}" style="display:${isCustom?'inline-block':'none'};height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportDateFromCustom=this.value; renderReport()">
+    <input type="date" id="reportDateFromInp" value="${reportDateFromCustom}" style="display:${isCustom?'inline-block':'none'};height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportDateFromCustom=this.value; reportRangeChanged()">
     <span style="display:${isCustom?'inline':'none'};color:var(--text-muted)">ຫາ</span>
-    <input type="date" id="reportDateToInp" value="${reportDateToCustom}" style="display:${isCustom?'inline-block':'none'};height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportDateToCustom=this.value; renderReport()">
+    <input type="date" id="reportDateToInp" value="${reportDateToCustom}" style="display:${isCustom?'inline-block':'none'};height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportDateToCustom=this.value; reportRangeChanged()">
     ${showGroupBy ? `
     <span style="color:var(--text-muted);margin-left:8px">ຈັດກຸ່ມ:</span>
     <select id="reportGroupBySel" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="reportGroupBy=this.value; renderReport()">
@@ -6881,13 +6921,25 @@ async function switchReportTab(type, skipHashUpdate){
     setTimeout(() => { suppressHashUpdate = false; }, 0);
   }
   renderReport(); // ສະແດງ "ກຳລັງໂຫຼດ..." ທັນທີ
-  if (!reportBills.length) await loadReportBills(); // ກັນກໍລະນີເຂົ້າໜ້ານີ້ໂດຍກົງ (ຜ່ານ URL hash) ໂດຍຍັງບໍ່ທັນໂຫຼດຂໍ້ມູນ
+  await loadReportBills(); // v2.56: ດຶງຕາມຊ່ວງວັນທີ່ປັດຈຸບັນ (ຂ້າມຖ້າຂໍ້ມູນທີ່ມີຢູ່ຄຸມແລ້ວ)
+  await loadReportTypeData(type);
+  renderReport();
+}
+async function loadReportTypeData(type){
   if (type === 'by_shift') await loadShiftReport();
   if (type === 'sales_by_item' || type === 'by_category'){ await loadReportItemsBulk(); }
   if (type === 'returns_report') await loadReturnsReport();
   if (type === 'deleted_bills') await loadDeletedBillsLog();
   if (type === 'credit_bills') await loadCreditBills();
   if (type === 'by_payment') await loadPaymentChannelReport();
+}
+// v2.56: ປ່ຽນຕົວກອງວັນທີ່ → ຖ້າຊ່ວງໃໝ່ກວ້າງກວ່າຂໍ້ມູນທີ່ໂຫຼດໄວ້ ດຶງເພີ່ມກ່ອນ ແລ້ວຈຶ່ງສະແດງ
+async function reportRangeChanged(){
+  reportCurrentPage = 1;
+  const wrap = document.getElementById('reportContent');
+  if (wrap) wrap.innerHTML = '<p style="font-size:15px;color:var(--text-muted)">ກຳລັງໂຫຼດ...</p>';
+  const reloaded = await loadReportBills();
+  if (reloaded) await loadReportTypeData(currentReportType);
   renderReport();
 }
 async function renderReport(){

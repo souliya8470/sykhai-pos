@@ -1871,7 +1871,8 @@ async function liveSetCurrent(productId){
 // v2.54 (Tar 2026-10-13, "ຂະຫຍາຍໜ້າຮັບເຂົ້າ LOT ໃຫ້ໃຫຍ່ ແລະ ສະແດງປະຫວັດການເອົາເຂົ້າ/ແກ້ສະຕ໊ອກຂອງສິນຄ້ານັ້ນ ມື້ໃດ ເວລາໃດ ໂດຍໃຜ"): (1) ໜ້າຮັບເຂົ້າ LOT ໃຫຍ່ຂຶ້ນ (ກວ້າງ ~900px, ຕົວອັກສອນ/ຊ່ອງໃສ່/ປຸ່ມໃຫຍ່ຂຶ້ນ) ເບິ່ງງ່າຍ. (2) ເມື່ອເລືອກສິນຄ້າ ຂຶ້ນກອບ "ປະຫວັດຂອງສິນຄ້ານີ້": ຮັບເຂົ້າຄັ້ງລ່າສຸດ (ວັນທີ+ເວລາ+ໂດຍໃຜ+ຈຳນວນ+ຕົ້ນທຶນ) ແລະ 6 ເຫດການຫຼ້າສຸດ (ຮັບເຂົ້າ LOT / ຮັບຈາກໃບສັ່ງຊື້ / ປັບສະຕ໊ອກ ພ້ອມ ຈາກ→ເປັນ) ອ່ານຈາກ pos_activity_log; ຖ້າມີການເພີ່ມສະຕ໊ອກໃນ 24 ຊົ່ວໂມງຜ່ານມາ ຂຶ້ນກອບເຕືອນສີສົ້ມ.
 // v2.55 (Tar 2026-10-13, "ຢາກໃຫ້ຂາຍຕັດຕາມ LOT ແລະຄິດຕົ້ນທຶນຕາມ LOT ນັ້ນ ບໍ່ແມ່ນຕົ້ນທຶນສະເລ່ຍ"): ລະບົບ FIFO ຕາມ LOT — (1) ສະຕ໊ອກ+ຕົ້ນທຶນໃນຕາຕະລາງ ວັນທີ 13 ຕຸລາ 2026 ຖືເປັນ LOT ເປີດຍອດຂອງທຸກສິນຄ້າ. (2) ຕອນຂາຍ ລະບົບຕັດຈາກ LOT ເກົ່າກ່ອນ ແລະຕົ້ນທຶນໃນບິນ/ລາຍງານກຳໄລ = ຕົ້ນທຶນຂອງ LOT ທີ່ຕັດ (ຖ້າຂາຍຂ້າມ 2 LOT ຄິດຖ່ວງນ້ຳໜັກຕາມຈຳນວນຈິງ); ຕາຕະລາງສິນຄ້າສະແດງຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່ ແລະປ່ຽນເປັນຂອງ LOT ຖັດໄປເອງເມື່ອ LOT ເກົ່າໝົດ. (3) ຮັບເຂົ້າ LOT ໃໝ່ບໍ່ຄິດຕົ້ນທຶນສະເລ່ຍອີກ (ຟັງຊັນ pos_receive_lot ໃນຖານຂໍ້ມູນ ເຮັດຄົບຂັ້ນຕອນໃນຄັ້ງດຽວ). (4) ປັບສະຕ໊ອກ (ວົງມົນສີສົ້ມ) ຫຼຸດ = ຕັດຈາກ LOT ເກົ່າກ່ອນ, ເພີ່ມ = ສ້າງ LOT ປັບຍອດດ້ວຍຕົ້ນທຶນປັດຈຸບັນ. (5) ແກ້ຕົ້ນທຶນໃນຟອມສິນຄ້າ = ແກ້ຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່. (6) ແກ້ບິນເກົ່າ: ຈຳນວນທີ່ຂາຍໄປແລ້ວຮັກສາຕົ້ນທຶນເດີມ, ສະເພາະຈຳນວນທີ່ເພີ່ມໃໝ່ຈຶ່ງຄິດຈາກ LOT ປັດຈຸບັນ; ຈຳນວນທີ່ຫຼຸດ ແລະການຍົກເລີກບິນ ຄືນເຂົ້າ LOT ເດີມຕາມຕົ້ນທຶນທີ່ຂາຍ. ບິນທີ່ຂາຍໄປແລ້ວທັງໝົດບໍ່ປ່ຽນ.
 // v2.56 (Tar 2026-10-26, "ໜ້າຍອດຂາຍລາຍວັນ ເລືອກ 1-26 ຕຸລາ ແຕ່ສະແດງພຽງ ~7 ວັນ"): ແກ້ບັກລາຍງານດຶງສະເພາະ 500 ບິນລ່າສຸດ (ຮ້ານມີ ~70 ບິນ/ວັນ ຈຶ່ງໄດ້ພຽງ ~7 ວັນ) ເຮັດໃຫ້ທຸກລາຍງານທີ່ເລືອກຊ່ວງເກີນ ~7 ວັນ (ຍອດຂາຍ/ກຳໄລ/ແຍກສິນຄ້າ/ໝວດໝູ່/ຊ່ອງທາງຊຳລະ/ເຄິ່ງກະ) ຂາດຂໍ້ມູນ ແລະຍອດລວມຕ່ຳກວ່າຈິງ. ຕອນນີ້ດຶງບິນທັງໝົດຕາມຊ່ວງວັນທີ່ທີ່ເລືອກ (ແບ່ງໜ້າ 1000 ແຖວ + ແບ່ງຊຸດ id ກັນ URL ຍາວເກີນ), ປ່ຽນຊ່ວງວັນທີ່ຈະດຶງຂໍ້ມູນເພີ່ມອັດຕະໂນມັດຖ້າຊ່ວງໃໝ່ກວ້າງກວ່າທີ່ໂຫຼດໄວ້, ເຂົ້າໜ້າລາຍງານດຶງສະເພາະວັນນີ້ (ໄວຂຶ້ນ).
-const APP_VERSION = 'v2.56';
+// v2.57 (Tar 2026-10-26, "ກວດທຸກໜ້າວ່າມີບັນຫາດຽວກັນບໍ: ເລືອກຊ່ວງວັນທີ່ແຕ່ສະແດງບໍ່ຄົບ"): ກວດທຸກຄຳສັ່ງດຶງຂໍ້ມູນ ແລ້ວແກ້ຈຸດທີ່ຂໍ້ມູນຖືກຕັດງຽບໆ: (1) ໜ້າ "ສິນຄ້າຂາຍດີ/ຂາຍບໍ່ອອກ" ເມື່ອກີ້ດຶງບິນໄດ້ແຕ່ 1000 ບິນ ແລະ .in() ຍາວເກີນ ຈຶ່ງນັບຈຳນວນຂາຍບໍ່ຄົບ ແລະລາຍການ "ຂາຍບໍ່ອອກ" ຍາວເກີນຈິງ — ຕອນນີ້ໃຫ້ຖານຂໍ້ມູນລວມເອງ (ຟັງຊັນ pos_sales_by_product). (2) ລາຍງານຄືນສິນຄ້າ ຈຳກັດ 300 ລາຍການ ແລະ ລາຍງານຕາມກະ ຈຳກັດ 50 ກະ — ຕອນນີ້ດຶງຕາມຊ່ວງວັນທີ່ທີ່ເລືອກທັງໝົດ ແລະດຶງໃໝ່ເມື່ອປ່ຽນຊ່ວງ. (3) ລາຍງານສິນຄ້າເຂົ້າ (LOT) ຈຳກັດ 200 ລາຍການ — ຕອນນີ້ສະແດງທຸກລາຍການ. (4) ຍອດຂາຍວັນນີ້ / ສິນຄ້າຂາຍດີວັນນີ້ / ເງິນສົດໃນກະ / ບິນເຄຣດິດ / ໃບສັ່ງຊື້ / ຄົ້ນຫາບິນດ້ວຍຊື່ລູກຄ້າ-ພະນັກງານ: ແບ່ງຊຸດ id ບໍ່ໃຫ້ URL ຍາວເກີນ ແລະແບ່ງໜ້າກັນຕັດ 1000 ແຖວ.
+const APP_VERSION = 'v2.57';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -2273,6 +2274,14 @@ async function fetchByIds(table, select, col, ids, size){
   }
   return out;
 }
+// v2.57: ແປງຊ່ວງວັນທີ່ຂອງໜ້າລາຍງານ (ເວລາລາວ +07:00) ເປັນ ISO ສຳລັບກອງໃນຖານຂໍ້ມູນ — null = ບໍ່ຈຳກັດ
+function reportRangeIso(){
+  const range = getReportDateRange();
+  return {
+    fromIso: range.from ? new Date(range.from + 'T00:00:00+07:00').toISOString() : null,
+    toIso: range.to ? new Date(new Date(range.to + 'T00:00:00+07:00').getTime() + 86400000).toISOString() : null
+  };
+}
 async function loadProducts(){
   const data = await fetchAllRows((from,to) => sb.from('pos_products').select('*').eq('shop_id', SHOP_ID).eq('is_active', true).order('created_at').order('id').range(from,to));
   PRODUCTS = (data||[]).map(mapProductRow);
@@ -2335,8 +2344,7 @@ async function loadPurchaseOrders(){
   const poIds = (pos||[]).map(p=>p.id);
   let items = [];
   if (poIds.length){
-    const { data: itemRows } = await sb.from('pos_purchase_order_items').select('*').in('po_id', poIds);
-    items = itemRows || [];
+    items = await fetchByIds('pos_purchase_order_items', '*', 'po_id', poIds).catch(()=>[]);
   }
   purchaseOrders = (pos||[]).map(po => ({
     id: po.id, no: po.po_no, vendor: po.vendor, status: po.status,
@@ -2494,7 +2502,13 @@ function computeCategoryReport(range){
 }
 let returnsReportData = [];
 async function loadReturnsReport(){
-  const { data } = await sb.from('pos_stock_movements').select('*, pos_products(name, barcode)').eq('shop_id', SHOP_ID).in('movement_type', ['sale_edit_remove','cancel']).order('created_at', {ascending:false}).limit(300);
+  const { fromIso, toIso } = reportRangeIso();
+  const data = await fetchAllRows((from,to) => {
+    let q = sb.from('pos_stock_movements').select('*, pos_products(name, barcode)').eq('shop_id', SHOP_ID).in('movement_type', ['sale_edit_remove','cancel']);
+    if (fromIso) q = q.gte('created_at', fromIso);
+    if (toIso) q = q.lt('created_at', toIso);
+    return q.order('created_at', {ascending:false}).order('id').range(from,to);
+  }).catch(err => { console.error('loadReturnsReport ລົ້ມເຫຼວ', err); showToast('⚠️ ໂຫຼດລາຍງານຄືນສິນຄ້າບໍ່ສຳເລັດ'); return []; });
   returnsReportData = (data||[]).map(m => ({
     barcode: m.pos_products ? m.pos_products.barcode : '-',
     name: m.pos_products ? m.pos_products.name : '(ສິນຄ້າຖືກລົບ)',
@@ -2505,8 +2519,13 @@ async function loadReturnsReport(){
 }
 let shiftReportData = [];
 async function loadShiftReport(){
-  const { data: shifts } = await sb.from('pos_shifts').select('*').eq('shop_id', SHOP_ID).order('opened_at', {ascending:false}).limit(50);
-  const list = shifts || [];
+  const { fromIso, toIso } = reportRangeIso();
+  const list = await fetchAllRows((from,to) => {
+    let q = sb.from('pos_shifts').select('*').eq('shop_id', SHOP_ID);
+    if (fromIso) q = q.gte('opened_at', fromIso);
+    if (toIso) q = q.lt('opened_at', toIso);
+    return q.order('opened_at', {ascending:false}).order('id').range(from,to);
+  }).catch(err => { console.error('loadShiftReport ລົ້ມເຫຼວ', err); showToast('⚠️ ໂຫຼດລາຍງານຕາມກະບໍ່ສຳເລັດ'); return []; });
   if (!list.length){ shiftReportData = []; return; }
   const earliestOpen = list[list.length-1].opened_at;
   const txnList = await fetchAllRows((from,to) => sb.from('pos_transactions').select('id, current_version_no, created_at').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', earliestOpen).order('created_at').order('id').range(from,to));
@@ -2517,8 +2536,7 @@ async function loadShiftReport(){
     return t && t.current_version_no === v.version_no;
   });
   const versionIds = currentVersions.map(v=>v.id);
-  const { data: items } = versionIds.length ? await sb.from('pos_transaction_items').select('version_id, qty').in('version_id', versionIds) : {data:[]};
-  const itemList = items || [];
+  const itemList = versionIds.length ? await fetchByIds('pos_transaction_items', 'version_id, qty', 'version_id', versionIds) : [];
   shiftReportData = list.map(s => {
     const openTime = new Date(s.opened_at);
     const closeTime = s.closed_at ? new Date(s.closed_at) : null;
@@ -2731,11 +2749,10 @@ async function loadCurrentShift(){
   currentShift = data;
 }
 async function computeCashSalesSince(sinceIso){
-  const { data: txns } = await sb.from('pos_transactions').select('id, current_version_no, created_at').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', sinceIso);
-  const list = txns || [];
+  const list = await fetchAllRows((from,to) => sb.from('pos_transactions').select('id, current_version_no, created_at').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', sinceIso).order('created_at').order('id').range(from,to));
   if (!list.length) return 0;
   const txnIds = list.map(t=>t.id);
-  const { data: versions } = await sb.from('pos_transaction_versions').select('*').in('transaction_id', txnIds);
+  const versions = await fetchByIds('pos_transaction_versions', '*', 'transaction_id', txnIds);
   let total = 0;
   (versions||[]).forEach(v => {
     const t = list.find(x=>x.id===v.transaction_id);
@@ -4268,19 +4285,21 @@ async function searchBillsFromServer(q){
   const sel = '*, pos_customers(name)';
   const base = () => sb.from('pos_transactions').select(sel).eq('shop_id', SHOP_ID).eq('status','completed');
   const queries = [ base().ilike('transaction_no', like).order('created_at',{ascending:false}).limit(100) ];
-  const { data: custs } = await sb.from('pos_customers').select('id').eq('shop_id', SHOP_ID).ilike('name', like).limit(200);
-  if (custs && custs.length) queries.push(base().in('customer_id', custs.map(c=>c.id)).order('created_at',{ascending:false}).limit(100));
-  const { data: vstaff } = await sb.from('pos_transaction_versions').select('transaction_id').ilike('created_by_name', like).limit(300);
-  if (vstaff && vstaff.length) queries.push(base().in('id', [...new Set(vstaff.map(v=>v.transaction_id))]).order('created_at',{ascending:false}).limit(100));
+  // v2.57: ລາຍຊື່ລູກຄ້າ/ບິນຂອງພະນັກງານອາດມີຫຼາຍຮ້ອຍ → ແບ່ງຊຸດ id ລະ 100 ບໍ່ໃຫ້ URL ຍາວເກີນ (ເມື່ອກີ້ຕັດທີ່ 200/300 ແລະຄົ້ນຫາຊື່ພະນັກງານໄດ້ບໍ່ຄົບ)
+  const chunkIds = (arr, n) => { const o = []; for (let i = 0; i < arr.length; i += n) o.push(arr.slice(i, i + n)); return o; };
+  const custs = await fetchAllRows((from,to) => sb.from('pos_customers').select('id').eq('shop_id', SHOP_ID).ilike('name', like).order('id').range(from,to));
+  chunkIds(custs.map(c=>c.id), 100).forEach(part => queries.push(base().in('customer_id', part).order('created_at',{ascending:false}).limit(100)));
+  const vstaff = await fetchAllRows((from,to) => sb.from('pos_transaction_versions').select('id, transaction_id').ilike('created_by_name', like).order('id').range(from,to));
+  chunkIds([...new Set(vstaff.map(v=>v.transaction_id))], 100).forEach(part => queries.push(base().in('id', part).order('created_at',{ascending:false}).limit(100)));
   const results = await Promise.all(queries);
   const byId = {};
   results.forEach(r => { if (r.error) throw r.error; (r.data||[]).forEach(t => { byId[t.id] = t; }); });
   const txns = Object.values(byId).sort((a,b)=> a.created_at < b.created_at ? 1 : -1).slice(0,100);
   if (!txns.length) return [];
   const ids = txns.map(t=>t.id);
-  const { data: versions } = await sb.from('pos_transaction_versions').select('*').in('transaction_id', ids);
+  const versions = await fetchByIds('pos_transaction_versions', '*', 'transaction_id', ids);
   const vIds = (versions||[]).map(v=>v.id);
-  const { data: items } = vIds.length ? await sb.from('pos_transaction_items').select('version_id, qty').in('version_id', vIds) : {data:[]};
+  const items = vIds.length ? await fetchByIds('pos_transaction_items', 'version_id, qty', 'version_id', vIds) : [];
   return txns.map(t => {
     const v = (versions||[]).find(v=>v.transaction_id===t.id && v.version_no===t.current_version_no);
     if (!v) return null;
@@ -4410,17 +4429,16 @@ function startOfTodayISO(){
 async function loadTodayStats(){
   try{
     const since = startOfTodayISO();
-    const { data: txns } = await sb.from('pos_transactions').select('id, current_version_no').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', since);
-    const list = txns || [];
+    const list = await fetchAllRows((from,to) => sb.from('pos_transactions').select('id, current_version_no').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', since).order('created_at').order('id').range(from,to));
     if (!list.length){ todayStats = { billCount:0, itemCount:0, revenueKip:0, revenueBaht:0, cost:0, costBaht:0, profit:0, profitBaht:0 }; return; }
     const txnIds = list.map(t=>t.id);
-    const { data: versions } = await sb.from('pos_transaction_versions').select('*').in('transaction_id', txnIds);
+    const versions = await fetchByIds('pos_transaction_versions', '*', 'transaction_id', txnIds);
     const currentVersions = (versions||[]).filter(v => {
       const t = list.find(x=>x.id===v.transaction_id);
       return t && t.current_version_no === v.version_no;
     });
     const versionIds = currentVersions.map(v=>v.id);
-    const { data: items } = versionIds.length ? await sb.from('pos_transaction_items').select('version_id, qty').in('version_id', versionIds) : {data:[]};
+    const items = versionIds.length ? await fetchByIds('pos_transaction_items', 'version_id, qty', 'version_id', versionIds) : [];
     const itemCount = (items||[]).reduce((s,i)=>s+Number(i.qty),0);
     const revenueKip = currentVersions.reduce((s,v)=>s+Number(v.total_amount_kip||0),0);
     const revenueBaht = currentVersions.reduce((s,v)=>s+Number(v.total_amount_baht||0),0);
@@ -4433,17 +4451,16 @@ let todayTopProducts = [];
 async function loadTodayTopProducts(){
   try{
     const since = startOfTodayISO();
-    const { data: txns } = await sb.from('pos_transactions').select('id, current_version_no').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', since);
-    const list = txns || [];
+    const list = await fetchAllRows((from,to) => sb.from('pos_transactions').select('id, current_version_no').eq('shop_id', SHOP_ID).eq('status','completed').gte('created_at', since).order('created_at').order('id').range(from,to));
     if (!list.length){ todayTopProducts = []; return; }
     const txnIds = list.map(t=>t.id);
-    const { data: versions } = await sb.from('pos_transaction_versions').select('id, transaction_id, version_no').in('transaction_id', txnIds);
+    const versions = await fetchByIds('pos_transaction_versions', 'id, transaction_id, version_no', 'transaction_id', txnIds);
     const currentVersionIds = (versions||[]).filter(v => {
       const t = list.find(x=>x.id===v.transaction_id);
       return t && t.current_version_no === v.version_no;
     }).map(v=>v.id);
     if (!currentVersionIds.length){ todayTopProducts = []; return; }
-    const { data: items } = await sb.from('pos_transaction_items').select('product_id, qty, line_total, currency').in('version_id', currentVersionIds);
+    const items = await fetchByIds('pos_transaction_items', 'product_id, qty, line_total, currency', 'version_id', currentVersionIds);
     const agg = {};
     (items||[]).forEach(i => {
       if (!agg[i.product_id]) agg[i.product_id] = { qty:0, revenueKip:0, revenueBaht:0 };
@@ -4747,13 +4764,11 @@ async function renderReportInList(){
   const wrap = document.getElementById('reportInList'); if (!wrap) return;
   wrap.innerHTML = '<p style="font-size:15px;color:var(--text-muted)">ກຳລັງໂຫຼດ...</p>';
   try{
-    const { data, error } = await sb.from('pos_product_lots').select('*, pos_products(name, barcode)').eq('shop_id', SHOP_ID).is('lot_no', null).order('received_at',{ascending:false}).limit(200);
-    if (error) throw error;
-    const rows = data || [];
+    const rows = await fetchAllRows((from,to) => sb.from('pos_product_lots').select('*, pos_products(name, barcode)').eq('shop_id', SHOP_ID).is('lot_no', null).order('received_at',{ascending:false}).order('id').range(from,to));
     wrap.innerHTML = rows.length
       ? `<div style="overflow-x:auto"><table style="width:100%"><thead><tr><th style="text-align:left">ວັນທີ</th><th style="text-align:left">ສິນຄ້າ</th><th>ຈຳນວນຮັບ</th><th>ຄົງເຫຼືອໃນ LOT</th><th>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</th><th>ໝົດອາຍຸ</th></tr></thead><tbody>`
         + rows.map(l => `<tr><td>${fmtD(l.received_at)} ${new Date(l.received_at).toTimeString().slice(0,5)}</td><td>${escAttr(l.pos_products?l.pos_products.name:'-')}</td><td style="text-align:center;font-weight:700">+${fmt(l.received_qty)}</td><td style="text-align:center">${fmt(l.remaining_qty)}</td><td style="text-align:right">${fmt(l.cost_per_unit)}${Number(l.cost_per_unit_baht)>0?' · ฿'+fmt(l.cost_per_unit_baht):''}</td><td style="text-align:center">${l.expiry_date?fmtD(l.expiry_date):'-'}</td></tr>`).join('')
-        + `</tbody></table></div><p style="font-size:13px;color:var(--text-muted);margin-top:8px">ສະແດງ 200 ລາຍການຫຼ້າສຸດ · ບໍ່ລວມຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (28/07)</p>`
+        + `</tbody></table></div><p style="font-size:13px;color:var(--text-muted);margin-top:8px">ສະແດງທັງໝົດ ${rows.length} ລາຍການ · ບໍ່ລວມຍອດຍົກມາຕອນນຳເຂົ້າລະບົບເກົ່າ (28/07)</p>`
       : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີການຮັບເຂົ້າ</p>';
   }catch(e){ wrap.innerHTML = '<p style="font-size:15px;color:var(--danger)">⚠️ ໂຫຼດບໍ່ສຳເລັດ: ' + escAttr(e.message||e) + '</p>'; }
 }
@@ -6517,7 +6532,7 @@ async function loadCreditBills(){
   const txns = data || [];
   if (txns.length){
     const ids = txns.map(t=>t.id);
-    const { data: versions } = await sb.from('pos_transaction_versions').select('id, transaction_id, version_no').in('transaction_id', ids);
+    const versions = await fetchByIds('pos_transaction_versions', 'id, transaction_id, version_no', 'transaction_id', ids);
     const vMap = {};
     (versions||[]).forEach(v => { vMap[v.transaction_id+':'+v.version_no] = v.id; });
     txns.forEach(t => { t.versionId = vMap[t.id+':'+t.current_version_no] || null; });
@@ -6889,22 +6904,11 @@ function goEditBillFromReport(billNo){
 let salesByProductCache = null;
 async function getSalesByProduct(){
   if (salesByProductCache) return salesByProductCache;
-  const { data: txns } = await sb.from('pos_transactions').select('id, current_version_no').eq('shop_id', SHOP_ID).eq('status','completed');
-  const list = txns || [];
-  if (!list.length){ salesByProductCache = []; return []; }
-  const txnIds = list.map(t=>t.id);
-  const { data: versions } = await sb.from('pos_transaction_versions').select('id, transaction_id, version_no').in('transaction_id', txnIds);
-  const currentVersionIds = (versions||[]).filter(v => {
-    const t = list.find(x=>x.id===v.transaction_id);
-    return t && t.current_version_no === v.version_no;
-  }).map(v=>v.id);
-  if (!currentVersionIds.length){ salesByProductCache = []; return []; }
-  const { data: items } = await sb.from('pos_transaction_items').select('product_id, qty').in('version_id', currentVersionIds);
-  const agg = {};
-  (items||[]).forEach(i => { agg[i.product_id] = (agg[i.product_id]||0) + Number(i.qty); });
-  salesByProductCache = Object.entries(agg).map(([productId, qtySold]) => {
-    const p = PRODUCTS.find(x=>x.id===productId);
-    return { productId, name: p?p.name:'(ສິນຄ້າຖືກລົບ)', cat: p?p.cat:'-', qtySold };
+  // v2.57: ໃຫ້ຖານຂໍ້ມູນລວມຈຳນວນຂາຍຕໍ່ສິນຄ້າ (ບິນທີ່ສຳເລັດ, ສະເພາະເວີຊັນປັດຈຸບັນ) — ເມື່ອກີ້ດຶງບິນໄດ້ແຕ່ 1000 ບິນ ແລະ .in() ຍາວເກີນ ຈຶ່ງນັບຂາດ
+  const rows = await fetchAllRows((from,to) => sb.rpc('pos_sales_by_product', { p_shop_id: SHOP_ID }).range(from,to));
+  salesByProductCache = rows.map(r => {
+    const p = PRODUCTS.find(x=>x.id===r.product_id);
+    return { productId: r.product_id, name: p?p.name:'(ສິນຄ້າຖືກລົບ)', cat: p?p.cat:'-', qtySold: Number(r.qty_sold) };
   }).sort((a,b)=>b.qtySold-a.qtySold);
   return salesByProductCache;
 }
@@ -6939,7 +6943,8 @@ async function reportRangeChanged(){
   const wrap = document.getElementById('reportContent');
   if (wrap) wrap.innerHTML = '<p style="font-size:15px;color:var(--text-muted)">ກຳລັງໂຫຼດ...</p>';
   const reloaded = await loadReportBills();
-  if (reloaded) await loadReportTypeData(currentReportType);
+  // v2.57: ລາຍງານຄືນສິນຄ້າ/ຕາມກະ ດຶງຕາມຊ່ວງວັນທີ່ເອງ (ບໍ່ໄດ້ມາຈາກ reportBills) ຈຶ່ງຕ້ອງດຶງໃໝ່ທຸກຄັ້ງທີ່ປ່ຽນຊ່ວງ
+  if (reloaded || currentReportType === 'returns_report' || currentReportType === 'by_shift') await loadReportTypeData(currentReportType);
   renderReport();
 }
 async function renderReport(){

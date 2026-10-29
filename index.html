@@ -548,7 +548,7 @@
       <div class="bills-wrap panel" style="margin-top:14px">
         <h3>ບິນລ່າສຸດ</h3>
         <div class="row" style="margin-bottom:10px">
-          <div class="search-box grow"><span>🔍</span><input type="text" id="recentBillSearchInput" placeholder="ຄົ້ນຫາ ເລກບິນ, ຊື່ລູກຄ້າ, ພະນັກງານ..." oninput="onRecentBillSearchInput(this.value)"></div>
+          <div class="search-box grow"><span>🔍</span><input type="text" id="recentBillSearchInput" placeholder="ຄົ້ນຫາ ເລກບິນ, ເລກໃບບິນ COD (T…), ຊື່ລູກຄ້າ, ພະນັກງານ..." oninput="onRecentBillSearchInput(this.value)"></div>
           <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;white-space:nowrap">
             <input type="checkbox" id="recentBillDeleteModeToggle" onchange="billDeleteMode=this.checked; renderBills()">
             ໂໝດລຶບ
@@ -1080,7 +1080,7 @@
 <div class="view" id="view-bills">
       <h2 class="page-title">ຄົ້ນຫາບິນ (ແກ້ໄຂ/ຍົກເລີກ)</h2>
       <div class="panel" style="margin-bottom:14px">
-        <div class="search-box"><span>🔍</span><input id="billSearch" placeholder="ຄົ້ນຫາເລກບິນ ຫຼື ຊື່ລູກຄ້າ" oninput="renderBillSearch()"></div>
+        <div class="search-box"><span>🔍</span><input id="billSearch" placeholder="ຄົ້ນຫາເລກບິນ ຫຼື ເລກໃບບິນ COD (T…)" oninput="renderBillSearch()"></div>
         <p style="font-size:14px;color:var(--text-muted);margin:8px 0 0">ກົດເລືອກບິນ — ລາຍການສິນຄ້າຈະຖືກໂຫຼດເຂົ້າກະຕ່າຢູ່ໜ້າຂາຍໃຫ້ແກ້ໄຂໄດ້ເລີຍ (ຄົ້ນຫາ, ຍິງບາໂຄດ, ໃຊ້ບັດສິນຄ້າໄດ້ຄືປົກກະຕິ)</p>
         <div id="billSearchResults"></div>
       </div>
@@ -1872,7 +1872,8 @@ async function liveSetCurrent(productId){
 // v2.55 (Tar 2026-10-13, "ຢາກໃຫ້ຂາຍຕັດຕາມ LOT ແລະຄິດຕົ້ນທຶນຕາມ LOT ນັ້ນ ບໍ່ແມ່ນຕົ້ນທຶນສະເລ່ຍ"): ລະບົບ FIFO ຕາມ LOT — (1) ສະຕ໊ອກ+ຕົ້ນທຶນໃນຕາຕະລາງ ວັນທີ 13 ຕຸລາ 2026 ຖືເປັນ LOT ເປີດຍອດຂອງທຸກສິນຄ້າ. (2) ຕອນຂາຍ ລະບົບຕັດຈາກ LOT ເກົ່າກ່ອນ ແລະຕົ້ນທຶນໃນບິນ/ລາຍງານກຳໄລ = ຕົ້ນທຶນຂອງ LOT ທີ່ຕັດ (ຖ້າຂາຍຂ້າມ 2 LOT ຄິດຖ່ວງນ້ຳໜັກຕາມຈຳນວນຈິງ); ຕາຕະລາງສິນຄ້າສະແດງຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່ ແລະປ່ຽນເປັນຂອງ LOT ຖັດໄປເອງເມື່ອ LOT ເກົ່າໝົດ. (3) ຮັບເຂົ້າ LOT ໃໝ່ບໍ່ຄິດຕົ້ນທຶນສະເລ່ຍອີກ (ຟັງຊັນ pos_receive_lot ໃນຖານຂໍ້ມູນ ເຮັດຄົບຂັ້ນຕອນໃນຄັ້ງດຽວ). (4) ປັບສະຕ໊ອກ (ວົງມົນສີສົ້ມ) ຫຼຸດ = ຕັດຈາກ LOT ເກົ່າກ່ອນ, ເພີ່ມ = ສ້າງ LOT ປັບຍອດດ້ວຍຕົ້ນທຶນປັດຈຸບັນ. (5) ແກ້ຕົ້ນທຶນໃນຟອມສິນຄ້າ = ແກ້ຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່. (6) ແກ້ບິນເກົ່າ: ຈຳນວນທີ່ຂາຍໄປແລ້ວຮັກສາຕົ້ນທຶນເດີມ, ສະເພາະຈຳນວນທີ່ເພີ່ມໃໝ່ຈຶ່ງຄິດຈາກ LOT ປັດຈຸບັນ; ຈຳນວນທີ່ຫຼຸດ ແລະການຍົກເລີກບິນ ຄືນເຂົ້າ LOT ເດີມຕາມຕົ້ນທຶນທີ່ຂາຍ. ບິນທີ່ຂາຍໄປແລ້ວທັງໝົດບໍ່ປ່ຽນ.
 // v2.56 (Tar 2026-10-26, "ໜ້າຍອດຂາຍລາຍວັນ ເລືອກ 1-26 ຕຸລາ ແຕ່ສະແດງພຽງ ~7 ວັນ"): ແກ້ບັກລາຍງານດຶງສະເພາະ 500 ບິນລ່າສຸດ (ຮ້ານມີ ~70 ບິນ/ວັນ ຈຶ່ງໄດ້ພຽງ ~7 ວັນ) ເຮັດໃຫ້ທຸກລາຍງານທີ່ເລືອກຊ່ວງເກີນ ~7 ວັນ (ຍອດຂາຍ/ກຳໄລ/ແຍກສິນຄ້າ/ໝວດໝູ່/ຊ່ອງທາງຊຳລະ/ເຄິ່ງກະ) ຂາດຂໍ້ມູນ ແລະຍອດລວມຕ່ຳກວ່າຈິງ. ຕອນນີ້ດຶງບິນທັງໝົດຕາມຊ່ວງວັນທີ່ທີ່ເລືອກ (ແບ່ງໜ້າ 1000 ແຖວ + ແບ່ງຊຸດ id ກັນ URL ຍາວເກີນ), ປ່ຽນຊ່ວງວັນທີ່ຈະດຶງຂໍ້ມູນເພີ່ມອັດຕະໂນມັດຖ້າຊ່ວງໃໝ່ກວ້າງກວ່າທີ່ໂຫຼດໄວ້, ເຂົ້າໜ້າລາຍງານດຶງສະເພາະວັນນີ້ (ໄວຂຶ້ນ).
 // v2.57 (Tar 2026-10-26, "ກວດທຸກໜ້າວ່າມີບັນຫາດຽວກັນບໍ: ເລືອກຊ່ວງວັນທີ່ແຕ່ສະແດງບໍ່ຄົບ"): ກວດທຸກຄຳສັ່ງດຶງຂໍ້ມູນ ແລ້ວແກ້ຈຸດທີ່ຂໍ້ມູນຖືກຕັດງຽບໆ: (1) ໜ້າ "ສິນຄ້າຂາຍດີ/ຂາຍບໍ່ອອກ" ເມື່ອກີ້ດຶງບິນໄດ້ແຕ່ 1000 ບິນ ແລະ .in() ຍາວເກີນ ຈຶ່ງນັບຈຳນວນຂາຍບໍ່ຄົບ ແລະລາຍການ "ຂາຍບໍ່ອອກ" ຍາວເກີນຈິງ — ຕອນນີ້ໃຫ້ຖານຂໍ້ມູນລວມເອງ (ຟັງຊັນ pos_sales_by_product). (2) ລາຍງານຄືນສິນຄ້າ ຈຳກັດ 300 ລາຍການ ແລະ ລາຍງານຕາມກະ ຈຳກັດ 50 ກະ — ຕອນນີ້ດຶງຕາມຊ່ວງວັນທີ່ທີ່ເລືອກທັງໝົດ ແລະດຶງໃໝ່ເມື່ອປ່ຽນຊ່ວງ. (3) ລາຍງານສິນຄ້າເຂົ້າ (LOT) ຈຳກັດ 200 ລາຍການ — ຕອນນີ້ສະແດງທຸກລາຍການ. (4) ຍອດຂາຍວັນນີ້ / ສິນຄ້າຂາຍດີວັນນີ້ / ເງິນສົດໃນກະ / ບິນເຄຣດິດ / ໃບສັ່ງຊື້ / ຄົ້ນຫາບິນດ້ວຍຊື່ລູກຄ້າ-ພະນັກງານ: ແບ່ງຊຸດ id ບໍ່ໃຫ້ URL ຍາວເກີນ ແລະແບ່ງໜ້າກັນຕັດ 1000 ແຖວ.
-const APP_VERSION = 'v2.57';
+// v2.58 (Tar 2026-10-29, "ຄົ້ນຫາບິນດ້ວຍລະຫັດບາໂຄດ (T106220) ທີ່ລິງກັບໃບບິນ COD ໃນ Marketing Studio ແລະເບິ່ງໃນໜ້າລາຍງານໄດ້"): ຊ່ອງຄົ້ນຫາບິນ (ໜ້າບິນລ່າສຸດ, ໜ້າລາຍງານຍອດຂາຍ, ໜ້າແກ້ໄຂບິນ) ຄົ້ນຫາດ້ວຍເລກໃບບິນ COD (shipping_label_ref ເຊັ່ນ T106220 / L00009) ໄດ້ແລ້ວ ນອກຈາກເລກບິນ/ຊື່ລູກຄ້າ/ພະນັກງານ — ຍິງບາໂຄດໃສ່ຊ່ອງຄົ້ນຫາໄດ້ເລີຍ. ໜ້າບິນລ່າສຸດຄົ້ນຫາທັງຖານຂໍ້ມູນ (ບິນເກົ່າກໍ່ພົບ). ໜ້າລາຍງານ: ຖ້າບິນທີ່ມີເລກໃບບິນນັ້ນຢູ່ນອກຊ່ວງວັນທີ່ທີ່ເລືອກ ກໍ່ສະແດງຕໍ່ທ້າຍພ້ອມໝາຍເຫດ (ບໍ່ລວມໃນຍອດລວມຂອງຊ່ວງວັນທີ່). ຖັນ "ລາຍລະອຽດ" ໃນລາຍງານສະແດງເລກໃບບິນ 🏷️ ຢູ່ແລ້ວ.
+const APP_VERSION = 'v2.58';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -4278,18 +4279,20 @@ function mapTxnToBill(t, v, qty){
   };
 }
 // v2.46: ຄົ້ນຫາບິນຈາກຖານຂໍ້ມູນໂດຍກົງ (ເລກບິນ / ຊື່ລູກຄ້າ / ຊື່ພະນັກງານ) — ບໍ່ຈຳກັດສະເພາະ 20 ບິນລ່າສຸດ
-async function searchBillsFromServer(q){
+async function searchBillsFromServer(q, labelOnly){
   const safe = q.replace(/[%_,()\\]/g,' ').trim();
   if (!safe) return [];
   const like = `%${safe}%`;
   const sel = '*, pos_customers(name)';
   const base = () => sb.from('pos_transactions').select(sel).eq('shop_id', SHOP_ID).eq('status','completed');
-  const queries = [ base().ilike('transaction_no', like).order('created_at',{ascending:false}).limit(100) ];
+  // v2.58: ຄົ້ນຫາຕາມເລກໃບບິນ COD (shipping_label_ref ເຊັ່ນ T106220) ນຳ; labelOnly = ຄົ້ນສະເພາະເລກໃບບິນ (ໃຊ້ໃນໜ້າລາຍງານ)
+  const queries = [ base().ilike('shipping_label_ref', like).order('created_at',{ascending:false}).limit(100) ];
+  if (!labelOnly) queries.push(base().ilike('transaction_no', like).order('created_at',{ascending:false}).limit(100));
   // v2.57: ລາຍຊື່ລູກຄ້າ/ບິນຂອງພະນັກງານອາດມີຫຼາຍຮ້ອຍ → ແບ່ງຊຸດ id ລະ 100 ບໍ່ໃຫ້ URL ຍາວເກີນ (ເມື່ອກີ້ຕັດທີ່ 200/300 ແລະຄົ້ນຫາຊື່ພະນັກງານໄດ້ບໍ່ຄົບ)
   const chunkIds = (arr, n) => { const o = []; for (let i = 0; i < arr.length; i += n) o.push(arr.slice(i, i + n)); return o; };
-  const custs = await fetchAllRows((from,to) => sb.from('pos_customers').select('id').eq('shop_id', SHOP_ID).ilike('name', like).order('id').range(from,to));
+  const custs = labelOnly ? [] : await fetchAllRows((from,to) => sb.from('pos_customers').select('id').eq('shop_id', SHOP_ID).ilike('name', like).order('id').range(from,to));
   chunkIds(custs.map(c=>c.id), 100).forEach(part => queries.push(base().in('customer_id', part).order('created_at',{ascending:false}).limit(100)));
-  const vstaff = await fetchAllRows((from,to) => sb.from('pos_transaction_versions').select('id, transaction_id').ilike('created_by_name', like).order('id').range(from,to));
+  const vstaff = labelOnly ? [] : await fetchAllRows((from,to) => sb.from('pos_transaction_versions').select('id, transaction_id').ilike('created_by_name', like).order('id').range(from,to));
   chunkIds([...new Set(vstaff.map(v=>v.transaction_id))], 100).forEach(part => queries.push(base().in('id', part).order('created_at',{ascending:false}).limit(100)));
   const results = await Promise.all(queries);
   const byId = {};
@@ -4344,7 +4347,7 @@ function renderBills(){
   let filtered = initialBills;
   if (recentBillSearchQuery){
     const q = recentBillSearchQuery.toLowerCase();
-    filtered = filtered.filter(b => b.no.toLowerCase().includes(q) || b.customer.toLowerCase().includes(q) || b.staff.toLowerCase().includes(q));
+    filtered = filtered.filter(b => b.no.toLowerCase().includes(q) || b.customer.toLowerCase().includes(q) || b.staff.toLowerCase().includes(q) || (b.labelRef||'').toLowerCase().includes(q));
     // v2.46: ລວມຜົນຄົ້ນຫາຈາກຖານຂໍ້ມູນ (ບິນເກົ່າ) — ບໍ່ຊ້ຳກັບບິນລ່າສຸດ, ຮຽງໃໝ່→ເກົ່າ
     if (recentSearchBillsQuery === recentBillSearchQuery && recentSearchBills.length){
       const seen = new Set(filtered.map(b=>b.txnId));
@@ -6140,7 +6143,8 @@ async function renderBillSearch(){
   const q = (document.getElementById('billSearch').value||'').trim();
   const wrap = document.getElementById('billSearchResults');
   if (!q){ wrap.innerHTML = '<p style="font-size:15px;color:var(--text-muted);margin-top:8px">ພິມເລກບິນ ຫຼືຊື່ລູກຄ້າເພື່ອຄົ້ນຫາ</p>'; return; }
-  const { data: txns } = await sb.from('pos_transactions').select('*, pos_customers(name)').eq('shop_id', SHOP_ID).ilike('transaction_no', `%${q}%`).limit(10);
+  const qSafe = q.replace(/[%_,()\\]/g,' ').trim();
+  const { data: txns } = await sb.from('pos_transactions').select('*, pos_customers(name)').eq('shop_id', SHOP_ID).or(`transaction_no.ilike.%${qSafe}%,shipping_label_ref.ilike.%${qSafe}%`).order('created_at',{ascending:false}).limit(10);
   const results = txns || [];
   wrap.innerHTML = results.map(t => `
     <div class="bill-search-result" onclick="openBillEdit('${t.transaction_no}')">
@@ -6148,7 +6152,7 @@ async function renderBillSearch(){
         <span style="font-weight:600">${t.transaction_no}</span>
         <span class="version-badge">v${t.current_version_no}</span>
       </div>
-      <div style="font-size:15px;color:var(--text-muted)">${t.pos_customers?t.pos_customers.name:'ລູກຄ້າທົ່ວໄປ'}</div>
+      <div style="font-size:15px;color:var(--text-muted)">${t.pos_customers?t.pos_customers.name:'ລູກຄ້າທົ່ວໄປ'}${t.shipping_label_ref?` · <span style="color:var(--success);font-weight:700">🏷️ ${escAttr(t.shipping_label_ref)}</span>`:''}</div>
     </div>`).join('') || '<p style="font-size:15px;color:var(--text-muted);margin-top:8px">ບໍ່ພົບບິນທີ່ຄົ້ນຫາ</p>';
 }
 let editingTxn = null;
@@ -6684,14 +6688,25 @@ async function toggleAllBillDetails(){
   }
 }
 let reportSearchDebounce = null;
+let reportSearchExtra = [], reportSearchExtraQuery = '', reportSearchSeq = 0;
 function onReportSearchInput(val){
   reportSearchQuery = val;
   reportCurrentPage = 1;
   clearTimeout(reportSearchDebounce);
-  reportSearchDebounce = setTimeout(() => {
+  const refocus = () => { const el = document.getElementById('reportSearchInput'); if (el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); } };
+  reportSearchDebounce = setTimeout(async () => {
     renderReport();
-    const el = document.getElementById('reportSearchInput');
-    if (el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+    refocus();
+    const q = (val||'').trim();
+    const seq = ++reportSearchSeq;
+    if (q.length < 3){ reportSearchExtra = []; reportSearchExtraQuery = ''; return; }
+    // v2.58: ຄົ້ນຫາເລກໃບບິນ COD ໃນຖານຂໍ້ມູນທັງໝົດ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່) ເພື່ອໃຫ້ຍິງບາໂຄດແລ້ວພົບບິນເກົ່າໄດ້
+    try{
+      const found = await searchBillsFromServer(q, true);
+      if (seq !== reportSearchSeq || currentReportType !== 'sales_full') return;
+      reportSearchExtra = found; reportSearchExtraQuery = reportSearchQuery;
+      if (found.length){ renderReport(); refocus(); }
+    }catch(e){ console.error('ຄົ້ນຫາເລກໃບບິນໃນລາຍງານລົ້ມເຫຼວ', e); }
   }, 300);
 }
 // ປ່ຽນຕົວເລກເປັນຕົວໜັງສືລາວ (ໃຊ້ໃນໃບບິນ A4) — ຮູບແບບ "ອ່ານທີລະຫຼັກພັນ" ຄືມາດຕະຖານໃບບິນລາວ/ໄທ
@@ -6916,7 +6931,7 @@ async function switchReportTab(type, skipHashUpdate){
   if (type !== currentReportType) resetReportDateFilter(); // v2.46: ຍ້າຍແທັບລາຍງານ → ຕົວກອງວັນທີ່ກັບເປັນ "ວັນນີ້"
   currentReportType = type;
   reportCurrentPage = 1;
-  reportSearchQuery = '';
+  reportSearchQuery = ''; reportSearchExtra = []; reportSearchExtraQuery = '';
   document.querySelectorAll('#view-reports .navitem').forEach(n => n.classList.toggle('active', n.dataset.report === type));
   localStorage.setItem('pos_lastsubtab_reports', type);
   if (!skipHashUpdate){
@@ -6956,19 +6971,26 @@ async function renderReport(){
     let filtered = reportBills.filter(b => inDateRange(b.createdAt, range));
     if (reportSearchQuery){
       const q = reportSearchQuery.toLowerCase();
-      filtered = filtered.filter(b => b.no.toLowerCase().includes(q) || b.customer.toLowerCase().includes(q) || b.staff.toLowerCase().includes(q));
+      filtered = filtered.filter(b => b.no.toLowerCase().includes(q) || b.customer.toLowerCase().includes(q) || b.staff.toLowerCase().includes(q) || (b.labelRef||'').toLowerCase().includes(q));
     }
     const totalItems = filtered.length;
-    const totalPages = Math.max(1, Math.ceil(totalItems / reportPageSize));
-    if (reportCurrentPage > totalPages) reportCurrentPage = totalPages;
-    const start = (reportCurrentPage - 1) * reportPageSize;
-    const pageBills = filtered.slice(start, start + reportPageSize);
     const totalKip = filtered.reduce((s,b)=>s+b.total,0);
     const totalBaht = filtered.reduce((s,b)=>s+(b.totalBaht||0),0);
+    // v2.58: ບິນທີ່ພົບຈາກເລກໃບບິນ COD ແຕ່ຢູ່ນອກຊ່ວງວັນທີ່ທີ່ເລືອກ — ສະແດງຕໍ່ທ້າຍ (ບໍ່ລວມໃນຍອດລວມ)
+    let extraBills = [];
+    if (reportSearchQuery && reportSearchExtraQuery === reportSearchQuery){
+      const seenIds = new Set(filtered.map(b=>b.txnId));
+      extraBills = reportSearchExtra.filter(b => !seenIds.has(b.txnId));
+    }
+    const shownBills = filtered.concat(extraBills);
+    const totalPages = Math.max(1, Math.ceil(shownBills.length / reportPageSize));
+    if (reportCurrentPage > totalPages) reportCurrentPage = totalPages;
+    const start = (reportCurrentPage - 1) * reportPageSize;
+    const pageBills = shownBills.slice(start, start + reportPageSize);
     wrap.innerHTML = `
       ${renderReportDateFilterBar()}
       <div class="row" style="margin-bottom:10px">
-        <div class="search-box grow"><span>🔍</span><input type="text" id="reportSearchInput" placeholder="ຄົ້ນຫາ ເລກບິນ, ຊື່ລູກຄ້າ, ພະນັກງານ..." value="${reportSearchQuery}" oninput="onReportSearchInput(this.value)"></div>
+        <div class="search-box grow"><span>🔍</span><input type="text" id="reportSearchInput" placeholder="ຄົ້ນຫາ ເລກບິນ, ເລກໃບບິນ COD (T…), ຊື່ລູກຄ້າ, ພະນັກງານ..." value="${escAttr(reportSearchQuery)}" oninput="onReportSearchInput(this.value)"></div>
         <label style="display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer;white-space:nowrap">
           <input type="checkbox" id="reportBillDeleteModeToggle" ${billDeleteMode?'checked':''} onchange="billDeleteMode=this.checked; renderReport()">
           ໂໝດລຶບ
@@ -6976,6 +6998,7 @@ async function renderReport(){
         <span class="btn" onclick="toggleAllBillDetails()" id="toggleAllDetailsBtn">👁️ ສະແດງລາຍລະອຽດທັງໝົດ</span>
       </div>
       <div class="row" style="margin-bottom:10px;justify-content:flex-end">
+        ${extraBills.length ? `<span style="font-size:14px;color:var(--warning);margin-right:auto">🏷️ ພົບອີກ ${extraBills.length} ບິນຈາກເລກໃບບິນ COD ທີ່ຢູ່ນອກຊ່ວງວັນທີ່ທີ່ເລືອກ (ສະແດງຕໍ່ທ້າຍ, ບໍ່ລວມໃນຍອດ)</span>` : ''}
         <span style="font-weight:700">ລວມທັງໝົດ (${totalItems} ບິນ): ${fmt(totalKip)} ກີບ${totalBaht>0?` <span style="color:var(--text-accent)">+ ฿${fmt(totalBaht)}</span>`:''}</span>
       </div>
       <div id="billCardsWrap">${pageBills.length ? `${renderBillTableHeader()}<div class="bills-wrap-rounded">${pageBills.map(b => {

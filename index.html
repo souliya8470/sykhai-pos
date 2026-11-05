@@ -424,6 +424,7 @@
       <div class="topbar-user" style="margin-left:auto">
         <span style="font-size:14px;color:var(--text-muted)" id="appVersionTag"></span>
         <span class="user-name" id="topbarUserName">👤 ...</span>
+        <button class="btn" onclick="openPwModal(false)">🔑 ປ່ຽນລະຫັດຜ່ານ</button>
         <button class="btn" onclick="doLogout()">🚪 ອອກຈາກລະບົບ</button>
       </div>
     </div>
@@ -1523,11 +1524,24 @@
     <div class="modal-head"><span id="userModalTitle">ເພີ່ມຜູ້ໃຊ້ໃໝ່</span><span class="x" onclick="closeUserModal()">✕</span></div>
     <div class="field"><label>ຊື່ສະແດງ</label><input type="text" id="uf-displayname" placeholder="ນາງ ສີສະຫວາດ"></div>
     <div class="field"><label>Username</label><input type="text" id="uf-username" placeholder="sisavath"></div>
-    <div class="field"><label>ລະຫັດຜ່ານ</label><input type="password" id="uf-password" placeholder="••••••"></div>
+    <div class="field" id="uf-password-wrap"><label id="uf-password-label">ລະຫັດຜ່ານ (ຢ່າງໜ້ອຍ 8 ຕົວ)</label><input type="password" id="uf-password" placeholder="••••••••" autocomplete="new-password"></div>
     <div class="field"><label>Role</label>
       <select id="uf-role" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px"></select>
     </div>
+    <div class="field" id="uf-active-wrap"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="uf-active" checked> ເປີດໃຊ້ງານບັນຊີນີ້</label></div>
     <button class="confirm-btn" onclick="saveUser()">ບັນທຶກ</button>
+  </div>
+</div>
+
+<div class="overlay" id="pwOverlay">
+  <div class="modal" style="width:420px;max-width:96vw">
+    <div class="modal-head"><span>🔑 ປ່ຽນລະຫັດຜ່ານ</span><span class="x" id="pwCloseX" onclick="closePwModal()">✕</span></div>
+    <p id="pwNote" style="font-size:15px;color:var(--text-muted);margin:0 0 10px"></p>
+    <div class="field"><label>ລະຫັດຜ່ານປັດຈຸບັນ</label><input type="password" id="pw-old" autocomplete="current-password"></div>
+    <div class="field"><label>ລະຫັດຜ່ານໃໝ່ (ຢ່າງໜ້ອຍ 8 ຕົວ)</label><input type="password" id="pw-new" autocomplete="new-password"></div>
+    <div class="field"><label>ຢືນຢັນລະຫັດຜ່ານໃໝ່</label><input type="password" id="pw-new2" autocomplete="new-password"></div>
+    <div id="pw-error" style="color:var(--danger);font-size:15px;margin-bottom:8px;display:none"></div>
+    <button class="confirm-btn" id="pw-btn" onclick="submitPwChange()">ບັນທຶກລະຫັດຜ່ານໃໝ່</button>
   </div>
 </div>
 
@@ -1554,7 +1568,19 @@
    ============================================================ */
 const SUPABASE_URL = 'https://swrijpkkufarddsyqhrh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3cmlqcGtrdWZhcmRkc3lxaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MDQ4ODYsImV4cCI6MjA5ODQ4MDg4Nn0.GoGsR4Z4u4UiCJ03-jZkJAgjJtjD8J4MosiBh4cpths';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const POS_TOKEN_KEY = 'pos_token_v2';
+function getPosToken(){ try{ return localStorage.getItem(POS_TOKEN_KEY) || ''; }catch(e){ return ''; } }
+function setPosToken(tok){ try{ if (tok) localStorage.setItem(POS_TOKEN_KEY, tok); else localStorage.removeItem(POS_TOKEN_KEY); }catch(e){} }
+// ສົ່ງ token ຂອງຜູ້ໃຊ້ທີ່ເຂົ້າສູ່ລະບົບໄປກັບທຸກຄຳຂໍ ຜ່ານ header X-Client-Info (header ນີ້ CORS ອະນຸຍາດຢູ່ແລ້ວ) — ເຊີບເວີໃຊ້ກວດສິດ (RLS)
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  global: { fetch: (input, init) => {
+    const tok = getPosToken();
+    if (!tok) return fetch(input, init);
+    const h = new Headers((init && init.headers) || {});
+    h.set('X-Client-Info', ((h.get('X-Client-Info') || 'pos').replace(/\s*sess=[0-9a-f]+/g, '')) + ' sess=' + tok);
+    return fetch(input, Object.assign({}, init || {}, { headers: h }));
+  } }
+});
 const SHOP_ID = '584156a3-cf33-4f1a-be2a-b24346631674'; // "ຮ້ານໃຫຍ່" — seed ໄວ້ໃນ migration ຄັ້ງທຳອິດ
 async function logActivity(action, detail){
   try{
@@ -1873,7 +1899,8 @@ async function liveSetCurrent(productId){
 // v2.56 (Tar 2026-10-26, "ໜ້າຍອດຂາຍລາຍວັນ ເລືອກ 1-26 ຕຸລາ ແຕ່ສະແດງພຽງ ~7 ວັນ"): ແກ້ບັກລາຍງານດຶງສະເພາະ 500 ບິນລ່າສຸດ (ຮ້ານມີ ~70 ບິນ/ວັນ ຈຶ່ງໄດ້ພຽງ ~7 ວັນ) ເຮັດໃຫ້ທຸກລາຍງານທີ່ເລືອກຊ່ວງເກີນ ~7 ວັນ (ຍອດຂາຍ/ກຳໄລ/ແຍກສິນຄ້າ/ໝວດໝູ່/ຊ່ອງທາງຊຳລະ/ເຄິ່ງກະ) ຂາດຂໍ້ມູນ ແລະຍອດລວມຕ່ຳກວ່າຈິງ. ຕອນນີ້ດຶງບິນທັງໝົດຕາມຊ່ວງວັນທີ່ທີ່ເລືອກ (ແບ່ງໜ້າ 1000 ແຖວ + ແບ່ງຊຸດ id ກັນ URL ຍາວເກີນ), ປ່ຽນຊ່ວງວັນທີ່ຈະດຶງຂໍ້ມູນເພີ່ມອັດຕະໂນມັດຖ້າຊ່ວງໃໝ່ກວ້າງກວ່າທີ່ໂຫຼດໄວ້, ເຂົ້າໜ້າລາຍງານດຶງສະເພາະວັນນີ້ (ໄວຂຶ້ນ).
 // v2.57 (Tar 2026-10-26, "ກວດທຸກໜ້າວ່າມີບັນຫາດຽວກັນບໍ: ເລືອກຊ່ວງວັນທີ່ແຕ່ສະແດງບໍ່ຄົບ"): ກວດທຸກຄຳສັ່ງດຶງຂໍ້ມູນ ແລ້ວແກ້ຈຸດທີ່ຂໍ້ມູນຖືກຕັດງຽບໆ: (1) ໜ້າ "ສິນຄ້າຂາຍດີ/ຂາຍບໍ່ອອກ" ເມື່ອກີ້ດຶງບິນໄດ້ແຕ່ 1000 ບິນ ແລະ .in() ຍາວເກີນ ຈຶ່ງນັບຈຳນວນຂາຍບໍ່ຄົບ ແລະລາຍການ "ຂາຍບໍ່ອອກ" ຍາວເກີນຈິງ — ຕອນນີ້ໃຫ້ຖານຂໍ້ມູນລວມເອງ (ຟັງຊັນ pos_sales_by_product). (2) ລາຍງານຄືນສິນຄ້າ ຈຳກັດ 300 ລາຍການ ແລະ ລາຍງານຕາມກະ ຈຳກັດ 50 ກະ — ຕອນນີ້ດຶງຕາມຊ່ວງວັນທີ່ທີ່ເລືອກທັງໝົດ ແລະດຶງໃໝ່ເມື່ອປ່ຽນຊ່ວງ. (3) ລາຍງານສິນຄ້າເຂົ້າ (LOT) ຈຳກັດ 200 ລາຍການ — ຕອນນີ້ສະແດງທຸກລາຍການ. (4) ຍອດຂາຍວັນນີ້ / ສິນຄ້າຂາຍດີວັນນີ້ / ເງິນສົດໃນກະ / ບິນເຄຣດິດ / ໃບສັ່ງຊື້ / ຄົ້ນຫາບິນດ້ວຍຊື່ລູກຄ້າ-ພະນັກງານ: ແບ່ງຊຸດ id ບໍ່ໃຫ້ URL ຍາວເກີນ ແລະແບ່ງໜ້າກັນຕັດ 1000 ແຖວ.
 // v2.58 (Tar 2026-10-29, "ຄົ້ນຫາບິນດ້ວຍລະຫັດບາໂຄດ (T106220) ທີ່ລິງກັບໃບບິນ COD ໃນ Marketing Studio ແລະເບິ່ງໃນໜ້າລາຍງານໄດ້"): ຊ່ອງຄົ້ນຫາບິນ (ໜ້າບິນລ່າສຸດ, ໜ້າລາຍງານຍອດຂາຍ, ໜ້າແກ້ໄຂບິນ) ຄົ້ນຫາດ້ວຍເລກໃບບິນ COD (shipping_label_ref ເຊັ່ນ T106220 / L00009) ໄດ້ແລ້ວ ນອກຈາກເລກບິນ/ຊື່ລູກຄ້າ/ພະນັກງານ — ຍິງບາໂຄດໃສ່ຊ່ອງຄົ້ນຫາໄດ້ເລີຍ. ໜ້າບິນລ່າສຸດຄົ້ນຫາທັງຖານຂໍ້ມູນ (ບິນເກົ່າກໍ່ພົບ). ໜ້າລາຍງານ: ຖ້າບິນທີ່ມີເລກໃບບິນນັ້ນຢູ່ນອກຊ່ວງວັນທີ່ທີ່ເລືອກ ກໍ່ສະແດງຕໍ່ທ້າຍພ້ອມໝາຍເຫດ (ບໍ່ລວມໃນຍອດລວມຂອງຊ່ວງວັນທີ່). ຖັນ "ລາຍລະອຽດ" ໃນລາຍງານສະແດງເລກໃບບິນ 🏷️ ຢູ່ແລ້ວ.
-const APP_VERSION = 'v2.58';
+// v2.59 (Tar 2026-11-05, ເຫດການຖືກແຮັກ: ຄົນພາຍນອກໃຊ້ key ສາທາລະນະອ່ານລະຫັດຜ່ານ ແລ້ວເຂົ້າ POS ດ້ວຍບັນຊີ Tar): ປ່ຽນລະບົບເຂົ້າສູ່ລະບົບໃຫ້ກວດລະຫັດຜ່ານຢູ່ເຊີບເວີ (pos_login) — ລະຫັດຜ່ານເກັບແບບເຂົ້າລະຫັດ (bcrypt) ບໍ່ສະແດງໃຫ້ໃຜເຫັນອີກ, ໃສ່ຜິດ 6 ເທື່ອຕິດກັນຖືກລັອກ 10 ນາທີ. ແຕ່ລະການເຂົ້າສູ່ລະບົບໄດ້ token ແບບສຸ່ມ (ແທນທີ່ຈະເກັບແຕ່ userId ໃນເຄື່ອງ) ແລະສົ່ງ token ໄປກັບທຸກຄຳຂໍ. ເພີ່ມປຸ່ມ "ປ່ຽນລະຫັດຜ່ານ" ແລະບັງຄັບປ່ຽນລະຫັດຜ່ານຊົ່ວຄາວຄັ້ງທຳອິດ. ການສ້າງ/ແກ້ໄຂຜູ້ໃຊ້ ແລະການປ່ຽນສິດ ຜ່ານເຊີບເວີ (ສະເພາະ Owner). ເຮັດໃຫ້ຖານຂໍ້ມູນລັອກ (RLS) ຕໍ່ໄປໄດ້ ໂດຍບໍ່ຕ້ອງແກ້ POS ອີກ.
+const APP_VERSION = 'v2.59';
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -3087,10 +3114,13 @@ async function toggleRolePermission(roleId, key){
   const existing = ROLE_PERMS.find(p=>p.role_id===roleId && p.permission_key===key);
   const newVal = existing ? !existing.allowed : true;
   try{
-    if (existing){
-      await sb.from('pos_role_permissions').update({ allowed: newVal }).eq('id', existing.id);
-    } else {
-      await sb.from('pos_role_permissions').insert({ role_id: roleId, permission_key: key, allowed: newVal });
+    // v2.59: ປ່ຽນສິດຜ່ານເຊີບເວີ (ສະເພາະ Owner) ແທນການຂຽນຕາຕະລາງໂດຍກົງ
+    const { data: res, error } = await sb.rpc('pos_admin_set_permission', { p_token: getPosToken(), p_role_id: roleId, p_key: key, p_allowed: newVal });
+    if (error) throw error;
+    if (!res || !res.ok){
+      const m = { forbidden:'🔒 ສະເພາະເຈົ້າຂອງຮ້ານ (Owner) ຈຶ່ງປ່ຽນສິດໄດ້', owner_fixed:'ສິດຂອງ Owner ປ່ຽນບໍ່ໄດ້', no_session:'ເຊດຊັນໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່' };
+      showToast((res && m[res.error]) || '⚠️ ອັບເດດສິດບໍ່ສຳເລັດ');
+      return;
     }
     await loadRolePermissions();
     renderPermTable();
@@ -3122,8 +3152,8 @@ async function loadRoles(){
   POS_ROLES = data || [];
 }
 async function loadUsers(){
-  const { data } = await sb.from('pos_users').select('*, pos_roles(name)').eq('shop_id', SHOP_ID).order('created_at');
-  USERS = (data||[]).map(r => ({ id:r.id, username:r.username, displayName:r.display_name, roleId:r.role_id, roleName:r.pos_roles?r.pos_roles.name:'-', password:r.password_hash||'' }));
+  const { data } = await sb.from('pos_users').select('id, username, display_name, role_id, is_active, created_at, pos_roles(name)').eq('shop_id', SHOP_ID).order('created_at');
+  USERS = (data||[]).map(r => ({ id:r.id, username:r.username, displayName:r.display_name, roleId:r.role_id, roleName:r.pos_roles?r.pos_roles.name:'-', isActive:r.is_active !== false }));
 }
 function renderUsersTable(){
   const body = document.getElementById('usersBody');
@@ -3142,8 +3172,8 @@ function renderUsersTable(){
     return;
   }
   body.innerHTML = USERS.map(u => `
-    <tr>
-      <td>${u.displayName||u.username}</td><td style="color:var(--text-muted)">${u.username}</td>
+    <tr${u.isActive?'':' style="opacity:.55"'}>
+      <td>${u.displayName||u.username}${u.isActive?'':' <span style="font-size:13px;color:var(--danger)">(ປິດໃຊ້ງານ)</span>'}</td><td style="color:var(--text-muted)">${u.username}</td>
       <td>${u.roleName}</td>
       <td><span class="btn" style="padding:4px 10px" onclick="openUserModal('${u.id}')">ແກ້ໄຂ</span></td>
     </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>';
@@ -3158,23 +3188,36 @@ function openUserModal(id){
   editingUserId = id || null;
   const sel = document.getElementById('uf-role');
   sel.innerHTML = POS_ROLES.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+  const pwWrap = document.getElementById('uf-password-wrap');
+  const actWrap = document.getElementById('uf-active-wrap');
+  const unameEl = document.getElementById('uf-username');
+  const pwEl = document.getElementById('uf-password');
+  pwEl.value = '';
+  pwEl.type = 'password';
   if (id){
     const u = USERS.find(x=>x.id===id);
+    const isSelf = id === currentUser?.id;
     document.getElementById('userModalTitle').textContent = 'ແກ້ໄຂຜູ້ໃຊ້: ' + (u.displayName||u.username);
     document.getElementById('uf-displayname').value = u.displayName||'';
-    document.getElementById('uf-username').value = u.username;
-    document.getElementById('uf-password').value = u.password||'';
-    document.getElementById('uf-password').type = 'text';
-    document.getElementById('uf-password').placeholder = '';
+    unameEl.value = u.username;
+    unameEl.disabled = !isOwner;
+    // v2.59: ບໍ່ສະແດງລະຫັດຜ່ານເດີມອີກ — ເວັ້ນວ່າງ = ບໍ່ປ່ຽນ; ປ່ຽນລະຫັດຕົນເອງໃຊ້ປຸ່ມ "ປ່ຽນລະຫັດຜ່ານ" ເທິງສຸດ
+    document.getElementById('uf-password-label').textContent = 'ຕັ້ງລະຫັດຜ່ານໃໝ່ໃຫ້ຜູ້ນີ້ (ເວັ້ນວ່າງ = ບໍ່ປ່ຽນ, ຢ່າງໜ້ອຍ 8 ຕົວ)';
+    pwWrap.style.display = (isOwner && !isSelf) ? '' : 'none';
     sel.value = u.roleId;
     sel.disabled = !isOwner;
+    actWrap.style.display = (isOwner && !isSelf) ? '' : 'none';
+    document.getElementById('uf-active').checked = u.isActive;
   } else {
     document.getElementById('userModalTitle').textContent = 'ເພີ່ມຜູ້ໃຊ້ໃໝ່';
     document.getElementById('uf-displayname').value = '';
-    document.getElementById('uf-username').value = '';
-    document.getElementById('uf-password').value = '';
-    document.getElementById('uf-password').type = 'text';
-    document.getElementById('uf-password').placeholder = '••••••';
+    unameEl.value = '';
+    unameEl.disabled = false;
+    sel.disabled = false;
+    document.getElementById('uf-password-label').textContent = 'ລະຫັດຜ່ານຊົ່ວຄາວ (ຢ່າງໜ້ອຍ 8 ຕົວ — ຜູ້ໃຊ້ຈະຖືກບັງຄັບໃຫ້ປ່ຽນຕອນເຂົ້າຄັ້ງທຳອິດ)';
+    pwWrap.style.display = '';
+    actWrap.style.display = 'none';
+    document.getElementById('uf-active').checked = true;
   }
   document.getElementById('userOverlay').classList.add('open');
 }
@@ -3192,16 +3235,20 @@ async function saveUser(){
     const selfUser = USERS.find(x=>x.id===editingUserId);
     roleId = selfUser ? selfUser.roleId : roleId; // ບໍ່ອະນຸຍາດປ່ຽນ role ຕົນເອງ ບໍ່ວ່າ input ຈະຖືກແອບແກ້ແນວໃດ
   }
+  if (password && password.length < 8){ showToast('ລະຫັດຜ່ານສັ້ນເກີນໄປ (ຢ່າງໜ້ອຍ 8 ຕົວ)'); return; }
   try{
-    if (editingUserId){
-      const data = { display_name: displayName, username, role_id: roleId };
-      if (password) data.password_hash = password;
-      const { error } = await sb.from('pos_users').update(data).eq('id', editingUserId);
-      if (error) throw error;
-    } else {
-      if (!password){ showToast('ກະລຸນາໃສ່ລະຫັດຜ່ານ'); return; }
-      const { error } = await sb.from('pos_users').insert({ shop_id: SHOP_ID, username, display_name: displayName, role_id: roleId, password_hash: password });
-      if (error) throw error;
+    // v2.59: ສ້າງ/ແກ້ໄຂຜູ້ໃຊ້ຜ່ານເຊີບເວີ — ເຊີບເວີກວດສິດ Owner ເອງ (ບໍ່ເຊື່ອປຸ່ມຝັ່ງເວັບ)
+    if (!editingUserId && !password){ showToast('ກະລຸນາໃສ່ລະຫັດຜ່ານ'); return; }
+    const activeEl = document.getElementById('uf-active');
+    const wantActive = (isOwner && editingUserId && editingUserId !== currentUser?.id) ? !!activeEl.checked : true;
+    const { data: res, error } = await sb.rpc('pos_admin_save_user', {
+      p_token: getPosToken(), p_id: editingUserId, p_username: username, p_display_name: displayName,
+      p_role_id: roleId, p_is_active: wantActive, p_password: password || null
+    });
+    if (error) throw error;
+    if (!res || !res.ok){
+      const m = { forbidden:'🔒 ບໍ່ມີສິດເຮັດລາຍການນີ້', username_taken:'Username ນີ້ມີຄົນໃຊ້ແລ້ວ', too_short:'ລະຫັດຜ່ານສັ້ນເກີນໄປ (ຢ່າງໜ້ອຍ 8 ຕົວ)', missing:'ກະລຸນາໃສ່ຂໍ້ມູນໃຫ້ຄົບ', bad_role:'Role ບໍ່ຖືກຕ້ອງ', not_found:'ບໍ່ພົບບັນຊີນີ້', no_session:'ເຊດຊັນໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່', use_change_password:'ປ່ຽນລະຫັດຜ່ານຂອງຕົນເອງ ໃຫ້ກົດປຸ່ມ "ປ່ຽນລະຫັດຜ່ານ" ເທິງສຸດ' };
+      throw new Error((res && m[res.error]) || 'ບັນທຶກບໍ່ສຳເລັດ');
     }
     await loadUsers();
     closeUserModal();
@@ -7362,6 +7409,45 @@ function hideLoginScreen(){
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appShell').style.display = '';
 }
+let pwForced = false;
+function openPwModal(forced){
+  pwForced = !!forced;
+  ['pw-old','pw-new','pw-new2'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const er = document.getElementById('pw-error'); if (er) er.style.display = 'none';
+  document.getElementById('pwNote').textContent = pwForced
+    ? 'ເພື່ອຄວາມປອດໄພ ກະລຸນາຕັ້ງລະຫັດຜ່ານໃໝ່ຂອງທ່ານເອງກ່ອນໃຊ້ງານ (ລະຫັດຜ່ານປັດຈຸບັນ = ລະຫັດຊົ່ວຄາວທີ່ເຈົ້າຂອງຮ້ານໃຫ້)'
+    : 'ໃສ່ລະຫັດຜ່ານປັດຈຸບັນ ແລ້ວຕັ້ງລະຫັດຜ່ານໃໝ່ (ຢ່າງໜ້ອຍ 8 ຕົວ)';
+  document.getElementById('pwCloseX').style.display = pwForced ? 'none' : '';
+  document.getElementById('pwOverlay').classList.add('open');
+  setTimeout(() => { const el = document.getElementById('pw-old'); if (el) el.focus(); }, 50);
+}
+function closePwModal(){ if (pwForced) return; document.getElementById('pwOverlay').classList.remove('open'); }
+async function submitPwChange(){
+  const oldPw = document.getElementById('pw-old').value;
+  const newPw = document.getElementById('pw-new').value;
+  const newPw2 = document.getElementById('pw-new2').value;
+  const er = document.getElementById('pw-error');
+  const btn = document.getElementById('pw-btn');
+  const fail = (m) => { er.textContent = m; er.style.display = 'block'; };
+  er.style.display = 'none';
+  if (!oldPw){ fail('ກະລຸນາໃສ່ລະຫັດຜ່ານປັດຈຸບັນ'); return; }
+  if (newPw.length < 8){ fail('ລະຫັດຜ່ານໃໝ່ສັ້ນເກີນໄປ (ຢ່າງໜ້ອຍ 8 ຕົວ)'); return; }
+  if (newPw !== newPw2){ fail('ລະຫັດຜ່ານໃໝ່ທັງສອງຊ່ອງບໍ່ຄືກັນ'); return; }
+  btn.disabled = true;
+  try{
+    const { data: res, error } = await sb.rpc('pos_change_password', { p_token: getPosToken(), p_old: oldPw, p_new: newPw });
+    if (error) throw error;
+    if (!res || !res.ok){
+      const m = { wrong_old:'ລະຫັດຜ່ານປັດຈຸບັນບໍ່ຖືກຕ້ອງ', too_short:'ລະຫັດຜ່ານໃໝ່ສັ້ນເກີນໄປ (ຢ່າງໜ້ອຍ 8 ຕົວ)', weak:'ລະຫັດຜ່ານໃໝ່ງ່າຍເກີນໄປ ຫຼືຄືກັບອັນເກົ່າ', no_session:'ເຊດຊັນໝົດອາຍຸ ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່' };
+      fail((res && m[res.error]) || 'ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ');
+      return;
+    }
+    pwForced = false;
+    document.getElementById('pwOverlay').classList.remove('open');
+    showToast('ປ່ຽນລະຫັດຜ່ານສຳເລັດ');
+  }catch(e){ fail('ປ່ຽນລະຫັດຜ່ານບໍ່ສຳເລັດ: ' + (e.message||'')); }
+  finally{ btn.disabled = false; }
+}
 async function doLogin(){
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value;
@@ -7373,14 +7459,22 @@ async function doLogin(){
   btn.disabled = true;
   statusEl.style.display = 'block'; statusEl.textContent = 'ກຳລັງກວດສອບ...';
   try{
-    const { data: user } = await sb.from('pos_users').select('*, pos_roles(name)').eq('username', username).eq('is_active', true).maybeSingle();
-    if (!user || user.password_hash !== password){
-      errEl.textContent = 'Username ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ';
+    // v2.59: ກວດລະຫັດຜ່ານຢູ່ເຊີບເວີ (ບໍ່ດຶງລະຫັດຜ່ານມາປຽບທຽບໃນເວັບອີກ)
+    const { data: lres, error: lerr } = await sb.rpc('pos_login', { p_username: username, p_password: password });
+    if (lerr) throw lerr;
+    if (!lres || !lres.ok){
+      errEl.textContent = (lres && lres.error === 'locked')
+        ? ('ໃສ່ລະຫັດຜິດຫຼາຍເທື່ອ ກະລຸນາລໍຖ້າ ' + Math.max(1, Math.ceil((lres.retry_after_s||600)/60)) + ' ນາທີ ແລ້ວລອງໃໝ່')
+        : 'Username ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ';
       errEl.style.display = 'block';
       statusEl.style.display = 'none';
       btn.disabled = false;
       return;
     }
+    setPosToken(lres.token);
+    const lu = lres.user;
+    const user = { id: lu.id, username: lu.username, display_name: lu.display_name, pos_roles: { name: lu.role_name } };
+    const mustChange = !!lres.must_change;
     statusEl.textContent = 'ກຳລັງຂໍທີ່ຕັ້ງ...';
     const loc = await getLocation();
     const { data: histRow } = await sb.from('pos_login_history').insert({
@@ -7396,6 +7490,7 @@ async function doLogin(){
     document.getElementById('topbarUserName').textContent = '👤 ' + currentUser.displayName;
     hideLoginScreen();
     initApp();
+    if (mustChange) openPwModal(true);
   }catch(err){
     errEl.textContent = 'ເຂົ້າສູ່ລະບົບບໍ່ສຳເລັດ: ' + (err.message||'');
     errEl.style.display = 'block';
@@ -7410,21 +7505,28 @@ async function doLogout(){
     if (currentLoginHistoryId) await sb.from('pos_login_history').update({ logout_at: new Date().toISOString() }).eq('id', currentLoginHistoryId);
     if (currentUser) await logActivity('logout', { username: currentUser.username });
   }catch(e){}
+  try{ await sb.rpc('pos_logout', { p_token: getPosToken() }); }catch(e){}
+  setPosToken('');
   localStorage.removeItem(SESSION_KEY);
   location.reload();
 }
 async function checkSessionAndStart(){
-  const raw = localStorage.getItem(SESSION_KEY);
-  if (!raw){ showLoginScreen(); return; }
+  // v2.59: ຕ້ອງມີ token ຈາກເຊີບເວີ (ເກົ່າ: ເກັບແຕ່ userId ໃນເຄື່ອງ ເຊິ່ງປອມໄດ້ງ່າຍ)
+  const tok = getPosToken();
+  if (!tok){ localStorage.removeItem(SESSION_KEY); showLoginScreen(); return; }
   try{
-    const session = JSON.parse(raw);
-    const { data: user } = await sb.from('pos_users').select('*, pos_roles(name)').eq('id', session.userId).eq('is_active', true).maybeSingle();
-    if (!user){ localStorage.removeItem(SESSION_KEY); showLoginScreen(); return; }
-    currentUser = { id: user.id, username: user.username, displayName: user.display_name || user.username, roleName: user.pos_roles ? user.pos_roles.name : '-' };
+    let session = {};
+    try{ session = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}') || {}; }catch(e){ session = {}; }
+    const { data: sres, error: serr } = await sb.rpc('pos_session', { p_token: tok });
+    if (serr) throw serr;
+    if (!sres || !sres.user){ setPosToken(''); localStorage.removeItem(SESSION_KEY); showLoginScreen(); return; }
+    const user = sres.user;
+    currentUser = { id: user.id, username: user.username, displayName: user.display_name || user.username, roleName: user.role_name || '-' };
     currentLoginHistoryId = session.loginHistoryId || null;
     document.getElementById('topbarUserName').textContent = '👤 ' + currentUser.displayName;
     hideLoginScreen();
     initApp();
+    if (sres.must_change) openPwModal(true);
   }catch(err){
     console.error('checkSessionAndStart error', err);
     showLoginScreen();

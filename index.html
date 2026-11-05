@@ -1902,7 +1902,8 @@ async function liveSetCurrent(productId){
 // v2.59 (Tar 2026-11-05, ເຫດການຖືກແຮັກ: ຄົນພາຍນອກໃຊ້ key ສາທາລະນະອ່ານລະຫັດຜ່ານ ແລ້ວເຂົ້າ POS ດ້ວຍບັນຊີ Tar): ປ່ຽນລະບົບເຂົ້າສູ່ລະບົບໃຫ້ກວດລະຫັດຜ່ານຢູ່ເຊີບເວີ (pos_login) — ລະຫັດຜ່ານເກັບແບບເຂົ້າລະຫັດ (bcrypt) ບໍ່ສະແດງໃຫ້ໃຜເຫັນອີກ, ໃສ່ຜິດ 6 ເທື່ອຕິດກັນຖືກລັອກ 10 ນາທີ. ແຕ່ລະການເຂົ້າສູ່ລະບົບໄດ້ token ແບບສຸ່ມ (ແທນທີ່ຈະເກັບແຕ່ userId ໃນເຄື່ອງ) ແລະສົ່ງ token ໄປກັບທຸກຄຳຂໍ. ເພີ່ມປຸ່ມ "ປ່ຽນລະຫັດຜ່ານ" ແລະບັງຄັບປ່ຽນລະຫັດຜ່ານຊົ່ວຄາວຄັ້ງທຳອິດ. ການສ້າງ/ແກ້ໄຂຜູ້ໃຊ້ ແລະການປ່ຽນສິດ ຜ່ານເຊີບເວີ (ສະເພາະ Owner). ເຮັດໃຫ້ຖານຂໍ້ມູນລັອກ (RLS) ຕໍ່ໄປໄດ້ ໂດຍບໍ່ຕ້ອງແກ້ POS ອີກ.
 // v2.60 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ລັອກຕາຕະລາງຂໍ້ມູນລູກຄ້າ/ໃບສັ່ງຊື້/ບັນທຶກກິດຈະກຳ/ຜູ້ໃຊ້/ສິດ ຢູ່ຖານຂໍ້ມູນ (ຕ້ອງມີ token ຈາກການເຂົ້າສູ່ລະບົບ). ເພາະ realtime ບໍ່ສົ່ງ token ຕາຕະລາງເຫຼົ່ານີ້ຈະບໍ່ອັບເດດເອງ — ເພີ່ມການດຶງຂໍ້ມູນໃໝ່ອັດຕະໂນມັດທຸກ 30 ວິນາທີ ສະເພາະໜ້າທີ່ກຳລັງເປີດຢູ່ (ລູກຄ້າ, ໃບສັ່ງຊື້, ບັນທຶກກິດຈະກຳ).
 // v2.61 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ເພີ່ມ posEsc() ກັນໂຄດ HTML ແຝງໃນຂໍ້ຄວາມ (ຊື່ຜູ້ໃຊ້, ຊື່ສິນຄ້າ, ທ້າຍບິນ) — ບໍ່ໃຫ້ຖືກນຳໄປ run ໃນໜ້າເວັບ; ອັບໂຫຼດຮູບໃຊ້ upsert:false (ຊື່ໄຟລ໌ບໍ່ຊ້ຳຢູ່ແລ້ວ) ເພື່ອໃຫ້ປິດສິດລຶບ/ຂຽນທັບຮູບຈາກຄົນນອກໄດ້.
-const APP_VERSION = 'v2.61';
+// v2.62 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ຕາຕະລາງສິນຄ້າ/lot/ບິນຈະຖືກລັອກ (RLS) ເຊິ່ງ realtime ຈະບໍ່ສົ່ງ event → ເພີ່ມການກວດການປ່ຽນແປງທຸກ 10 ວິນາທີ (rpc pos_change_stamp, ເບົາຫຼາຍ) ແລ້ວໂຫຼດຂໍ້ມູນໃໝ່ສະເພາະເມື່ອມີການປ່ຽນ — ເຮັດໃຫ້ສະຕັອກ/ບິນຂອງເຄື່ອງອື່ນອັບເດດຕາມເດີມ.
+const APP_VERSION = 'v2.62';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
@@ -2708,6 +2709,37 @@ function setupLockedTablePolling(){
       else if (isActive('view-activitylog')){ await loadActivityLog(); }
     } catch(e){ /* ຂ້າມໄປຮອບຕໍ່ໄປ */ }
   }, 30000);
+
+  // v2.62: ກວດ "ຕົວນັບການປ່ຽນແປງ" ຈາກເຊີບເວີ — ແທນ realtime ຂອງ products / lots / transactions ທີ່ຖືກລັອກ
+  let stampLast = null;
+  setInterval(async () => {
+    if (document.hidden || !getPosToken()) return;
+    try {
+      const { data } = await sb.rpc('pos_change_stamp');
+      if (!data) return;
+      if (stampLast){
+        if (data.products !== stampLast.products){
+          debounceRealtime('products', async () => { await loadProducts(); renderGrid(); renderStockTable(); renderHomeSidebar(); });
+        }
+        if (data.lots !== stampLast.lots){
+          debounceRealtime('lots', async () => {
+            await loadProducts(); renderStockTable();
+            const lotTab = document.getElementById('stocktab-lot');
+            if (lotTab && lotTab.style.display !== 'none') await renderLotList();
+          });
+        }
+        if (data.txns !== stampLast.txns){
+          debounceRealtime('transactions', async () => {
+            await loadRecentBills(); renderBills();
+            await Promise.all([loadTodayStats(), loadTodayTopProducts(), loadExpiringLots()]); renderHomeStats();
+            if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
+            if (document.getElementById('view-reports').classList.contains('active')) renderReport();
+          });
+        }
+      }
+      stampLast = data;
+    } catch(e){ /* ຂ້າມໄປຮອບຕໍ່ໄປ */ }
+  }, 10000);
 }
 
 

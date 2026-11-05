@@ -1901,7 +1901,9 @@ async function liveSetCurrent(productId){
 // v2.58 (Tar 2026-10-29, "ຄົ້ນຫາບິນດ້ວຍລະຫັດບາໂຄດ (T106220) ທີ່ລິງກັບໃບບິນ COD ໃນ Marketing Studio ແລະເບິ່ງໃນໜ້າລາຍງານໄດ້"): ຊ່ອງຄົ້ນຫາບິນ (ໜ້າບິນລ່າສຸດ, ໜ້າລາຍງານຍອດຂາຍ, ໜ້າແກ້ໄຂບິນ) ຄົ້ນຫາດ້ວຍເລກໃບບິນ COD (shipping_label_ref ເຊັ່ນ T106220 / L00009) ໄດ້ແລ້ວ ນອກຈາກເລກບິນ/ຊື່ລູກຄ້າ/ພະນັກງານ — ຍິງບາໂຄດໃສ່ຊ່ອງຄົ້ນຫາໄດ້ເລີຍ. ໜ້າບິນລ່າສຸດຄົ້ນຫາທັງຖານຂໍ້ມູນ (ບິນເກົ່າກໍ່ພົບ). ໜ້າລາຍງານ: ຖ້າບິນທີ່ມີເລກໃບບິນນັ້ນຢູ່ນອກຊ່ວງວັນທີ່ທີ່ເລືອກ ກໍ່ສະແດງຕໍ່ທ້າຍພ້ອມໝາຍເຫດ (ບໍ່ລວມໃນຍອດລວມຂອງຊ່ວງວັນທີ່). ຖັນ "ລາຍລະອຽດ" ໃນລາຍງານສະແດງເລກໃບບິນ 🏷️ ຢູ່ແລ້ວ.
 // v2.59 (Tar 2026-11-05, ເຫດການຖືກແຮັກ: ຄົນພາຍນອກໃຊ້ key ສາທາລະນະອ່ານລະຫັດຜ່ານ ແລ້ວເຂົ້າ POS ດ້ວຍບັນຊີ Tar): ປ່ຽນລະບົບເຂົ້າສູ່ລະບົບໃຫ້ກວດລະຫັດຜ່ານຢູ່ເຊີບເວີ (pos_login) — ລະຫັດຜ່ານເກັບແບບເຂົ້າລະຫັດ (bcrypt) ບໍ່ສະແດງໃຫ້ໃຜເຫັນອີກ, ໃສ່ຜິດ 6 ເທື່ອຕິດກັນຖືກລັອກ 10 ນາທີ. ແຕ່ລະການເຂົ້າສູ່ລະບົບໄດ້ token ແບບສຸ່ມ (ແທນທີ່ຈະເກັບແຕ່ userId ໃນເຄື່ອງ) ແລະສົ່ງ token ໄປກັບທຸກຄຳຂໍ. ເພີ່ມປຸ່ມ "ປ່ຽນລະຫັດຜ່ານ" ແລະບັງຄັບປ່ຽນລະຫັດຜ່ານຊົ່ວຄາວຄັ້ງທຳອິດ. ການສ້າງ/ແກ້ໄຂຜູ້ໃຊ້ ແລະການປ່ຽນສິດ ຜ່ານເຊີບເວີ (ສະເພາະ Owner). ເຮັດໃຫ້ຖານຂໍ້ມູນລັອກ (RLS) ຕໍ່ໄປໄດ້ ໂດຍບໍ່ຕ້ອງແກ້ POS ອີກ.
 // v2.60 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ລັອກຕາຕະລາງຂໍ້ມູນລູກຄ້າ/ໃບສັ່ງຊື້/ບັນທຶກກິດຈະກຳ/ຜູ້ໃຊ້/ສິດ ຢູ່ຖານຂໍ້ມູນ (ຕ້ອງມີ token ຈາກການເຂົ້າສູ່ລະບົບ). ເພາະ realtime ບໍ່ສົ່ງ token ຕາຕະລາງເຫຼົ່ານີ້ຈະບໍ່ອັບເດດເອງ — ເພີ່ມການດຶງຂໍ້ມູນໃໝ່ອັດຕະໂນມັດທຸກ 30 ວິນາທີ ສະເພາະໜ້າທີ່ກຳລັງເປີດຢູ່ (ລູກຄ້າ, ໃບສັ່ງຊື້, ບັນທຶກກິດຈະກຳ).
-const APP_VERSION = 'v2.60';
+// v2.61 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ເພີ່ມ posEsc() ກັນໂຄດ HTML ແຝງໃນຂໍ້ຄວາມ (ຊື່ຜູ້ໃຊ້, ຊື່ສິນຄ້າ, ທ້າຍບິນ) — ບໍ່ໃຫ້ຖືກນຳໄປ run ໃນໜ້າເວັບ; ອັບໂຫຼດຮູບໃຊ້ upsert:false (ຊື່ໄຟລ໌ບໍ່ຊ້ຳຢູ່ແລ້ວ) ເພື່ອໃຫ້ປິດສິດລຶບ/ຂຽນທັບຮູບຈາກຄົນນອກໄດ້.
+const APP_VERSION = 'v2.61';
+const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -1961,7 +1963,7 @@ async function handleSlipUpload(event, txnId, qualifier){
   try{
     const compressed = await compressImage(file, 1200, 0.82);
     const path = `${SHOP_ID}/${txnId}_${Date.now()}.jpg`;
-    const { error: upErr } = await sb.storage.from('bill-transfer-images').upload(path, compressed, { upsert: true, contentType: 'image/jpeg' });
+    const { error: upErr } = await sb.storage.from('bill-transfer-images').upload(path, compressed, { upsert: false, contentType: 'image/jpeg' });
     if (upErr) throw upErr;
     const { data: urlData } = sb.storage.from('bill-transfer-images').getPublicUrl(path);
     const slipUrl = urlData.publicUrl;
@@ -3181,7 +3183,7 @@ function renderUsersTable(){
   if (!isOwner){
     body.innerHTML = (visibleUsers.length ? visibleUsers.map(u => `
       <tr>
-        <td>${u.displayName||u.username}</td><td style="color:var(--text-muted)">${u.username}</td>
+        <td>${posEsc(u.displayName||u.username)}</td><td style="color:var(--text-muted)">${posEsc(u.username)}</td>
         <td>${u.roleName}</td>
         <td><span class="btn" style="padding:4px 10px" onclick="openUserModal('${u.id}')">ແກ້ໄຂ (ຕົນເອງ)</span></td>
       </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">ບໍ່ພົບບັນຊີ</td></tr>')
@@ -3190,8 +3192,8 @@ function renderUsersTable(){
   }
   body.innerHTML = USERS.map(u => `
     <tr${u.isActive?'':' style="opacity:.55"'}>
-      <td>${u.displayName||u.username}${u.isActive?'':' <span style="font-size:13px;color:var(--danger)">(ປິດໃຊ້ງານ)</span>'}</td><td style="color:var(--text-muted)">${u.username}</td>
-      <td>${u.roleName}</td>
+      <td>${posEsc(u.displayName||u.username)}${u.isActive?'':' <span style="font-size:13px;color:var(--danger)">(ປິດໃຊ້ງານ)</span>'}</td><td style="color:var(--text-muted)">${posEsc(u.username)}</td>
+      <td>${posEsc(u.roleName)}</td>
       <td><span class="btn" style="padding:4px 10px" onclick="openUserModal('${u.id}')">ແກ້ໄຂ</span></td>
     </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>';
 }
@@ -3204,7 +3206,7 @@ function openUserModal(id){
   }
   editingUserId = id || null;
   const sel = document.getElementById('uf-role');
-  sel.innerHTML = POS_ROLES.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+  sel.innerHTML = POS_ROLES.map(r=>`<option value="${r.id}">${posEsc(r.name)}</option>`).join('');
   const pwWrap = document.getElementById('uf-password-wrap');
   const actWrap = document.getElementById('uf-active-wrap');
   const unameEl = document.getElementById('uf-username');
@@ -3396,7 +3398,7 @@ function renderGrid(){
     const priceHtml = priceTier===3 && !priceVal
       ? '<span style="color:var(--danger)">ບໍ່ມີລາຄາບາດ</span>'
       : `${curSymbol}${fmt(priceVal)} ${curSuffix}`;
-    card.innerHTML = `${low}<p class="meta">${p.barcode} · ຄົງເຫຼືອ ${p.stock}</p>${thumbHtml}<p class="name">${p.name}</p><p class="price">${priceHtml}</p>`;
+    card.innerHTML = `${low}<p class="meta">${posEsc(p.barcode)} · ຄົງເຫຼືອ ${p.stock}</p>${thumbHtml}<p class="name">${posEsc(p.name)}</p><p class="price">${priceHtml}</p>`;
     grid.appendChild(card);
   });
 }
@@ -5290,7 +5292,7 @@ async function handleProductImageSelect(event){
     const compressed = await compressImage(file);
     statusEl.textContent = `ກຳລັງອັບໂຫຼດ... (ຫຼັງບີບອັດ ${(compressed.size/1024).toFixed(0)}KB)`;
     const path = `${SHOP_ID}/${Date.now()}.jpg`;
-    const { error: upErr } = await sb.storage.from('pos-product-images').upload(path, compressed, { upsert: true, contentType: 'image/jpeg' });
+    const { error: upErr } = await sb.storage.from('pos-product-images').upload(path, compressed, { upsert: false, contentType: 'image/jpeg' });
     if (upErr) throw upErr;
     const { data: urlData } = sb.storage.from('pos-product-images').getPublicUrl(path);
     pendingImageUrl = urlData.publicUrl;
@@ -6966,7 +6968,7 @@ async function printBillReceipt(versionId, billNo){
     </div>
     ${r.confirm_amount_on_bill ? '<p class="receipt-sub" style="margin-top:10px">*** ກະລຸນາກວດຈຳນວນເງິນກ່ອນອອກຈາກຮ້ານ ***</p>' : ''}
     <div class="receipt-divider"></div>
-    <p class="receipt-foot">${r.footer_text || 'ຂອບໃຈລູກຄ້າທີ່ມາອຸດໜູນ 🙏'}</p>
+    <p class="receipt-foot">${r.footer_text ? posEsc(r.footer_text) : 'ຂອບໃຈລູກຄ້າທີ່ມາອຸດໜູນ 🙏'}</p>
     ${r.confirm_amount_on_bill ? `<div class="receipt-sig"><div>ຜູ້ຂາຍ</div><div>ຜູ້ຊື້</div></div>` : ''}
   `;
   document.querySelector('#receiptPreviewOverlay .modal').style.width = '400px';

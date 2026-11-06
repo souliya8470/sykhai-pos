@@ -621,6 +621,8 @@
               <div class="stock-toolbar">
                 <div class="search-box"><span>🔍</span><input id="stockSearch" placeholder="ຄົ້ນຫາຊື່ ຫຼື ບາໂຄດ" oninput="stockCurrentPage=1; renderStockTable()"></div>
                 <button class="btn" onclick="openReceiveModal()">+ ຮັບເຄື່ອງເຂົ້າ (LOT)</button>
+                <button class="btn" onclick="exportStockExcel('count')">📥 Export ໃບນັບສະຕັອກ (Excel)</button>
+                <button class="btn" id="stockExportFullBtn" style="display:none" onclick="exportStockExcel('full')">📥 Export ເຕັມ (ມີຕົ້ນທຶນ)</button>
                 <button class="btn" onclick="document.getElementById('excelImportInput').click()">📥 ນຳເຂົ້າຈາກ Excel (ລະບົບເກົ່າ)</button>
                 <input type="file" id="excelImportInput" accept=".xls,.xlsx,.csv" style="display:none" onchange="handleExcelImport(event)">
                 <button class="btn primary" onclick="openProductModal()">+ ເພີ່ມສິນຄ້າໃໝ່</button>
@@ -1903,7 +1905,8 @@ async function liveSetCurrent(productId){
 // v2.60 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ລັອກຕາຕະລາງຂໍ້ມູນລູກຄ້າ/ໃບສັ່ງຊື້/ບັນທຶກກິດຈະກຳ/ຜູ້ໃຊ້/ສິດ ຢູ່ຖານຂໍ້ມູນ (ຕ້ອງມີ token ຈາກການເຂົ້າສູ່ລະບົບ). ເພາະ realtime ບໍ່ສົ່ງ token ຕາຕະລາງເຫຼົ່ານີ້ຈະບໍ່ອັບເດດເອງ — ເພີ່ມການດຶງຂໍ້ມູນໃໝ່ອັດຕະໂນມັດທຸກ 30 ວິນາທີ ສະເພາະໜ້າທີ່ກຳລັງເປີດຢູ່ (ລູກຄ້າ, ໃບສັ່ງຊື້, ບັນທຶກກິດຈະກຳ).
 // v2.61 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ເພີ່ມ posEsc() ກັນໂຄດ HTML ແຝງໃນຂໍ້ຄວາມ (ຊື່ຜູ້ໃຊ້, ຊື່ສິນຄ້າ, ທ້າຍບິນ) — ບໍ່ໃຫ້ຖືກນຳໄປ run ໃນໜ້າເວັບ; ອັບໂຫຼດຮູບໃຊ້ upsert:false (ຊື່ໄຟລ໌ບໍ່ຊ້ຳຢູ່ແລ້ວ) ເພື່ອໃຫ້ປິດສິດລຶບ/ຂຽນທັບຮູບຈາກຄົນນອກໄດ້.
 // v2.62 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ຕາຕະລາງສິນຄ້າ/lot/ບິນຈະຖືກລັອກ (RLS) ເຊິ່ງ realtime ຈະບໍ່ສົ່ງ event → ເພີ່ມການກວດການປ່ຽນແປງທຸກ 10 ວິນາທີ (rpc pos_change_stamp, ເບົາຫຼາຍ) ແລ້ວໂຫຼດຂໍ້ມູນໃໝ່ສະເພາະເມື່ອມີການປ່ຽນ — ເຮັດໃຫ້ສະຕັອກ/ບິນຂອງເຄື່ອງອື່ນອັບເດດຕາມເດີມ.
-const APP_VERSION = 'v2.62';
+// v2.63 (Tar 2026-11-06, "ສົ່ງອອກສະຕັອກເປັນ Excel ໃຫ້ທີມງານໄລ່ສະຕັອກ"): ເພີ່ມປຸ່ມ Export Excel ໃນໜ້າສະຕັອກ (ໄຟລ໌ .xlsx ແທ້). ແບບ "ໃບນັບສະຕັອກ": ບາໂຄດ, ຊື່, ໝວດ, ຈຳນວນໃນລະບົບ, ຊ່ອງໃຫ້ຂຽນຈຳນວນທີ່ນັບໄດ້ + ຜົນຕ່າງ (ສູດຄຳນວນເອງ) + ໝາຍເຫດ — ບໍ່ມີລາຄາ/ຕົ້ນທຶນ ເພື່ອສົ່ງໃຫ້ທີມໄດ້. ແບບ "ເຕັມ" (ສະເພາະ Owner): ມີຜູ້ຂາຍ, ໂຊນ, ລາຄາ 1-3, ຕົ້ນທຶນ, ມູນຄ່າສະຕັອກ. ສົ່ງອອກຕາມຜົນຄົ້ນຫາ/ການຈັດລຽງໃນໜ້ານັ້ນ ແລະ ບັນທຶກລົງບັນທຶກກິດຈະກຳ. ສະເພາະ Owner ແລະ Manager.
+const APP_VERSION = 'v2.63';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
@@ -5085,7 +5088,42 @@ function getFilteredStockProducts(){
   }
   return list;
 }
+// v2.63: Export ສະຕັອກເປັນ Excel (.xlsx) — mode 'count' = ໃບນັບສະຕັອກ (ບໍ່ມີລາຄາ/ຕົ້ນທຶນ), 'full' = ມີຕົ້ນທຶນ (Owner)
+async function exportStockExcel(mode){
+  const role = currentUser && currentUser.roleName;
+  if (role !== 'Owner' && role !== 'Manager'){ showToast('🔒 ສະເພາະ Owner ແລະ Manager ຈຶ່ງ export ໄດ້'); return; }
+  if (mode === 'full' && role !== 'Owner'){ showToast('🔒 ແບບເຕັມ (ມີຕົ້ນທຶນ) ສະເພາະ Owner'); return; }
+  if (typeof XLSX === 'undefined'){ showToast('⚠️ ຕ້ອງການອິນເຕີເນັດເພື່ອໂຫຼດຕົວສ້າງ Excel — ລອງໃໝ່'); return; }
+  const list = getFilteredStockProducts();
+  if (!list.length){ showToast('ບໍ່ມີສິນຄ້າໃຫ້ export'); return; }
+  let aoa, widths;
+  if (mode === 'full'){
+    aoa = [['ລຳດັບ','ບາໂຄດ','ຊື່ສິນຄ້າ','ໝວດ','ຜູ້ຂາຍ','ໂຊນ','ຈຳນວນໃນລະບົບ','ລາຄາ 1 (ກີບ)','ລາຄາ 2 (ກີບ)','ລາຄາ 3 (ກີບ)','ຕົ້ນທຶນສະເລ່ຍ (ກີບ)','ຕົ້ນທຶນ (ບາດ)','ມູນຄ່າສະຕັອກ (ກີບ)']];
+    list.forEach((p,i) => aoa.push([i+1, p.barcode, p.name, p.cat, p.vendor, p.zone, p.stock, p.p1, p.p2, p.p3, p.avgCost, p.costBaht, Math.round(p.stock * p.avgCost)]));
+    widths = [7,16,40,18,16,10,14,14,14,14,18,14,18];
+  } else {
+    aoa = [['ລຳດັບ','ບາໂຄດ','ຊື່ສິນຄ້າ','ໝວດ','ຈຳນວນໃນລະບົບ','ຈຳນວນທີ່ນັບໄດ້','ຜົນຕ່າງ (ນັບໄດ້ - ລະບົບ)','ໝາຍເຫດ']];
+    list.forEach((p,i) => {
+      const r = i + 2;
+      aoa.push([i+1, p.barcode, p.name, p.cat, p.stock, '', { t:'s', v:'', f:'IF(F'+r+'="","",F'+r+'-E'+r+')' }, '']);
+    });
+    widths = [7,16,44,18,16,16,22,26];
+  }
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = widths.map(w => ({ wch: w }));
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, mode === 'full' ? 'ສະຕັອກ (ເຕັມ)' : 'ໃບນັບສະຕັອກ');
+  const d = new Date();
+  const stamp = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  XLSX.writeFile(wb, (mode === 'full' ? 'stock_full_' : 'stock_count_') + stamp + '.xlsx');
+  showToast('Export ສຳເລັດ ' + list.length + ' ລາຍການ');
+  logActivity('export_stock', { mode, rows: list.length });
+}
+
 function renderStockTable(){
+  const exFull = document.getElementById('stockExportFullBtn');
+  if (exFull) exFull.style.display = (currentUser && currentUser.roleName === 'Owner') ? '' : 'none';
   const filtered = getFilteredStockProducts();
   const totalPages = Math.max(1, Math.ceil(filtered.length / stockPageSize));
   if (stockCurrentPage > totalPages) stockCurrentPage = totalPages;

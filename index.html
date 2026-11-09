@@ -945,6 +945,19 @@
       <h2 class="page-title">ສ້າງບາໂຄດ</h2>
       <div class="db-grid">
         <div class="panel">
+          <div class="field" style="border-bottom:1px solid var(--border);padding-bottom:12px">
+            <label>ນຳເຂົ້າລາຍການຈາກ Excel (ໄຟລ໌ທີ່ທີມ Live ແກ້ໄຂແລ້ວ)</label>
+            <input type="file" id="bc-import-file" accept=".xls,.xlsx,.csv" onchange="bcImportExcel(event)">
+            <div style="display:flex;gap:8px;align-items:center;margin-top:6px"><span style="font-size:14px">ຈຳນວນປ້າຍຕໍ່ສິນຄ້າ</span><input type="text" inputmode="numeric" id="bc-import-qty" value="1" style="width:60px;text-align:center"></div>
+            <div id="bcImportInfo" style="font-size:14px;margin-top:6px"></div>
+          </div>
+          <div class="field"><label>ຂະໜາດປ້າຍ</label>
+            <select id="bc-cfg-preset" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="bcPresetChanged()">
+              <option value="p32">32x25 ມມ · 3 ປ້າຍຕໍ່ແຖວ</option>
+              <option value="p40">40x30 ມມ · 1 ປ້າຍຕໍ່ແຖວ</option>
+              <option value="custom">ກຳນົດເອງ</option>
+            </select>
+          </div>
           <div class="field"><label>ຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ)</label>
             <input type="text" id="bc-search" oninput="filterBarcodeProductSelect()" onkeydown="if(event.key==='Enter'){addBarcodeToQueue();}">
           </div>
@@ -1971,7 +1984,8 @@ async function liveSetCurrent(productId){
 // v2.65 (Tar 2026-11-09, "ບັນຊີພະນັກງານ POS ໃຫ້ເຫັນແຕ່ລາຄາຂາຍ ບໍ່ໃຫ້ເຫັນຕົ້ນທຶນ"): ເຊື່ອງຕົ້ນທຶນ/ກຳໄລ/LOT ຕົ້ນທຶນ ຈາກທຸກບົດບາດທີ່ບໍ່ແມ່ນ Owner ຫຼື Manager (Cashier ເຫັນແຕ່ລາຄາຂາຍ): ຄໍລຳຕົ້ນທຶນໃນຕາຕະລາງສະຕັອກ, ຊ່ອງຕົ້ນທຶນໃນຟອມສິນຄ້າ/ຮັບເຂົ້າ, ກຳໄລໃນໜ້າ Dashboard, ລາຍງານກຳໄລ-ຂາດທຶນ, ຄໍລຳກຳໄລໃນລາຍງານຍອດຂາຍ, ແທັບຮັບເຂົ້າ/LOT/ລາຍງານສິນຄ້າເຂົ້າ, ໜ້າຈັດຊື້, ຕົ້ນທຶນໃນປະຫວັດການກະທຳ. Cashier ແກ້ໄຂສິນຄ້າແລ້ວຕົ້ນທຶນເດີມບໍ່ຖືກປ່ຽນ. (ຂໍ້ມູນຍັງມາຮອດບຣາວເຊີ — ການກັ້ນໃນຖານຂໍ້ມູນແມ່ນຂັ້ນຕໍ່ໄປ)
 // v2.66 (Tar 2026-11-09, "ເຄື່ອງພິມ GG-9200BL ມ້ວນປ້າຍ 32x25x3 ຢາກພິມ 3 ບາໂຄດຕ່າງກັນໃນແຖວດຽວ"): ໜ້າ "ສ້າງບາໂຄດ" ປ່ຽນເປັນລາຍການຫຼາຍສິນຄ້າ — ເພີ່ມສິນຄ້າໄດ້ຫຼາຍຕົວ (ມີຊ່ອງຄົ້ນຫາ) ກຳນົດຈຳນວນປ້າຍແຕ່ລະຕົວ ລະບົບເຕີມປ້າຍຊ້າຍ→ຂວາ ແຖວລະ 3 ປ້າຍ (ແຕ່ລະປ້າຍເປັນບາໂຄດຕ່າງກັນໄດ້) ແລ້ວລົງແຖວໃໝ່. ຂະໜາດເຈ້ຍຕັ້ງຕາມມ້ວນປ້າຍ (ຄ່າເລີ່ມຕົ້ນ 32x25 ມມ, 3 ປ້າຍ/ແຖວ, ຫ່າງ 2 ມມ) ແກ້ໄຂໄດ້ໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ" (ຈື່ໄວ້ໃນເຄື່ອງ). ມີ "ເລີ່ມພິມຢູ່ຊ່ອງທີ" ສຳລັບແຖວທີ່ເຫຼືອປ້າຍວ່າງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກໃຊ້ຮູບແບບດຽວກັນ. ບໍ່ພິມທັງໜ້າເວັບອີກ (ເດີມໃຊ້ window.print) ແຕ່ເປີດໜ້າຕ່າງພິມສະເພາະປ້າຍ.
 // v2.67 (Tar 2026-11-09, "ເອົາຊື່ສິນຄ້າ + ລະຫັດ Live (A1, A2) + ລາຄາຂາຍ ໃສ່ປ້າຍບາໂຄດນ້ອຍ ໂດຍພິມຜ່ານ POS ເລີຍ"): ແຖບ "ສິນຄ້າໄລ້ສົດ" ເພີ່ມປຸ່ມ ▤ ພິມປ້າຍ Live — ສົ່ງສິນຄ້າທີ່ເລືອກໄວ້ໃນ Live (ລຽງ A1, A2, A3...) ໄປໜ້າ "ສ້າງບາໂຄດ" ແລ້ວພິມ 3 ປ້າຍ/ແຖວ. ປ້າຍ Live ສະແດງ: ຊື່, ລະຫັດ Live ໂຕໃຫຍ່, ລາຄາ (ເທົ່າກັບໃນແຖບ Live), ບາໂຄດສິນຄ້າ (ປິດໄດ້ໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ"). ປັບຈຳນວນປ້າຍຂອງແຕ່ລະສິນຄ້າໄດ້ກ່ອນພິມ.
-const APP_VERSION = 'v2.67';
+// v2.68 (Tar 2026-11-09, "ທີມ Live ຕັດສິນຄ້າໃນ Excel ອອກ ແລ້ວໃຫ້ນຳເຂົ້າ Excel ມາພິມປ້າຍ + ເລືອກຂະໜາດປ້າຍໄດ້"): ໜ້າ "ສ້າງບາໂຄດ" ເພີ່ມ "ນຳເຂົ້າລາຍການຈາກ Excel" — ອ່ານໄຟລ໌ສະຕັອກທີ່ທີມ Live ແກ້ແລ້ວ (ແຖວທີ່ເຫຼືອ = ສິນຄ້າທີ່ຈະພິມ), ຈັບຄູ່ກັບ POS ດ້ວຍບາໂຄດ (ຖ້າມີຖັນບາໂຄດ) ຫຼື ຊື່ສິນຄ້າ, ຖ້າມີຖັນ "ລະຫັດ" ຈະໃຊ້ເປັນລະຫັດ Live (A1, A2) ເທິງປ້າຍ, ຖ້າມີຖັນ "ຈຳນວນປ້າຍ" ຈະໃຊ້ຈຳນວນນັ້ນ. ເພີ່ມຕົວເລືອກຂະໜາດປ້າຍ: 32x25 ມມ (3 ປ້າຍ/ແຖວ), 40x30 ມມ (1 ປ້າຍ/ແຖວ), ກຳນົດເອງ — ຕົວໜັງສືຂະຫຍາຍຕາມຂະໜາດປ້າຍ.
+const APP_VERSION = 'v2.68';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -6770,6 +6784,21 @@ function bcLoadCfg(){
   }catch(e){}
   return bcCleanCfg(BC_CFG_DEFAULT);
 }
+const BC_PRESETS = {
+  p32: { cols:3, w:32, h:25, hgap:2, vgap:2 },
+  p40: { cols:1, w:40, h:30, hgap:0, vgap:2 }
+};
+function bcPresetKey(c){
+  return Object.keys(BC_PRESETS).find(k => { const q = BC_PRESETS[k]; return q.cols === c.cols && q.w === c.w && q.h === c.h && q.hgap === c.hgap && q.vgap === c.vgap; }) || 'custom';
+}
+function bcPresetChanged(){
+  const k = document.getElementById('bc-cfg-preset').value;
+  const q = BC_PRESETS[k];
+  if (!q) return; // "ກຳນົດເອງ" — ແກ້ເອງໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ"
+  const set = (id, v) => { document.getElementById(id).value = v; };
+  set('bc-cfg-cols', q.cols); set('bc-cfg-w', q.w); set('bc-cfg-h', q.h); set('bc-cfg-hgap', q.hgap); set('bc-cfg-vgap', q.vgap);
+  bcCfgChanged();
+}
 function bcFillCfgForm(){
   const c = bcLoadCfg();
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
@@ -6778,6 +6807,7 @@ function bcFillCfgForm(){
   document.getElementById('bc-cfg-name').checked = c.showName;
   document.getElementById('bc-cfg-price').checked = c.showPrice;
   document.getElementById('bc-cfg-live-bc').checked = c.showBarcode;
+  const pr = document.getElementById('bc-cfg-preset'); if (pr) pr.value = bcPresetKey(c);
 }
 function bcCfgChanged(){
   const g = id => document.getElementById(id).value;
@@ -6854,13 +6884,14 @@ function bcRenderQueue(){
     box.innerHTML = '<p style="font-size:14px;color:var(--text-muted);margin:0">ຍັງບໍ່ມີລາຍການ — ເລືອກສິນຄ້າແລ້ວກົດ "ເພີ່ມເຂົ້າລາຍການພິມ"</p>';
     return;
   }
-  box.innerHTML = items.map(({ it, i, p }) => `
+  const QMAX = 200; // ລາຍການຍາວ (ນຳເຂົ້າຈາກ Excel) ສະແດງແຕ່ 200 ແຖວທຳອິດ — ແຕ່ພິມຄົບທັງໝົດ
+  box.innerHTML = items.slice(0, QMAX).map(({ it, i, p }) => `
     <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
       <span style="color:var(--text-muted);width:20px;text-align:right">${i + 1}</span>
       <span style="flex:1;min-width:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escAttr(p.name)}">${it.code ? `<b style="background:#fff7ec;border:1px solid #f0c48a;border-radius:4px;padding:0 6px;margin-right:6px">${posEsc(it.code)}</b>` : ''}${posEsc(p.name)}<br><span style="font-size:13px;color:var(--text-muted)">${posEsc(p.barcode)}</span></span>
       <input type="text" inputmode="numeric" value="${it.qty}" style="width:56px;text-align:center" onchange="bcSetQty(${i}, this.value)">
       <span class="btn" style="padding:2px 8px" onclick="bcRemove(${i})">✕</span>
-    </div>`).join('');
+    </div>`).join('') + (items.length > QMAX ? `<p style="font-size:13px;color:var(--text-muted);margin:6px 0 0">ສະແດງ ${QMAX} ລາຍການທຳອິດ ຈາກທັງໝົດ ${items.length} ລາຍການ</p>` : '');
 }
 // ລຳດັບປ້າຍທັງໝົດ (ຕາມລາຍການ, ແຕ່ລະສິນຄ້າຊ້ຳຕາມຈຳນວນ)
 function bcBuildLabels(){
@@ -6924,18 +6955,19 @@ function bcPageSize(cfg){
 function bcLabelCss(cfg, mode){
   const s = mode === 'preview' ? '#bcPreview ' : '';
   const pg = bcPageSize(cfg);
+  const k = Math.max(0.7, Math.min(cfg.w / 32, cfg.h / 25)).toFixed(3); // ຂະຫຍາຍຕົວໜັງສືຕາມຂະໜາດປ້າຍ (ອີງ 32x25)
   const base = `
-    ${s}.bcl{width:${cfg.w}mm;height:${cfg.h}mm;box-sizing:border-box;padding:0.8mm 1mm;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;text-align:center;flex:none;background:#fff;color:#000}
-    ${s}.bcl-n{font-size:2.6mm;line-height:1.3;font-weight:700;max-height:7mm;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+    ${s}.bcl{width:${cfg.w}mm;height:${cfg.h}mm;box-sizing:border-box;--k:${k};padding:calc(0.8mm*var(--k)) calc(1mm*var(--k));overflow:hidden;display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;text-align:center;flex:none;background:#fff;color:#000}
+    ${s}.bcl-n{font-size:calc(2.6mm*var(--k));line-height:1.3;font-weight:700;max-height:calc(7mm*var(--k));overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
     ${s}.bcl-b{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
     ${s}.bcl-b svg{width:100%;height:100%;display:block}
-    ${s}.bcl-p{font-size:3mm;line-height:1.2;font-weight:700}
-    ${s}.bcl-live .bcl-n{font-size:2.3mm;max-height:6.2mm}
+    ${s}.bcl-p{font-size:calc(3mm*var(--k));line-height:1.2;font-weight:700}
+    ${s}.bcl-live .bcl-n{font-size:calc(2.3mm*var(--k));max-height:calc(6.2mm*var(--k))}
     ${s}.bcl-lr{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;white-space:nowrap}
-    ${s}.bcl-code{font-size:5.5mm;line-height:1.15;font-weight:700}
-    ${s}.bcl-lp{font-size:3mm;line-height:1.2;font-weight:700}
-    ${s}.bcl-lp small{font-size:2.2mm}
-    ${s}.bcl-live .bcl-b{flex:0 0 8.5mm}`;
+    ${s}.bcl-code{font-size:calc(5.5mm*var(--k));line-height:1.15;font-weight:700}
+    ${s}.bcl-lp{font-size:calc(3mm*var(--k));line-height:1.2;font-weight:700}
+    ${s}.bcl-lp small{font-size:calc(2.2mm*var(--k))}
+    ${s}.bcl-live .bcl-b{flex:0 0 calc(8.5mm*var(--k))}`;
   if (mode === 'preview'){
     return base + `
     #bcPreview{zoom:1.6}
@@ -6969,6 +7001,72 @@ function updateBarcodePreview(){
   const MAX_ROWS = 10; // ສະແດງຕົວຢ່າງສະເພາະ 10 ແຖວທຳອິດ
   wrap.innerHTML = `<style>${bcLabelCss(cfg, 'preview')}</style>` + bcSheetHtml(rows.slice(0, MAX_ROWS), cfg)
     + (rows.length > MAX_ROWS ? `<p style="font-size:13px;color:var(--text-muted);margin:6px 0 0;zoom:0.625">ສະແດງສະເພາະ ${MAX_ROWS} ແຖວທຳອິດໃນຕົວຢ່າງ — ຕອນພິມຈະອອກຄົບທັງໝົດ</p>` : '');
+}
+/* ---- ນຳເຂົ້າຈາກ Excel (ໄຟລ໌ສະຕັອກທີ່ສົ່ງໃຫ້ທີມ Live ແລ້ວທີມຕັດ/ແກ້ໄຂ) ---- */
+function bcNorm(v){ return String(v == null ? '' : v).replace(/[\u200b-\u200d\ufeff]/g, '').replace(/\s+/g, ' ').trim().toLowerCase(); }
+// rows = ແຖວທັງໝົດຂອງແຜ່ນທຳອິດ (ແຖວ 1 = ຫົວຕາຕະລາງ). ຈັບຄູ່ກັບ POS ດ້ວຍບາໂຄດ (ຖ້າມີຖັນບາໂຄດ) ຫຼື ຊື່ສິນຄ້າ
+function bcParseImportRows(rows, products, defQty){
+  const hdr = (rows[0] || []).map(bcNorm);
+  const find = fn => hdr.findIndex(fn);
+  let nameCol = find(h => h.includes('ຊື່') || h.includes('name')); if (nameCol < 0) nameCol = 1;
+  const bcCol = find(h => h.includes('ບາໂຄດ') || h.includes('barcode'));
+  const codeCol = find(h => !h.includes('ບາໂຄດ') && !h.includes('barcode') && (h.includes('ລະຫັດ') || h.includes('code') || h.includes('live') || h === 'cf'));
+  const qtyCol = find(h => h.includes('ຈຳນວນປ້າຍ'));
+  const byBarcode = new Map(), byName = new Map();
+  products.forEach(p => {
+    if (p.barcode) byBarcode.set(String(p.barcode).trim(), p);
+    const k = bcNorm(p.name); if (!byName.has(k)) byName.set(k, []); byName.get(k).push(p);
+  });
+  const merged = new Map(); const unmatched = []; let total = 0, ambiguous = 0, withCode = 0;
+  for (let i = 1; i < rows.length; i++){
+    const r = rows[i] || [];
+    const nm = String(r[nameCol] == null ? '' : r[nameCol]).trim();
+    const bc = bcCol >= 0 ? String(r[bcCol] == null ? '' : r[bcCol]).trim() : '';
+    if (!nm && !bc) continue;
+    total++;
+    let p = bc ? byBarcode.get(bc) : null;
+    if (!p && nm){
+      const list = byName.get(bcNorm(nm));
+      if (list && list.length){ p = list[0]; if (list.length > 1) ambiguous++; }
+    }
+    if (!p){ unmatched.push(nm || bc); continue; }
+    const code = codeCol >= 0 ? String(r[codeCol] == null ? '' : r[codeCol]).trim().toUpperCase() : '';
+    if (code) withCode++;
+    const q = qtyCol >= 0 ? (parseInt(r[qtyCol], 10) || defQty) : defQty;
+    const key = p.id + '|' + code;
+    const ex = merged.get(key);
+    if (ex) ex.qty = Math.min(500, ex.qty + q); else merged.set(key, { id: p.id, qty: Math.min(500, Math.max(1, q)), code });
+  }
+  return { entries: Array.from(merged.values()), unmatched, ambiguous, total, withCode, hasCodeCol: codeCol >= 0 };
+}
+function bcImportExcel(ev){
+  const input = ev.target;
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const info = document.getElementById('bcImportInfo');
+  if (typeof XLSX === 'undefined'){ showToast('⚠️ ຕ້ອງການອິນເຕີເນັດເພື່ອໂຫຼດຕົວອ່ານ Excel — ລອງໃໝ່'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
+      const defQty = Math.max(1, Math.min(500, parseInt(document.getElementById('bc-import-qty').value, 10) || 1));
+      const res = bcParseImportRows(rows, PRODUCTS, defQty);
+      if (!res.entries.length){
+        if (info) info.innerHTML = `<span style="color:var(--danger)">ບໍ່ພົບລາຍການທີ່ຈັບຄູ່ກັບ POS ໄດ້ (ອ່ານ ${res.total} ແຖວ)</span>`;
+        showToast('ບໍ່ພົບລາຍການທີ່ຈັບຄູ່ກັບ POS ໄດ້'); return;
+      }
+      BC_QUEUE = res.entries;
+      const parts = [`ອ່ານໄດ້ ${res.total} ແຖວ · ຈັບຄູ່ກັບ POS ໄດ້ <b>${res.entries.length}</b> ລາຍການ`];
+      if (res.hasCodeCol) parts.push(`ມີລະຫັດ Live ${res.withCode} ແຖວ`);
+      if (res.ambiguous) parts.push(`ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguous} ແຖວ (ເລືອກຕົວທຳອິດ)`);
+      if (res.unmatched.length) parts.push(`<span style="color:var(--danger)">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ: ${posEsc(res.unmatched.slice(0, 8).join(', '))}${res.unmatched.length > 8 ? ' …' : ''}</span>`);
+      if (info) info.innerHTML = parts.join('<br>');
+      updateBarcodePreview();
+    }catch(err){ showToast('⚠️ ອ່ານໄຟລ໌ບໍ່ໄດ້: ' + (err.message || '')); }
+    input.value = '';
+  };
+  reader.readAsArrayBuffer(file);
 }
 function printBarcodes(){ bcPrintLabels(bcBuildLabels(), bcStartSlot()); }
 function bcPrintLabels(labels, startSlot){

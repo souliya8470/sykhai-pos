@@ -212,6 +212,7 @@
   .bc-label{display:none}
   .bill-card-detail{padding:12px 16px;border-top:1px dashed var(--border-strong)}
   .bill-card-detail table{font-size:15px}
+  body.no-cost .cost-only{display:none !important}
   .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
   .metric{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px}
   .metric p.label{font-size:15px;color:var(--text-soft);margin:0 0 4px}
@@ -456,7 +457,7 @@
           <a class="home-btn" data-btnkey="sales" href="#sales" onclick="switchView('sales');return false;"><span class="hi">🛒</span>ຂາຍສິນຄ້າ</a>
           <a class="home-btn" data-btnkey="customers" href="#customers" onclick="switchView('customers');return false;"><span class="hi">👥</span>ລູກຄ້າສະມາຊິກ</a>
           <a class="home-btn" data-btnkey="stock" href="#stock" onclick="switchView('stock');return false;"><span class="hi">📦</span>ສິນຄ້າ ສະຕ໊ອກ</a>
-          <a class="home-btn" data-btnkey="purchase" href="#purchase" onclick="switchView('purchase');return false;"><span class="hi">🧺</span>ຈັດຊື້</a>
+          <a class="home-btn cost-only" data-btnkey="purchase" href="#purchase" onclick="switchView('purchase');return false;"><span class="hi">🧺</span>ຈັດຊື້</a>
           <a class="home-btn" data-btnkey="reports" href="#reports" onclick="switchView('reports');return false;"><span class="hi">📊</span>ລາຍງານ</a>
           <a class="home-btn" data-btnkey="activitylog" href="#activitylog" onclick="switchView('activitylog');return false;"><span class="hi">📜</span>ປະຫວັດການກະທຳ</a>
           <a class="home-btn" data-btnkey="staff" href="#staff" onclick="switchView('staff');return false;"><span class="hi">🧑‍🤝‍🧑</span>ພະນັກງານ</a>
@@ -565,7 +566,7 @@
       <div class="metrics">
         <div class="metric"><p class="label">ຍອດຂາຍມື້ນີ້</p><p class="val" id="dash-sales-today">0</p></div>
         <div class="metric"><p class="label">ຈຳນວນບິນ</p><p class="val" id="dash-bill-count">0</p></div>
-        <div class="metric"><p class="label">ກຳໄລ (ຄາດ)</p><p class="val" style="color:var(--success)" id="dash-profit">0</p></div>
+        <div class="metric cost-only"><p class="label">ກຳໄລ (ຄາດ)</p><p class="val" style="color:var(--success)" id="dash-profit">0</p></div>
         <div class="metric"><p class="label">ສະຕ໊ອກໃກ້ໝົດ</p><p class="val" style="color:var(--warning)" id="dash-lowstock">0 ລາຍການ</p></div>
       </div>
       <div class="panel">
@@ -594,9 +595,9 @@
       <div class="page-shell">
         <div style="display:flex;flex-direction:column;gap:14px">
           <div class="panel page-nav">
-            <a class="navitem" href="#stock/receive" data-stocktab="receive" onclick="switchStockTab('receive');return false;">📥 ຮັບເຂົ້າສະຕ໊ອກ (+ເພີ່ມ)</a>
+            <a class="navitem cost-only" href="#stock/receive" data-stocktab="receive" onclick="switchStockTab('receive');return false;">📥 ຮັບເຂົ້າສະຕ໊ອກ (+ເພີ່ມ)</a>
             <a class="navitem" href="#stock/transfer" data-stocktab="transfer" onclick="switchStockTab('transfer');return false;">📤 ໂອນອອກສະຕ໊ອກ (-ໂອນ)</a>
-            <a class="navitem" href="#stock/lot" data-stocktab="lot" onclick="switchStockTab('lot');return false;">🏷️ ສິນຄ້າຕາມ LOT</a>
+            <a class="navitem cost-only" href="#stock/lot" data-stocktab="lot" onclick="switchStockTab('lot');return false;">🏷️ ສິນຄ້າຕາມ LOT</a>
           </div>
           <div class="panel page-nav">
             <a class="navitem active" href="#stock/list" data-stocktab="list" onclick="switchStockTab('list');return false;">📋 ລາຍການສິນຄ້າ</a>
@@ -607,7 +608,7 @@
           <div class="panel page-nav">
             <a class="navitem" href="#stock/remaining" data-stocktab="remaining" onclick="switchStockTab('remaining');return false;">📦 ສິນຄ້າຄົງເຫຼືອ</a>
             <a class="navitem" href="#stock/outofstock" data-stocktab="outofstock" onclick="switchStockTab('outofstock');return false;">🚫 ສິນຄ້າໝົດສະຕ໊ອກ</a>
-            <a class="navitem" href="#stock/report_in" data-stocktab="report_in" onclick="switchStockTab('report_in');return false;">📈 ລາຍງານສິນຄ້າເຂົ້າ</a>
+            <a class="navitem cost-only" href="#stock/report_in" data-stocktab="report_in" onclick="switchStockTab('report_in');return false;">📈 ລາຍງານສິນຄ້າເຂົ້າ</a>
             <a class="navitem" href="#stock/report_out" data-stocktab="report_out" onclick="switchStockTab('report_out');return false;">📉 ລາຍງານສິນຄ້າອອກ</a>
             <a class="navitem" href="#stock/online" data-stocktab="online" onclick="switchStockTab('online');return false;">🛒 ລາຍການສິນຄ້າອອນລາຍ</a>
             <a class="navitem" href="#stock/live" data-stocktab="live" onclick="switchStockTab('live');return false;">🔴 ສິນຄ້າໄລ້ສົດ</a>
@@ -620,7 +621,7 @@
             <div class="panel">
               <div class="stock-toolbar">
                 <div class="search-box"><span>🔍</span><input id="stockSearch" placeholder="ຄົ້ນຫາຊື່ ຫຼື ບາໂຄດ" oninput="stockCurrentPage=1; renderStockTable()"></div>
-                <button class="btn" onclick="openReceiveModal()">+ ຮັບເຄື່ອງເຂົ້າ (LOT)</button>
+                <button class="btn cost-only" onclick="openReceiveModal()">+ ຮັບເຄື່ອງເຂົ້າ (LOT)</button>
                 <button class="btn" onclick="openExportModal()">📥 Export Excel</button>
                 <button class="btn" onclick="document.getElementById('excelImportInput').click()">📥 ນຳເຂົ້າຈາກ Excel (ລະບົບເກົ່າ)</button>
                 <input type="file" id="excelImportInput" accept=".xls,.xlsx,.csv" style="display:none" onchange="handleExcelImport(event)">
@@ -888,7 +889,7 @@
             <a class="navitem" href="#reports/stock_movement" data-report="stock_movement" onclick="switchReportTab('stock_movement');return false;">🔄 ການເຄື່ອນໄຫວສະຕ໊ອກ</a>
             <a class="navitem" href="#reports/stock_remaining" data-report="stock_remaining" onclick="switchReportTab('stock_remaining');return false;">📦 ສະຕ໊ອກຍັງເຫຼືອທຸກສາຂາ</a>
           </div>
-          <div class="panel page-nav">
+          <div class="panel page-nav cost-only">
             <a class="navitem" href="#reports/profit" data-report="profit" onclick="switchReportTab('profit');return false;">💰 ກຳໄລ-ຂາດທຶນ</a>
           </div>
           <div class="panel page-nav">
@@ -1279,8 +1280,8 @@
         <option>ອາຫານເສີມ</option><option>ເຄື່ອງສຳອາງ</option><option>ອື່ນໆ</option>
       </select>
     </div>
-    <div class="field" style="background:var(--surface-1);padding:10px;border-radius:var(--radius)"><label>ຕົ້ນທຶນ (ກີບ) — ໃຊ້ຄິດກຳໄລ ບໍ່ແມ່ນລາຄາຂາຍ</label><input type="text" inputmode="numeric" id="pf-cost-kip" placeholder="0" oninput="formatPriceInput(this)" style="color:#000;font-weight:800"></div>
-    <div class="field" style="background:var(--surface-1);padding:10px;border-radius:var(--radius)"><label>🇹🇭 ຕົ້ນທຶນ (ບາດ) — ໃຊ້ຄິດກຳໄລ ບໍ່ແມ່ນລາຄາຂາຍ</label><input type="text" inputmode="numeric" id="pf-cost-baht" placeholder="0" oninput="formatPriceInput(this)" style="color:#c0392b;font-weight:800"></div>
+    <div class="field cost-only" style="background:var(--surface-1);padding:10px;border-radius:var(--radius)"><label>ຕົ້ນທຶນ (ກີບ) — ໃຊ້ຄິດກຳໄລ ບໍ່ແມ່ນລາຄາຂາຍ</label><input type="text" inputmode="numeric" id="pf-cost-kip" placeholder="0" oninput="formatPriceInput(this)" style="color:#000;font-weight:800"></div>
+    <div class="field cost-only" style="background:var(--surface-1);padding:10px;border-radius:var(--radius)"><label>🇹🇭 ຕົ້ນທຶນ (ບາດ) — ໃຊ້ຄິດກຳໄລ ບໍ່ແມ່ນລາຄາຂາຍ</label><input type="text" inputmode="numeric" id="pf-cost-baht" placeholder="0" oninput="formatPriceInput(this)" style="color:#c0392b;font-weight:800"></div>
     <div class="field"><label>ລາຄາ 1 (ກີບ-ຍ່ອຍ)</label><input type="text" inputmode="numeric" id="pf-p1" placeholder="0" oninput="formatPriceInput(this)" style="color:#000;font-weight:800"></div>
     <div class="field"><label>ລາຄາ 2 (ກີບ-ສົ່ງ)</label><input type="text" inputmode="numeric" id="pf-p2" placeholder="0" oninput="formatPriceInput(this)" style="color:#000;font-weight:800"></div>
     <div class="field"><label>🇹🇭 ລາຄາ 3 (ບາດ)</label><input type="text" inputmode="numeric" id="pf-p3" placeholder="0" oninput="formatPriceInput(this)" style="color:#c0392b;font-weight:800"></div>
@@ -1467,8 +1468,8 @@
     </div>
     <div class="row">
       <div class="field grow"><label>ຈຳນວນຮັບເຂົ້າ</label><input type="text" id="recvQty" placeholder="100" oninput="recvPreview()"></div>
-      <div class="field grow"><label>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</label><input type="text" id="recvCost" placeholder="70000" oninput="recvPreview()"></div>
-      <div class="field grow"><label>🇹🇭 ຕົ້ນທຶນ/ໜ່ວຍ (ບາດ, ຖ້າມີ)</label><input type="text" id="recvCostBaht" placeholder="0"></div>
+      <div class="field grow cost-only"><label>ຕົ້ນທຶນ/ໜ່ວຍ (ກີບ)</label><input type="text" id="recvCost" placeholder="70000" oninput="recvPreview()"></div>
+      <div class="field grow cost-only"><label>🇹🇭 ຕົ້ນທຶນ/ໜ່ວຍ (ບາດ, ຖ້າມີ)</label><input type="text" id="recvCostBaht" placeholder="0"></div>
     </div>
     <div id="recvPreview" style="margin:0 0 10px"></div>
     <div class="field"><label>ວັນໝົດອາຍຸ (ຖ້າມີ) — ກົດເລືອກຈາກປະຕິທິນ</label>
@@ -1639,7 +1640,7 @@ function summarizeActivity(a){
   if (a.action === 'cancel_bill') return `ບິນ ${d.transaction_no||'-'} · ເຫດຜົນ: ${d.reason||'-'}`;
   if (a.action === 'receive_stock') {
     if (d.po_no) return `ໃບສັ່ງຊື້ ${d.po_no} · Vendor: ${d.vendor||'-'} · ${d.item_count||0} ລາຍການ`;
-    return `${d.product_name||'-'} +${d.qty||0} · ຕົ້ນທຶນ ${fmt(d.cost_kip||0)}${d.cost_baht?' + ฿'+fmt(d.cost_baht):''}`;
+    return `${d.product_name||'-'} +${d.qty||0}${canSeeCost() ? ` · ຕົ້ນທຶນ ${fmt(d.cost_kip||0)}${d.cost_baht?' + ฿'+fmt(d.cost_baht):''}` : ''}`;
   }
   if (a.action === 'create_product') return `${d.product_name||'-'} · ບາໂຄດ ${d.barcode||'-'}${d.category?' · '+d.category:''}`;
   if (a.action === 'stock_adjustment') return `${d.product_name||'-'} · ${d.old_qty} → ${d.new_qty} (${d.delta>0?'+':''}${d.delta}) ${d.reason&&d.reason!=='-'?'· '+d.reason:''}`;
@@ -1710,9 +1711,9 @@ function renderActivityDetailHtml(a){
   }
   if (a.action === 'receive_stock'){
     if (d.po_no){
-      return head + kv('ໃບສັ່ງຊື້', d.po_no) + kv('Vendor', d.vendor||'-') + kv('ຈຳນວນລາຍການ', d.item_count||0) + itemsTable((d.items||[]).map(i=>({name:i.product_name, qty:i.qty, price:i.cost_kip})));
+      return head + kv('ໃບສັ່ງຊື້', d.po_no) + kv('Vendor', d.vendor||'-') + kv('ຈຳນວນລາຍການ', d.item_count||0) + (canSeeCost() ? itemsTable((d.items||[]).map(i=>({name:i.product_name, qty:i.qty, price:i.cost_kip}))) : '');
     }
-    return head + kv('ສິນຄ້າ', d.product_name||'-') + kv('ຈຳນວນເຂົ້າ', '+'+(d.qty||0)) + kv('ຕົ້ນທຶນ', fmt(d.cost_kip||0)+' ກີບ'+(d.cost_baht?' + ฿'+fmt(d.cost_baht):''));
+    return head + kv('ສິນຄ້າ', d.product_name||'-') + kv('ຈຳນວນເຂົ້າ', '+'+(d.qty||0)) + (canSeeCost() ? kv('ຕົ້ນທຶນ', fmt(d.cost_kip||0)+' ກີບ'+(d.cost_baht?' + ฿'+fmt(d.cost_baht):'')) : '');
   }
   if (a.action === 'create_product'){
     return head + kv('ຊື່ສິນຄ້າ', d.product_name||'-') + kv('ບາໂຄດ', d.barcode||'-') + kv('ໝວດໝູ່', d.category||'-') + (d.price_1 ? kv('ລາຄາ 1', fmt(d.price_1)+' ກີບ') : '');
@@ -1725,7 +1726,7 @@ function renderActivityDetailHtml(a){
       + kv('ເຫດຜົນ', d.reason||'-');
   }
   if (a.action === 'edit_product'){
-    const rows = (d.changes||[]).map(c => `<tr><td>${c.label}</td><td style="text-align:right;color:var(--text-muted);text-decoration:line-through">${c.old}</td><td style="text-align:right;color:var(--accent-text);font-weight:700">${c.new}</td></tr>`).join('');
+    const rows = (d.changes||[]).filter(c => canSeeCost() || !/ຕົ້ນທຶນ/.test(c.label||'')).map(c => `<tr><td>${c.label}</td><td style="text-align:right;color:var(--text-muted);text-decoration:line-through">${c.old}</td><td style="text-align:right;color:var(--accent-text);font-weight:700">${c.new}</td></tr>`).join('');
     return head + kv('ສິນຄ້າ', d.product_name||'-')
       + `<table style="width:100%;margin-top:8px"><thead><tr><th>ຊ່ອງ</th><th>ຄ່າເກົ່າ</th><th>ຄ່າໃໝ່</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
@@ -1737,7 +1738,7 @@ function renderActivityDetailHtml(a){
     return head + kv('ຜູ້ໃຊ້', d.username||'-');
   }
   // ການກະທຳອື່ນໆທີ່ບໍ່ຮູ້ຈັກ — ສະແດງແບບ key-value ທົ່ວໄປແທນ raw JSON
-  return head + Object.keys(d).map(k => kv(ACTIVITY_FIELD_LABELS[k]||k, typeof d[k]==='object' ? JSON.stringify(d[k]) : String(d[k]))).join('');
+  return head + Object.keys(d).filter(k => canSeeCost() || !/cost/i.test(k)).map(k => kv(ACTIVITY_FIELD_LABELS[k]||k, typeof d[k]==='object' ? JSON.stringify(d[k]) : String(d[k]))).join('');
 }
 function viewActivityDetail(idx){
   const a = activityLogCache[idx];
@@ -1926,8 +1927,16 @@ async function liveSetCurrent(productId){
 // v2.62 (Tar 2026-11-05, ຫຼັງເຫດການຖືກແຮັກ): ຕາຕະລາງສິນຄ້າ/lot/ບິນຈະຖືກລັອກ (RLS) ເຊິ່ງ realtime ຈະບໍ່ສົ່ງ event → ເພີ່ມການກວດການປ່ຽນແປງທຸກ 10 ວິນາທີ (rpc pos_change_stamp, ເບົາຫຼາຍ) ແລ້ວໂຫຼດຂໍ້ມູນໃໝ່ສະເພາະເມື່ອມີການປ່ຽນ — ເຮັດໃຫ້ສະຕັອກ/ບິນຂອງເຄື່ອງອື່ນອັບເດດຕາມເດີມ.
 // v2.63 (Tar 2026-11-06, "ສົ່ງອອກສະຕັອກເປັນ Excel ໃຫ້ທີມງານໄລ່ສະຕັອກ"): ເພີ່ມປຸ່ມ Export Excel ໃນໜ້າສະຕັອກ (ໄຟລ໌ .xlsx ແທ້). ແບບ "ໃບນັບສະຕັອກ": ບາໂຄດ, ຊື່, ໝວດ, ຈຳນວນໃນລະບົບ, ຊ່ອງໃຫ້ຂຽນຈຳນວນທີ່ນັບໄດ້ + ຜົນຕ່າງ (ສູດຄຳນວນເອງ) + ໝາຍເຫດ — ບໍ່ມີລາຄາ/ຕົ້ນທຶນ ເພື່ອສົ່ງໃຫ້ທີມໄດ້. ແບບ "ເຕັມ" (ສະເພາະ Owner): ມີຜູ້ຂາຍ, ໂຊນ, ລາຄາ 1-3, ຕົ້ນທຶນ, ມູນຄ່າສະຕັອກ. ສົ່ງອອກຕາມຜົນຄົ້ນຫາ/ການຈັດລຽງໃນໜ້ານັ້ນ ແລະ ບັນທຶກລົງບັນທຶກກິດຈະກຳ. ສະເພາະ Owner ແລະ Manager.
 // v2.64 (Tar 2026-11-06, "ກົດ export ແລ້ວໃຫ້ມີໜ້າຕ່າງເລືອກຫົວຂໍ້ + ຕິກບໍ່ເອົາສິນຄ້າສະຕັອກ 0"): ປຸ່ມ Export ໃນໜ້າສະຕັອກເປີດໜ້າຕ່າງໃຫ້ຕິກເລືອກຖັນທີ່ຕ້ອງການ (ລຳດັບ, ຮູບສິນຄ້າ (ລິ້ງ), ບາໂຄດ, ຊື່, ໝວດ, ສະຕັອກ, ຕົ້ນທຶນ, ລາຄາຂາຍ, ມູນຄ່າສະຕັອກ, ຜູ້ຂາຍ, ໂຊນ, ຊ່ອງນັບໄດ້/ຜົນຕ່າງ/ໝາຍເຫດ) + ຕິກ "ສະເພາະສິນຄ້າທີ່ມີສະຕັອກ" (ຕັດສະຕັອກ 0 ແລະຕິດລົບອອກ) + ສະແດງຈຳນວນທີ່ຈະອອກ. ມີປຸ່ມຊຸດສຳເລັດຮູບ. ຖັນຕົ້ນທຶນ/ລາຄາ/ມູນຄ່າ ສະເພາະ Owner. ຈື່ການເລືອກຄັ້ງຫຼ້າສຸດ.
-const APP_VERSION = 'v2.64';
+// v2.65 (Tar 2026-11-09, "ບັນຊີພະນັກງານ POS ໃຫ້ເຫັນແຕ່ລາຄາຂາຍ ບໍ່ໃຫ້ເຫັນຕົ້ນທຶນ"): ເຊື່ອງຕົ້ນທຶນ/ກຳໄລ/LOT ຕົ້ນທຶນ ຈາກທຸກບົດບາດທີ່ບໍ່ແມ່ນ Owner ຫຼື Manager (Cashier ເຫັນແຕ່ລາຄາຂາຍ): ຄໍລຳຕົ້ນທຶນໃນຕາຕະລາງສະຕັອກ, ຊ່ອງຕົ້ນທຶນໃນຟອມສິນຄ້າ/ຮັບເຂົ້າ, ກຳໄລໃນໜ້າ Dashboard, ລາຍງານກຳໄລ-ຂາດທຶນ, ຄໍລຳກຳໄລໃນລາຍງານຍອດຂາຍ, ແທັບຮັບເຂົ້າ/LOT/ລາຍງານສິນຄ້າເຂົ້າ, ໜ້າຈັດຊື້, ຕົ້ນທຶນໃນປະຫວັດການກະທຳ. Cashier ແກ້ໄຂສິນຄ້າແລ້ວຕົ້ນທຶນເດີມບໍ່ຖືກປ່ຽນ. (ຂໍ້ມູນຍັງມາຮອດບຣາວເຊີ — ການກັ້ນໃນຖານຂໍ້ມູນແມ່ນຂັ້ນຕໍ່ໄປ)
+const APP_VERSION = 'v2.65';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
+const COST_ROLES = ['Owner','Manager'];
+const COST_COL_KEYS = ['avgCost','costBaht'];
+function canSeeCost(){ return !!(typeof currentUser !== 'undefined' && currentUser && COST_ROLES.includes(currentUser.roleName)); }
+function stockVisibleCols(){ return stockColumnConfig.order.filter(k => !stockColumnConfig.hidden.includes(k) && (canSeeCost() || !COST_COL_KEYS.includes(k))); }
+function applyCostVisibility(){ document.body.classList.toggle('no-cost', !canSeeCost()); }
+const COST_ONLY_STOCK_TABS = ['receive','lot','report_in'];
 
 const fmt = n => Math.round(n || 0).toLocaleString('en-US');
 const escAttr = s => String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); // ກັນ HTML attribute ແຕກ ຖ້າຂໍ້ຄວາມມີເຄື່ອງໝາຍ " ຢູ່ໃນນັ້ນ
@@ -2244,6 +2253,7 @@ let selectedCustomerId = null;
    INIT / LOADING
    ============================================================ */
 async function initApp(){
+  applyCostVisibility(); // v2.65
   resetReportDateFilter(); resetActivityDateFilter(); // v2.46: ເຂົ້າລະບົບໃໝ່ → ຕົວກອງຂອງບັນຊີກ່ອນໜ້າບໍ່ຕິດມາ
   document.getElementById('appVersionTag').textContent = APP_VERSION;
   showToast('ກຳລັງໂຫຼດຂໍ້ມູນ...');
@@ -2773,6 +2783,7 @@ const VALID_VIEWS = ['home','sales','stock','purchase','customers','reports','st
 const SUBTAB_VIEWS = ['stock','reports','purchase','customers','settings']; // ໜ້າທີ່ມີແທັບຍ່ອຍ ແລະ ຕ້ອງການຄ້າງໄວ້ບ່ອນເກົ່າ ຫຼັງ reload/ເປີດແທັບໃໝ່
 let suppressHashUpdate = false;
 function switchView(name, skipHashUpdate, subtab){
+  if (name === 'purchase' && !canSeeCost()){ name = 'home'; subtab = null; } // v2.65
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   document.getElementById('backHomeBtn').style.display = (name === 'home') ? 'none' : 'block';
@@ -4736,7 +4747,7 @@ async function renderDashboard(){
     : fmt(todayStats.revenueKip);
   document.getElementById('dash-sales-today').textContent = salesTodayTxt;
   document.getElementById('dash-bill-count').textContent = todayStats.billCount;
-  document.getElementById('dash-profit').textContent = fmt(todayStats.profit) + (todayStats.revenueBaht>0 ? ` + ฿${fmt(todayStats.profitBaht)}` : '');
+  document.getElementById('dash-profit').textContent = !canSeeCost() ? '' : fmt(todayStats.profit) + (todayStats.revenueBaht>0 ? ` + ฿${fmt(todayStats.profitBaht)}` : '');
   const lowCount = PRODUCTS.filter(p=>p.stock<=(p.lowStockAlert ?? 10)).length;
   document.getElementById('dash-lowstock').textContent = lowCount + ' ລາຍການ';
 
@@ -4786,6 +4797,7 @@ function closeLowStockModal(){ document.getElementById('lowStockOverlay').classL
    STOCK / PRODUCTS
    ============================================================ */
 function switchStockTab(tab, skipHashUpdate){
+  if (!canSeeCost() && COST_ONLY_STOCK_TABS.includes(tab)) tab = 'list'; // v2.65
   document.querySelectorAll('#view-stock .page-nav .navitem').forEach(n => n.classList.toggle('active', n.dataset.stocktab === tab));
   document.querySelectorAll('.stocktab').forEach(s => s.style.display = (s.id === 'stocktab-'+tab) ? 'block' : 'none');
   localStorage.setItem('pos_lastsubtab_stock', tab);
@@ -4865,7 +4877,7 @@ function renderOnlineProductList(){
   if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || p.barcode.includes(q));
   list = list.slice().sort((a,b)=>a.name.localeCompare(b.name,'lo'));
 
-  const visibleCols = stockColumnConfig.order.filter(k => !stockColumnConfig.hidden.includes(k));
+  const visibleCols = stockVisibleCols();
   const thead = document.getElementById('onlineProductTableHead');
   if (thead) thead.innerHTML = `<tr><th style="width:50px">ລ/ດ</th>${visibleCols.map(k=>`<th style="white-space:nowrap">${STOCK_COL_DEFS[k].label}</th>`).join('')}<th style="width:90px">ແກ້ໄຂ</th><th style="width:135px">ນັບສາງ</th></tr>`;
 
@@ -4945,7 +4957,7 @@ async function saveStockColumnConfig(cfg){
 }
 function renderStockTableHeader(){
   const thead = document.getElementById('stockTableHead');
-  const visibleCols = stockColumnConfig.order.filter(k => !stockColumnConfig.hidden.includes(k));
+  const visibleCols = stockVisibleCols();
   const widths = stockColumnConfig.widths || {};
   const fixedTh = (key, label, defaultWidth) => `<th data-colkey="${key}" style="white-space:nowrap;width:${widths[key]||defaultWidth}px">${label}<span class="col-resize-handle" onmousedown="startColResize(event,'${key}')"></span></th>`;
   thead.innerHTML = `<tr><th style="width:36px"><input type="checkbox" id="stockSelectAllPageBox" onchange="toggleSelectAllStockPage(this.checked)"></th><th style="width:50px">ລ/ດ</th>${visibleCols.map(k=>`<th draggable="true" data-colkey="${k}" style="cursor:grab;${widths[k]?`width:${widths[k]}px`:''}" ondragstart="onStockThDragStart(event,'${k}')" ondragover="onStockThDragOver(event,'${k}')" ondragleave="onStockThDragLeave(event)" ondrop="onStockThDrop(event,'${k}')" ondragend="onStockThDragEnd(event)">${STOCK_COL_DEFS[k].label}<span class="col-resize-handle" draggable="false" onmousedown="startColResize(event,'${k}')"></span></th>`).join('')}${fixedTh('_edit','ແກ້ໄຂ',90)}${fixedTh('_adjust','ນັບສາງ',135)}</tr>`;
@@ -5048,7 +5060,7 @@ function stockCellHtml(key, p){
 }
 function openStockColumnManager(){
   const list = document.getElementById('colMgrList');
-  list.innerHTML = stockColumnConfig.order.map(k => `
+  list.innerHTML = stockColumnConfig.order.filter(k => canSeeCost() || !COST_COL_KEYS.includes(k)).map(k => `
     <div class="col-mgr-row" draggable="true" data-key="${k}"
       ondragstart="event.dataTransfer.setData('text/plain','${k}')"
       ondragover="event.preventDefault()"
@@ -5252,7 +5264,7 @@ function renderStockTable(){
   const start = (stockCurrentPage - 1) * stockPageSize;
   const pageItems = filtered.slice(start, start + stockPageSize);
   renderStockTableHeader();
-  const visibleCols = stockColumnConfig.order.filter(k => !stockColumnConfig.hidden.includes(k));
+  const visibleCols = stockVisibleCols();
 
   const body = document.getElementById('stockBody');
   body.innerHTML = pageItems.map((p,i) => {
@@ -5389,8 +5401,8 @@ async function openProductModal(id, focusFieldId){
     document.getElementById('pf-p2').value = p.p2 ? Number(p.p2).toLocaleString('en-US') : '';
     document.getElementById('pf-p3').value = p.p3 ? Number(p.p3).toLocaleString('en-US') : '';
     document.getElementById('pf-online-price').value = p.onlinePrice ? Number(p.onlinePrice).toLocaleString('en-US') : '';
-    document.getElementById('pf-cost-kip').value = p.avgCost ? Number(p.avgCost).toLocaleString('en-US') : '';
-    document.getElementById('pf-cost-baht').value = p.costBaht ? Number(p.costBaht).toLocaleString('en-US') : '';
+    document.getElementById('pf-cost-kip').value = !canSeeCost() ? '' : p.avgCost ? Number(p.avgCost).toLocaleString('en-US') : '';
+    document.getElementById('pf-cost-baht').value = !canSeeCost() ? '' : p.costBaht ? Number(p.costBaht).toLocaleString('en-US') : '';
     document.getElementById('pf-lowstock').value = p.lowStockAlert ?? 10;
     document.getElementById('pf-vat').classList.toggle('on', p.vat);
     document.getElementById('pf-show-online').classList.toggle('on', p.showOnline);
@@ -5423,7 +5435,7 @@ async function renderProductLotsInModal(productId){
   const lots = data || [];
   wrap.innerHTML = lots.length ? lots.map(l => `
     <div class="row" style="align-items:center;margin-bottom:6px">
-      <span style="font-size:15px;flex:1">${(l.lot_no||'').startsWith('OPEN') ? 'ຍອດຍົກມາ' : 'LOT-' + l.id.slice(0,8)} · ຄົງເຫຼືອ ${Number(l.remaining_qty)} · ຕົ້ນທຶນ ${fmt(l.cost_per_unit)}</span>
+      <span style="font-size:15px;flex:1">${(l.lot_no||'').startsWith('OPEN') ? 'ຍອດຍົກມາ' : 'LOT-' + l.id.slice(0,8)} · ຄົງເຫຼືອ ${Number(l.remaining_qty)}${canSeeCost() ? ' · ຕົ້ນທຶນ ' + fmt(l.cost_per_unit) : ''}</span>
       <input type="date" id="lot-expiry-${l.id}" value="${l.expiry_date||''}" style="height:32px;border:1px solid var(--border);border-radius:var(--radius);padding:0 6px;font-size:15px">
       <span class="btn" style="padding:4px 10px" onclick="saveLotExpiry('${l.id}')">ບັນທຶກ</span>
     </div>`).join('') : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີ LOT</p>';
@@ -5514,6 +5526,8 @@ async function saveProduct(){
     vat: document.getElementById('pf-vat').classList.contains('on'),
     show_online: document.getElementById('pf-show-online').classList.contains('on'),
   };
+  const costLocked = !canSeeCost(); // v2.65: ບົດບາດທີ່ບໍ່ເຫັນຕົ້ນທຶນ ບໍ່ສົ່ງຄ່າຕົ້ນທຶນໄປແກ້
+  if (costLocked){ delete data.avg_cost; delete data.cost_baht; }
   if (pendingImageUrl) data.image_url = pendingImageUrl;
   else if (removeImageFlag) data.image_url = null;
   try{
@@ -5537,7 +5551,7 @@ async function saveProduct(){
         { key:'zone', old:'zone', label:'Zone' },
       ];
       const changes = before ? [
-        ...numericFields.filter(f => Number(before[f.old]||0) !== Number(data[f.key]||0))
+        ...numericFields.filter(f => !(costLocked && (f.key === 'avg_cost' || f.key === 'cost_baht')) && Number(before[f.old]||0) !== Number(data[f.key]||0))
           .map(f => ({ label:f.label, old:fmt(before[f.old]||0), new:fmt(data[f.key]||0) })),
         ...textFields.filter(f => String(before[f.old]||'') !== String(data[f.key]||''))
           .map(f => ({ label:f.label, old:before[f.old]||'-', new:data[f.key]||'-' })),
@@ -5547,7 +5561,7 @@ async function saveProduct(){
       const { error } = await sb.from('pos_products').update(data).eq('id', editingProductId);
       if (error) throw error;
       // v2.55: ແກ້ຕົ້ນທຶນໃນຟອມ = ແກ້ຕົ້ນທຶນຂອງ LOT ທີ່ກຳລັງຂາຍຢູ່ (LOT ເກົ່າສຸດທີ່ຍັງເຫຼືອ) ເພື່ອໃຫ້ຕົ້ນທຶນໃນ LOT ກົງກັບຕາຕະລາງ
-      if (before && (Number(before.avgCost||0) !== Number(data.avg_cost||0) || Number(before.costBaht||0) !== Number(data.cost_baht||0))){
+      if (!costLocked && before && (Number(before.avgCost||0) !== Number(data.avg_cost||0) || Number(before.costBaht||0) !== Number(data.cost_baht||0))){
         const { error: hcErr } = await sb.rpc('pos_set_head_cost', { p_product_id: editingProductId, p_cost_kip: data.avg_cost||0, p_cost_baht: data.cost_baht||0 });
         if (hcErr) console.error('pos_set_head_cost ລົ້ມເຫຼວ', hcErr);
       }
@@ -5822,9 +5836,9 @@ function recvHistWhat(a, pid){
   }
   if (d.po_no){
     const it = (d.items||[]).find(x=>x.product_id===pid) || {};
-    return `📥 ຮັບເຂົ້າຈາກໃບສັ່ງຊື້ ${escAttr(d.po_no)} <b>+${fmt(it.qty)}</b> · ຕົ້ນທຶນ ${fmt(it.cost_kip)}`;
+    return `📥 ຮັບເຂົ້າຈາກໃບສັ່ງຊື້ ${escAttr(d.po_no)} <b>+${fmt(it.qty)}</b>${canSeeCost() ? ' · ຕົ້ນທຶນ ' + fmt(it.cost_kip) : ''}`;
   }
-  return `📥 ຮັບເຂົ້າ LOT <b>+${fmt(d.qty)}</b> · ຕົ້ນທຶນ ${fmt(d.cost_kip)}${Number(d.cost_baht)>0?' + ฿'+fmt(d.cost_baht):''}`;
+  return `📥 ຮັບເຂົ້າ LOT <b>+${fmt(d.qty)}</b>${canSeeCost() ? ' · ຕົ້ນທຶນ ' + fmt(d.cost_kip) + (Number(d.cost_baht)>0?' + ฿'+fmt(d.cost_baht):'') : ''}`;
 }
 function recvHistHtml(rows, pid){
   if (!rows.length) return `<div style="border:1px dashed #bbb;border-radius:8px;padding:10px 14px;font-size:16px;color:var(--text-muted)">🕘 ສິນຄ້ານີ້ຍັງບໍ່ມີປະຫວັດການຮັບເຂົ້າ/ປັບສະຕ໊ອກ ໃນລະບົບ</div>`;
@@ -5961,6 +5975,7 @@ function recvExpiryQuick(n, unit){
   recvExpiryChanged();
 }
 function openReceiveModal(){
+  if (!canSeeCost()){ showToast('ບົດບາດຂອງທ່ານບໍ່ມີສິດຮັບສິນຄ້າເຂົ້າ'); return; } // v2.65
   recvPickedId = null; recvHistCache = {};
   const hEl = document.getElementById('recvHistory'); if (hEl) hEl.innerHTML = '';
   document.getElementById('recvSearch').value = '';
@@ -6174,6 +6189,7 @@ function renderPOTable(){
 }
 let poItemsTemp = [];
 function openPOModal(){
+  if (!canSeeCost()){ showToast('ບົດບາດຂອງທ່ານບໍ່ມີສິດສ້າງໃບສັ່ງຊື້'); return; } // v2.65
   poItemsTemp = [];
   document.getElementById('po-vendor').value = '';
   const sel = document.getElementById('poAddItemSelect');
@@ -7185,6 +7201,7 @@ async function getSalesByProduct(){
   return salesByProductCache;
 }
 async function switchReportTab(type, skipHashUpdate){
+  if (!canSeeCost() && type === 'profit') type = 'sales_full'; // v2.65
   if (type !== currentReportType) resetReportDateFilter(); // v2.46: ຍ້າຍແທັບລາຍງານ → ຕົວກອງວັນທີ່ກັບເປັນ "ວັນນີ້"
   currentReportType = type;
   reportCurrentPage = 1;
@@ -7329,8 +7346,8 @@ async function renderReport(){
     });
     const rows = Object.entries(dayMap).sort((a,b)=>b[0].localeCompare(a[0]));
     const groupLabel = reportGroupBy==='year' ? 'ປີ' : reportGroupBy==='month' ? 'ເດືອນ' : 'ວັນທີ່';
-    wrap.innerHTML = renderReportDateFilterBar(true) + (rows.length ? `<table><thead><tr><th>${groupLabel}</th><th>ຍອດຂາຍ (ກີບ)</th><th>ກຳໄລ (ກີບ)</th><th>ຍອດຂາຍ (ບາດ)</th><th>ກຳໄລ (ບາດ)</th></tr></thead><tbody>${
-      rows.map(([d,v])=>`<tr><td>${d}</td><td style="font-weight:600">${fmt(v.kip)}</td><td style="color:${(v.kip-v.cost)<0?'var(--danger)':'var(--success)'}">${fmt(v.kip-v.cost)}</td><td style="font-weight:600">${v.baht?'฿'+fmt(v.baht):'-'}</td><td style="color:${(v.baht-v.costBaht)<0?'var(--danger)':'var(--success)'}">${v.baht?'฿'+fmt(v.baht-v.costBaht):'-'}</td></tr>`).join('')}</tbody></table>`
+    wrap.innerHTML = renderReportDateFilterBar(true) + (rows.length ? `<table><thead><tr><th>${groupLabel}</th><th>ຍອດຂາຍ (ກີບ)</th><th class="cost-only">ກຳໄລ (ກີບ)</th><th>ຍອດຂາຍ (ບາດ)</th><th class="cost-only">ກຳໄລ (ບາດ)</th></tr></thead><tbody>${
+      rows.map(([d,v])=>`<tr><td>${d}</td><td style="font-weight:600">${fmt(v.kip)}</td><td class="cost-only" style="color:${(v.kip-v.cost)<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? fmt(v.kip-v.cost) : ''}</td><td style="font-weight:600">${v.baht?'฿'+fmt(v.baht):'-'}</td><td class="cost-only" style="color:${(v.baht-v.costBaht)<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? (v.baht?'฿'+fmt(v.baht-v.costBaht):'-') : ''}</td></tr>`).join('')}</tbody></table>`
       : '<p style="font-size:15px;color:var(--text-muted)">ຍັງບໍ່ມີຂໍ້ມູນການຂາຍໃນຊ່ວງນີ້</p>');
   } else if (type === 'top_products'){
     const sales = await getSalesByProduct();
@@ -7419,8 +7436,8 @@ async function renderReport(){
     const rows = computeSalesByItemReport(range);
     wrap.innerHTML = renderReportDateFilterBar() + `<div style="overflow-x:auto"><table class="table-bordered" style="min-width:1300px"><thead><tr>
       <th>ບາໂຄດ</th><th>ຊື່ສິນຄ້າ</th><th>ສະຕ໊ອກ (ອັນ)</th><th>ຈຳນວນຂາຍ (ອັນ)</th><th>ສະຕ໊ອກທີ່ຍັງເຫຼືອ (ອັນ)</th>
-      <th>ຍອດຂາຍ (ກີບ)</th><th>ຕົ້ນທຶນ (ກີບ)</th><th>ກຳໄລ (ກີບ)</th><th>ROI (ກີບ)</th>
-      <th>ຈຳນວນຂາຍ (ບາດ)</th><th>ຍອດຂາຍ (ບາດ)</th><th>ຕົ້ນທຶນ (ບາດ)</th><th>ກຳໄລ (ບາດ)</th><th>ROI (ບາດ)</th>
+      <th>ຍອດຂາຍ (ກີບ)</th><th class="cost-only">ຕົ້ນທຶນ (ກີບ)</th><th class="cost-only">ກຳໄລ (ກີບ)</th><th class="cost-only">ROI (ກີບ)</th>
+      <th>ຈຳນວນຂາຍ (ບາດ)</th><th>ຍອດຂາຍ (ບາດ)</th><th class="cost-only">ຕົ້ນທຶນ (ບາດ)</th><th class="cost-only">ກຳໄລ (ບາດ)</th><th class="cost-only">ROI (ບາດ)</th>
     </tr></thead><tbody>${rows.map(p => {
       const roiBaht = p.costBaht>0 ? (p.profitBaht/p.costBaht*100) : 0;
       return `<tr>
@@ -7429,14 +7446,14 @@ async function renderReport(){
       <td style="text-align:right;font-weight:600">${p.totalQty}</td>
       <td style="text-align:right;color:var(--text-muted)">${p.stockRemaining!==null?p.stockRemaining:'-'}</td>
       <td style="text-align:right">${fmt(p.revenueKip)}</td>
-      <td style="text-align:right">${fmt(p.costKip)}</td>
-      <td style="text-align:right;color:${p.profitKip<0?'var(--danger)':'var(--success)'}">${fmt(p.profitKip)}</td>
-      <td style="text-align:right">${p.roiKip.toFixed(1)}%</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? fmt(p.costKip) : ''}</td>
+      <td class="cost-only" style="text-align:right;color:${p.profitKip<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? fmt(p.profitKip) : ''}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? p.roiKip.toFixed(1)+'%' : ''}</td>
       <td style="text-align:right">${p.qtyBaht||'-'}</td>
       <td style="text-align:right">${p.revenueBaht?'฿'+fmt(p.revenueBaht):'-'}</td>
-      <td style="text-align:right">${p.costBaht?'฿'+fmt(p.costBaht):'-'}</td>
-      <td style="text-align:right;color:${p.profitBaht<0?'var(--danger)':'var(--success)'}">${p.qtyBaht?'฿'+fmt(p.profitBaht):'-'}</td>
-      <td style="text-align:right">${p.qtyBaht?roiBaht.toFixed(1)+'%':'-'}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.costBaht?'฿'+fmt(p.costBaht):'-') : ''}</td>
+      <td class="cost-only" style="text-align:right;color:${p.profitBaht<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? (p.qtyBaht?'฿'+fmt(p.profitBaht):'-') : ''}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.qtyBaht?roiBaht.toFixed(1)+'%':'-') : ''}</td>
     </tr>`;}).join('') || '<tr><td colspan="13" style="text-align:center;color:var(--text-muted)">ບໍ່ມີຂໍ້ມູນ</td></tr>'}</tbody></table></div>`;
   } else if (type === 'by_category'){
     const range = getReportDateRange();

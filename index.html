@@ -991,7 +991,6 @@
             </div>
             <label style="display:flex;align-items:center;gap:8px;font-size:15px;margin:4px 0"><input type="checkbox" id="bc-cfg-name" onchange="bcCfgChanged()"> ສະແດງຊື່ສິນຄ້າ</label>
             <label style="display:flex;align-items:center;gap:8px;font-size:15px;margin:4px 0"><input type="checkbox" id="bc-cfg-price" onchange="bcCfgChanged()"> ສະແດງລາຄາ</label>
-            <label style="display:flex;align-items:center;gap:8px;font-size:15px;margin:4px 0"><input type="checkbox" id="bc-cfg-live-bc" onchange="bcCfgChanged()"> ສະແດງບາໂຄດໃນປ້າຍ Live</label>
           </details>
         </div>
         <div class="panel">
@@ -1914,7 +1913,7 @@ function livePrintLabels(){
     .filter(x => x.code && PRODUCTS.find(p => p.id === x.id));
   if (!rows.length){ showToast('ຍັງບໍ່ໄດ້ເລືອກສິນຄ້າໃນ Live ນີ້'); return; }
   rows.sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' }));
-  BC_QUEUE = rows.map(x => ({ id: x.id, qty: 1, code: x.code }));
+  BC_QUEUE = rows.map(x => ({ id: x.id, qty: 1, code: x.code, live: true }));
   switchView('barcode');
   showToast(`ສົ່ງ ${rows.length} ລາຍການໄປໜ້າພິມປ້າຍແລ້ວ — ປັບຈຳນວນ ແລ້ວກົດພິມ`);
 }
@@ -1985,7 +1984,7 @@ async function liveSetCurrent(productId){
 // v2.66 (Tar 2026-11-09, "ເຄື່ອງພິມ GG-9200BL ມ້ວນປ້າຍ 32x25x3 ຢາກພິມ 3 ບາໂຄດຕ່າງກັນໃນແຖວດຽວ"): ໜ້າ "ສ້າງບາໂຄດ" ປ່ຽນເປັນລາຍການຫຼາຍສິນຄ້າ — ເພີ່ມສິນຄ້າໄດ້ຫຼາຍຕົວ (ມີຊ່ອງຄົ້ນຫາ) ກຳນົດຈຳນວນປ້າຍແຕ່ລະຕົວ ລະບົບເຕີມປ້າຍຊ້າຍ→ຂວາ ແຖວລະ 3 ປ້າຍ (ແຕ່ລະປ້າຍເປັນບາໂຄດຕ່າງກັນໄດ້) ແລ້ວລົງແຖວໃໝ່. ຂະໜາດເຈ້ຍຕັ້ງຕາມມ້ວນປ້າຍ (ຄ່າເລີ່ມຕົ້ນ 32x25 ມມ, 3 ປ້າຍ/ແຖວ, ຫ່າງ 2 ມມ) ແກ້ໄຂໄດ້ໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ" (ຈື່ໄວ້ໃນເຄື່ອງ). ມີ "ເລີ່ມພິມຢູ່ຊ່ອງທີ" ສຳລັບແຖວທີ່ເຫຼືອປ້າຍວ່າງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກໃຊ້ຮູບແບບດຽວກັນ. ບໍ່ພິມທັງໜ້າເວັບອີກ (ເດີມໃຊ້ window.print) ແຕ່ເປີດໜ້າຕ່າງພິມສະເພາະປ້າຍ.
 // v2.67 (Tar 2026-11-09, "ເອົາຊື່ສິນຄ້າ + ລະຫັດ Live (A1, A2) + ລາຄາຂາຍ ໃສ່ປ້າຍບາໂຄດນ້ອຍ ໂດຍພິມຜ່ານ POS ເລີຍ"): ແຖບ "ສິນຄ້າໄລ້ສົດ" ເພີ່ມປຸ່ມ ▤ ພິມປ້າຍ Live — ສົ່ງສິນຄ້າທີ່ເລືອກໄວ້ໃນ Live (ລຽງ A1, A2, A3...) ໄປໜ້າ "ສ້າງບາໂຄດ" ແລ້ວພິມ 3 ປ້າຍ/ແຖວ. ປ້າຍ Live ສະແດງ: ຊື່, ລະຫັດ Live ໂຕໃຫຍ່, ລາຄາ (ເທົ່າກັບໃນແຖບ Live), ບາໂຄດສິນຄ້າ (ປິດໄດ້ໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ"). ປັບຈຳນວນປ້າຍຂອງແຕ່ລະສິນຄ້າໄດ້ກ່ອນພິມ.
 // v2.68 (Tar 2026-11-09, "ທີມ Live ຕັດສິນຄ້າໃນ Excel ອອກ ແລ້ວໃຫ້ນຳເຂົ້າ Excel ມາພິມປ້າຍ + ເລືອກຂະໜາດປ້າຍໄດ້"): ໜ້າ "ສ້າງບາໂຄດ" ເພີ່ມ "ນຳເຂົ້າລາຍການຈາກ Excel" — ອ່ານໄຟລ໌ສະຕັອກທີ່ທີມ Live ແກ້ແລ້ວ (ແຖວທີ່ເຫຼືອ = ສິນຄ້າທີ່ຈະພິມ), ຈັບຄູ່ກັບ POS ດ້ວຍບາໂຄດ (ຖ້າມີຖັນບາໂຄດ) ຫຼື ຊື່ສິນຄ້າ, ຖ້າມີຖັນ "ລະຫັດ" ຈະໃຊ້ເປັນລະຫັດ Live (A1, A2) ເທິງປ້າຍ, ຖ້າມີຖັນ "ຈຳນວນປ້າຍ" ຈະໃຊ້ຈຳນວນນັ້ນ. ເພີ່ມຕົວເລືອກຂະໜາດປ້າຍ: 32x25 ມມ (3 ປ້າຍ/ແຖວ), 40x30 ມມ (1 ປ້າຍ/ແຖວ), ກຳນົດເອງ — ຕົວໜັງສືຂະຫຍາຍຕາມຂະໜາດປ້າຍ.
-const APP_VERSION = 'v2.68';
+// v2.69 (Tar 2026-11-09, "ເອົາບາໂຄດອອກຈາກສະຕິກເກີ — ຊື່ສິນຄ້າແຖວ 1-2, ແຖວ 3 ລະຫັດ + ລາຄາ ໂຕໃຫຍ່ຂຶ້ນ"): ປ້າຍ Live (ຈາກແຖບ Live ຫຼື ນຳເຂົ້າ Excel) ບໍ່ມີຮູບບາໂຄດອີກ. ຊື່ສິນຄ້າສະແດງສູງສຸດ 2 ແຖວ (ຍາວເກີນຕັດ), ແຖວລຸ່ມສຸດ = ລະຫັດ Live (ຊ້າຍ) + ລາຄາ (ຂວາ, ໂຕໃຫຍ່ຂຶ້ນ). ເອົາຕົວເລືອກ "ສະແດງບາໂຄດໃນປ້າຍ Live" ອອກ. ປ້າຍທີ່ເພີ່ມເອງຈາກຊ່ອງເລືອກສິນຄ້າຍັງມີບາໂຄດຄືເກົ່າ.\nconst APP_VERSION = 'v2.69';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -6766,7 +6765,7 @@ function renderAttendanceLog(){
    BARCODE GENERATOR
    v2.66: ລາຍການຫຼາຍສິນຄ້າ ພິມໃສ່ມ້ວນປ້າຍ 3 ປ້າຍຕໍ່ແຖວ (ແຕ່ລະປ້າຍເປັນບາໂຄດຕ່າງກັນໄດ້)
    ============================================================ */
-const BC_CFG_DEFAULT = { cols:3, w:32, h:25, hgap:2, vgap:2, offx:0, showName:true, showPrice:true, showBarcode:true };
+const BC_CFG_DEFAULT = { cols:3, w:32, h:25, hgap:2, vgap:2, offx:0, showName:true, showPrice:true };
 let BC_QUEUE = []; // [{id, qty}] — ລຽງຕາມລຳດັບທີ່ເພີ່ມ, ເຕີມຊ່ອງຊ້າຍ→ຂວາ ແລ້ວລົງແຖວໃໝ່
 function bcCleanCfg(c){
   const num = (v, d, min, max) => { v = parseFloat(v); return isFinite(v) ? Math.min(max, Math.max(min, v)) : d; };
@@ -6774,7 +6773,7 @@ function bcCleanCfg(c){
     cols: Math.round(num(c.cols, 3, 1, 6)),
     w: num(c.w, 32, 10, 100), h: num(c.h, 25, 10, 100),
     hgap: num(c.hgap, 2, 0, 20), vgap: num(c.vgap, 2, 0, 20), offx: num(c.offx, 0, -20, 20),
-    showName: c.showName !== false, showPrice: c.showPrice !== false, showBarcode: c.showBarcode !== false
+    showName: c.showName !== false, showPrice: c.showPrice !== false
   };
 }
 function bcLoadCfg(){
@@ -6806,7 +6805,6 @@ function bcFillCfgForm(){
   set('bc-cfg-hgap', c.hgap); set('bc-cfg-vgap', c.vgap); set('bc-cfg-offx', c.offx);
   document.getElementById('bc-cfg-name').checked = c.showName;
   document.getElementById('bc-cfg-price').checked = c.showPrice;
-  document.getElementById('bc-cfg-live-bc').checked = c.showBarcode;
   const pr = document.getElementById('bc-cfg-preset'); if (pr) pr.value = bcPresetKey(c);
 }
 function bcCfgChanged(){
@@ -6815,8 +6813,7 @@ function bcCfgChanged(){
     cols: g('bc-cfg-cols'), w: g('bc-cfg-w'), h: g('bc-cfg-h'),
     hgap: g('bc-cfg-hgap'), vgap: g('bc-cfg-vgap'), offx: g('bc-cfg-offx'),
     showName: document.getElementById('bc-cfg-name').checked,
-    showPrice: document.getElementById('bc-cfg-price').checked,
-    showBarcode: document.getElementById('bc-cfg-live-bc').checked
+    showPrice: document.getElementById('bc-cfg-price').checked
   });
   try{ localStorage.setItem('bc_label_cfg', JSON.stringify(c)); }catch(e){}
   bcFillCfgForm();
@@ -6861,7 +6858,7 @@ function addBarcodeToQueue(){
   const sel = document.getElementById('bc-product');
   if (!sel || !sel.value){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
   const qty = Math.max(1, Math.min(500, parseInt(document.getElementById('bc-qty').value, 10) || 1));
-  const ex = BC_QUEUE.find(x => x.id === sel.value && !x.code);
+  const ex = BC_QUEUE.find(x => x.id === sel.value && !x.code && !x.live);
   if (ex) ex.qty = Math.min(500, ex.qty + qty); else BC_QUEUE.push({ id: sel.value, qty });
   document.getElementById('bc-qty').value = 1;
   const s = document.getElementById('bc-search');
@@ -6899,7 +6896,7 @@ function bcBuildLabels(){
   BC_QUEUE.forEach(it => {
     const p = PRODUCTS.find(x => x.id === it.id);
     if (!p) return;
-    const lab = it.code ? { ...p, liveCode: it.code, livePrice: p.onlinePrice || p.p1 || 0 } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
+    const lab = (it.live || it.code) ? { ...p, isLive: true, liveCode: it.code || '', livePrice: p.onlinePrice || p.p1 || 0 } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
     for (let i = 0; i < it.qty; i++) out.push(lab);
   });
   return out;
@@ -6931,17 +6928,16 @@ function bcSvg(code, withText){
 }
 function bcCellHtml(p, cfg, cache){
   if (!p) return '<div class="bcl bcl-empty"></div>';
-  const live = !!p.liveCode;
-  const withText = !live; // ປ້າຍ Live: ບໍ່ສະແດງເລກໃຕ້ບາໂຄດ ເພື່ອປະຫຍັດທີ່
-  const key = (withText ? 't|' : 'n|') + p.barcode;
-  let svg = cache.get(key);
-  if (svg === undefined){ svg = bcSvg(p.barcode, withText); cache.set(key, svg); }
-  if (live){
+  if (p.isLive){
+    // ປ້າຍ Live: ບໍ່ມີບາໂຄດ — ແຖວ 1-2 = ຊື່ສິນຄ້າ (ຍາວແລ້ວລົງແຖວ 2), ແຖວ 3 = ລະຫັດ + ລາຄາ (ໂຕໃຫຍ່)
     const pr = p.livePrice;
-    return `<div class="bcl bcl-live">${cfg.showName ? `<div class="bcl-n">${posEsc(p.name)}</div>` : ''}`
-      + `<div class="bcl-lr"><span class="bcl-code">${posEsc(p.liveCode)}</span>${cfg.showPrice && pr ? `<span class="bcl-lp">${fmt(pr)} <small>ກີບ</small></span>` : ''}</div>`
-      + `${cfg.showBarcode ? `<div class="bcl-b">${svg}</div>` : ''}</div>`;
+    const row = (p.liveCode ? `<span class="bcl-code">${posEsc(p.liveCode)}</span>` : '')
+      + (cfg.showPrice && pr ? `<span class="bcl-lp">${fmt(pr)} <small>ກີບ</small></span>` : '');
+    return `<div class="bcl bcl-live">${cfg.showName ? `<div class="bcl-nw"><div class="bcl-n">${posEsc(p.name)}</div></div>` : ''}`
+      + `${row ? `<div class="bcl-lr">${row}</div>` : ''}</div>`;
   }
+  let svg = cache.get(p.barcode);
+  if (svg === undefined){ svg = bcSvg(p.barcode, true); cache.set(p.barcode, svg); }
   return `<div class="bcl">${cfg.showName ? `<div class="bcl-n">${posEsc(p.name)}</div>` : ''}<div class="bcl-b">${svg}</div>${cfg.showPrice ? `<div class="bcl-p">${fmt(p.p1)} ກີບ</div>` : ''}</div>`;
 }
 function bcSheetHtml(rows, cfg){
@@ -6962,12 +6958,12 @@ function bcLabelCss(cfg, mode){
     ${s}.bcl-b{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
     ${s}.bcl-b svg{width:100%;height:100%;display:block}
     ${s}.bcl-p{font-size:calc(3mm*var(--k));line-height:1.2;font-weight:700}
-    ${s}.bcl-live .bcl-n{font-size:calc(2.3mm*var(--k));max-height:calc(6.2mm*var(--k))}
-    ${s}.bcl-lr{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;white-space:nowrap}
-    ${s}.bcl-code{font-size:calc(5.5mm*var(--k));line-height:1.15;font-weight:700}
-    ${s}.bcl-lp{font-size:calc(3mm*var(--k));line-height:1.2;font-weight:700}
-    ${s}.bcl-lp small{font-size:calc(2.2mm*var(--k))}
-    ${s}.bcl-live .bcl-b{flex:0 0 calc(8.5mm*var(--k))}`;
+    ${s}.bcl-nw{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    ${s}.bcl-live .bcl-n{font-size:calc(3.4mm*var(--k));line-height:1.3;max-height:calc(8.5mm*var(--k));width:100%}
+    ${s}.bcl-lr{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;white-space:nowrap;margin-top:calc(0.6mm*var(--k))}
+    ${s}.bcl-code{font-size:calc(4.8mm*var(--k));line-height:1.15;font-weight:700}
+    ${s}.bcl-lp{font-size:calc(3.7mm*var(--k));line-height:1.15;font-weight:700;margin-left:auto}
+    ${s}.bcl-lp small{font-size:calc(2.3mm*var(--k))}`;
   if (mode === 'preview'){
     return base + `
     #bcPreview{zoom:1.6}
@@ -7035,7 +7031,7 @@ function bcParseImportRows(rows, products, defQty){
     const q = qtyCol >= 0 ? (parseInt(r[qtyCol], 10) || defQty) : defQty;
     const key = p.id + '|' + code;
     const ex = merged.get(key);
-    if (ex) ex.qty = Math.min(500, ex.qty + q); else merged.set(key, { id: p.id, qty: Math.min(500, Math.max(1, q)), code });
+    if (ex) ex.qty = Math.min(500, ex.qty + q); else merged.set(key, { id: p.id, qty: Math.min(500, Math.max(1, q)), code, live: true });
   }
   return { entries: Array.from(merged.values()), unmatched, ambiguous, total, withCode, hasCodeCol: codeCol >= 0 };
 }

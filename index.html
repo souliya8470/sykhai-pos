@@ -745,6 +745,7 @@
               <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
                 <select id="liveSessionSelect" onchange="liveTabSelectSession(this.value)" style="flex:1;min-width:220px;padding:8px"></select>
                 <button class="btn" onclick="renderLiveProductTab()">🔄 ໂຫຼດຄືນ</button>
+                <button class="btn" onclick="livePrintLabels()">▤ ພິມປ້າຍ Live</button>
                 <a class="btn primary" href="https://marketing.touktashop.online/#liveCf" target="_blank" rel="noopener" style="text-decoration:none">🔴 ເປີດໜ້າ Live CF</a>
               </div>
               <p id="liveTabInfo" style="font-size:14px;color:var(--text-muted);margin:0 0 10px"></p>
@@ -977,6 +978,7 @@
             </div>
             <label style="display:flex;align-items:center;gap:8px;font-size:15px;margin:4px 0"><input type="checkbox" id="bc-cfg-name" onchange="bcCfgChanged()"> ສະແດງຊື່ສິນຄ້າ</label>
             <label style="display:flex;align-items:center;gap:8px;font-size:15px;margin:4px 0"><input type="checkbox" id="bc-cfg-price" onchange="bcCfgChanged()"> ສະແດງລາຄາ</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:15px;margin:4px 0"><input type="checkbox" id="bc-cfg-live-bc" onchange="bcCfgChanged()"> ສະແດງບາໂຄດໃນປ້າຍ Live</label>
           </details>
         </div>
         <div class="panel">
@@ -1893,6 +1895,16 @@ function renderLiveProductRows(){
   }).join('') + (total > LIMIT ? `<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">ສະແດງ ${LIMIT} ຈາກ ${total} ລາຍການ — ພິມຄົ້ນຫາເພື່ອຫາຕື່ມ</td></tr>` : '')
     : '<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">ບໍ່ພົບສິນຄ້າ</td></tr>';
 }
+// v2.67: ສົ່ງສິນຄ້າທີ່ເລືອກໄວ້ໃນ Live ນີ້ (ລຽງຕາມລະຫັດ A1, A2...) ໄປໜ້າ "ສ້າງບາໂຄດ" ເພື່ອພິມປ້າຍ: ຊື່ + ລະຫັດ Live + ລາຄາ + ບາໂຄດ
+function livePrintLabels(){
+  const rows = Object.entries(LIVE_TAB.lsp).map(([pid, r]) => ({ id: pid, code: String(r.code || '').trim() }))
+    .filter(x => x.code && PRODUCTS.find(p => p.id === x.id));
+  if (!rows.length){ showToast('ຍັງບໍ່ໄດ້ເລືອກສິນຄ້າໃນ Live ນີ້'); return; }
+  rows.sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' }));
+  BC_QUEUE = rows.map(x => ({ id: x.id, qty: 1, code: x.code }));
+  switchView('barcode');
+  showToast(`ສົ່ງ ${rows.length} ລາຍການໄປໜ້າພິມປ້າຍແລ້ວ — ປັບຈຳນວນ ແລ້ວກົດພິມ`);
+}
 async function liveToggleProduct(productId, on){
   const sid = LIVE_TAB.sessionId; if (!sid) return;
   try{
@@ -1958,7 +1970,8 @@ async function liveSetCurrent(productId){
 // v2.64 (Tar 2026-11-06, "ກົດ export ແລ້ວໃຫ້ມີໜ້າຕ່າງເລືອກຫົວຂໍ້ + ຕິກບໍ່ເອົາສິນຄ້າສະຕັອກ 0"): ປຸ່ມ Export ໃນໜ້າສະຕັອກເປີດໜ້າຕ່າງໃຫ້ຕິກເລືອກຖັນທີ່ຕ້ອງການ (ລຳດັບ, ຮູບສິນຄ້າ (ລິ້ງ), ບາໂຄດ, ຊື່, ໝວດ, ສະຕັອກ, ຕົ້ນທຶນ, ລາຄາຂາຍ, ມູນຄ່າສະຕັອກ, ຜູ້ຂາຍ, ໂຊນ, ຊ່ອງນັບໄດ້/ຜົນຕ່າງ/ໝາຍເຫດ) + ຕິກ "ສະເພາະສິນຄ້າທີ່ມີສະຕັອກ" (ຕັດສະຕັອກ 0 ແລະຕິດລົບອອກ) + ສະແດງຈຳນວນທີ່ຈະອອກ. ມີປຸ່ມຊຸດສຳເລັດຮູບ. ຖັນຕົ້ນທຶນ/ລາຄາ/ມູນຄ່າ ສະເພາະ Owner. ຈື່ການເລືອກຄັ້ງຫຼ້າສຸດ.
 // v2.65 (Tar 2026-11-09, "ບັນຊີພະນັກງານ POS ໃຫ້ເຫັນແຕ່ລາຄາຂາຍ ບໍ່ໃຫ້ເຫັນຕົ້ນທຶນ"): ເຊື່ອງຕົ້ນທຶນ/ກຳໄລ/LOT ຕົ້ນທຶນ ຈາກທຸກບົດບາດທີ່ບໍ່ແມ່ນ Owner ຫຼື Manager (Cashier ເຫັນແຕ່ລາຄາຂາຍ): ຄໍລຳຕົ້ນທຶນໃນຕາຕະລາງສະຕັອກ, ຊ່ອງຕົ້ນທຶນໃນຟອມສິນຄ້າ/ຮັບເຂົ້າ, ກຳໄລໃນໜ້າ Dashboard, ລາຍງານກຳໄລ-ຂາດທຶນ, ຄໍລຳກຳໄລໃນລາຍງານຍອດຂາຍ, ແທັບຮັບເຂົ້າ/LOT/ລາຍງານສິນຄ້າເຂົ້າ, ໜ້າຈັດຊື້, ຕົ້ນທຶນໃນປະຫວັດການກະທຳ. Cashier ແກ້ໄຂສິນຄ້າແລ້ວຕົ້ນທຶນເດີມບໍ່ຖືກປ່ຽນ. (ຂໍ້ມູນຍັງມາຮອດບຣາວເຊີ — ການກັ້ນໃນຖານຂໍ້ມູນແມ່ນຂັ້ນຕໍ່ໄປ)
 // v2.66 (Tar 2026-11-09, "ເຄື່ອງພິມ GG-9200BL ມ້ວນປ້າຍ 32x25x3 ຢາກພິມ 3 ບາໂຄດຕ່າງກັນໃນແຖວດຽວ"): ໜ້າ "ສ້າງບາໂຄດ" ປ່ຽນເປັນລາຍການຫຼາຍສິນຄ້າ — ເພີ່ມສິນຄ້າໄດ້ຫຼາຍຕົວ (ມີຊ່ອງຄົ້ນຫາ) ກຳນົດຈຳນວນປ້າຍແຕ່ລະຕົວ ລະບົບເຕີມປ້າຍຊ້າຍ→ຂວາ ແຖວລະ 3 ປ້າຍ (ແຕ່ລະປ້າຍເປັນບາໂຄດຕ່າງກັນໄດ້) ແລ້ວລົງແຖວໃໝ່. ຂະໜາດເຈ້ຍຕັ້ງຕາມມ້ວນປ້າຍ (ຄ່າເລີ່ມຕົ້ນ 32x25 ມມ, 3 ປ້າຍ/ແຖວ, ຫ່າງ 2 ມມ) ແກ້ໄຂໄດ້ໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ" (ຈື່ໄວ້ໃນເຄື່ອງ). ມີ "ເລີ່ມພິມຢູ່ຊ່ອງທີ" ສຳລັບແຖວທີ່ເຫຼືອປ້າຍວ່າງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກໃຊ້ຮູບແບບດຽວກັນ. ບໍ່ພິມທັງໜ້າເວັບອີກ (ເດີມໃຊ້ window.print) ແຕ່ເປີດໜ້າຕ່າງພິມສະເພາະປ້າຍ.
-const APP_VERSION = 'v2.66';
+// v2.67 (Tar 2026-11-09, "ເອົາຊື່ສິນຄ້າ + ລະຫັດ Live (A1, A2) + ລາຄາຂາຍ ໃສ່ປ້າຍບາໂຄດນ້ອຍ ໂດຍພິມຜ່ານ POS ເລີຍ"): ແຖບ "ສິນຄ້າໄລ້ສົດ" ເພີ່ມປຸ່ມ ▤ ພິມປ້າຍ Live — ສົ່ງສິນຄ້າທີ່ເລືອກໄວ້ໃນ Live (ລຽງ A1, A2, A3...) ໄປໜ້າ "ສ້າງບາໂຄດ" ແລ້ວພິມ 3 ປ້າຍ/ແຖວ. ປ້າຍ Live ສະແດງ: ຊື່, ລະຫັດ Live ໂຕໃຫຍ່, ລາຄາ (ເທົ່າກັບໃນແຖບ Live), ບາໂຄດສິນຄ້າ (ປິດໄດ້ໃນ "ຕັ້ງຄ່າຂະໜາດປ້າຍ"). ປັບຈຳນວນປ້າຍຂອງແຕ່ລະສິນຄ້າໄດ້ກ່ອນພິມ.
+const APP_VERSION = 'v2.67';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -6739,7 +6752,7 @@ function renderAttendanceLog(){
    BARCODE GENERATOR
    v2.66: ລາຍການຫຼາຍສິນຄ້າ ພິມໃສ່ມ້ວນປ້າຍ 3 ປ້າຍຕໍ່ແຖວ (ແຕ່ລະປ້າຍເປັນບາໂຄດຕ່າງກັນໄດ້)
    ============================================================ */
-const BC_CFG_DEFAULT = { cols:3, w:32, h:25, hgap:2, vgap:2, offx:0, showName:true, showPrice:true };
+const BC_CFG_DEFAULT = { cols:3, w:32, h:25, hgap:2, vgap:2, offx:0, showName:true, showPrice:true, showBarcode:true };
 let BC_QUEUE = []; // [{id, qty}] — ລຽງຕາມລຳດັບທີ່ເພີ່ມ, ເຕີມຊ່ອງຊ້າຍ→ຂວາ ແລ້ວລົງແຖວໃໝ່
 function bcCleanCfg(c){
   const num = (v, d, min, max) => { v = parseFloat(v); return isFinite(v) ? Math.min(max, Math.max(min, v)) : d; };
@@ -6747,7 +6760,7 @@ function bcCleanCfg(c){
     cols: Math.round(num(c.cols, 3, 1, 6)),
     w: num(c.w, 32, 10, 100), h: num(c.h, 25, 10, 100),
     hgap: num(c.hgap, 2, 0, 20), vgap: num(c.vgap, 2, 0, 20), offx: num(c.offx, 0, -20, 20),
-    showName: c.showName !== false, showPrice: c.showPrice !== false
+    showName: c.showName !== false, showPrice: c.showPrice !== false, showBarcode: c.showBarcode !== false
   };
 }
 function bcLoadCfg(){
@@ -6764,6 +6777,7 @@ function bcFillCfgForm(){
   set('bc-cfg-hgap', c.hgap); set('bc-cfg-vgap', c.vgap); set('bc-cfg-offx', c.offx);
   document.getElementById('bc-cfg-name').checked = c.showName;
   document.getElementById('bc-cfg-price').checked = c.showPrice;
+  document.getElementById('bc-cfg-live-bc').checked = c.showBarcode;
 }
 function bcCfgChanged(){
   const g = id => document.getElementById(id).value;
@@ -6771,7 +6785,8 @@ function bcCfgChanged(){
     cols: g('bc-cfg-cols'), w: g('bc-cfg-w'), h: g('bc-cfg-h'),
     hgap: g('bc-cfg-hgap'), vgap: g('bc-cfg-vgap'), offx: g('bc-cfg-offx'),
     showName: document.getElementById('bc-cfg-name').checked,
-    showPrice: document.getElementById('bc-cfg-price').checked
+    showPrice: document.getElementById('bc-cfg-price').checked,
+    showBarcode: document.getElementById('bc-cfg-live-bc').checked
   });
   try{ localStorage.setItem('bc_label_cfg', JSON.stringify(c)); }catch(e){}
   bcFillCfgForm();
@@ -6816,7 +6831,7 @@ function addBarcodeToQueue(){
   const sel = document.getElementById('bc-product');
   if (!sel || !sel.value){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
   const qty = Math.max(1, Math.min(500, parseInt(document.getElementById('bc-qty').value, 10) || 1));
-  const ex = BC_QUEUE.find(x => x.id === sel.value);
+  const ex = BC_QUEUE.find(x => x.id === sel.value && !x.code);
   if (ex) ex.qty = Math.min(500, ex.qty + qty); else BC_QUEUE.push({ id: sel.value, qty });
   document.getElementById('bc-qty').value = 1;
   const s = document.getElementById('bc-search');
@@ -6842,7 +6857,7 @@ function bcRenderQueue(){
   box.innerHTML = items.map(({ it, i, p }) => `
     <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
       <span style="color:var(--text-muted);width:20px;text-align:right">${i + 1}</span>
-      <span style="flex:1;min-width:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escAttr(p.name)}">${posEsc(p.name)}<br><span style="font-size:13px;color:var(--text-muted)">${posEsc(p.barcode)}</span></span>
+      <span style="flex:1;min-width:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escAttr(p.name)}">${it.code ? `<b style="background:#fff7ec;border:1px solid #f0c48a;border-radius:4px;padding:0 6px;margin-right:6px">${posEsc(it.code)}</b>` : ''}${posEsc(p.name)}<br><span style="font-size:13px;color:var(--text-muted)">${posEsc(p.barcode)}</span></span>
       <input type="text" inputmode="numeric" value="${it.qty}" style="width:56px;text-align:center" onchange="bcSetQty(${i}, this.value)">
       <span class="btn" style="padding:2px 8px" onclick="bcRemove(${i})">✕</span>
     </div>`).join('');
@@ -6853,7 +6868,8 @@ function bcBuildLabels(){
   BC_QUEUE.forEach(it => {
     const p = PRODUCTS.find(x => x.id === it.id);
     if (!p) return;
-    for (let i = 0; i < it.qty; i++) out.push(p);
+    const lab = it.code ? { ...p, liveCode: it.code, livePrice: p.onlinePrice || p.p1 || 0 } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
+    for (let i = 0; i < it.qty; i++) out.push(lab);
   });
   return out;
 }
@@ -6869,10 +6885,11 @@ function bcBuildRows(labels, cfg, startSlot){
   }
   return rows;
 }
-function bcSvg(code){
+function bcSvg(code, withText){
+  if (withText === undefined) withText = true;
   try{
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    JsBarcode(svg, String(code || ''), { format:'CODE128', width:1, height:40, displayValue:true, fontSize:14, margin:2, textMargin:1, background:'#ffffff', lineColor:'#000000' });
+    JsBarcode(svg, String(code || ''), { format:'CODE128', width:1, height:40, displayValue:withText, fontSize:14, margin:2, textMargin:1, background:'#ffffff', lineColor:'#000000' });
     const w = parseFloat(svg.getAttribute('width')), h = parseFloat(svg.getAttribute('height'));
     if (w && h) svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
     svg.removeAttribute('width'); svg.removeAttribute('height'); svg.removeAttribute('style');
@@ -6883,8 +6900,17 @@ function bcSvg(code){
 }
 function bcCellHtml(p, cfg, cache){
   if (!p) return '<div class="bcl bcl-empty"></div>';
-  let svg = cache.get(p.barcode);
-  if (svg === undefined){ svg = bcSvg(p.barcode); cache.set(p.barcode, svg); }
+  const live = !!p.liveCode;
+  const withText = !live; // ປ້າຍ Live: ບໍ່ສະແດງເລກໃຕ້ບາໂຄດ ເພື່ອປະຫຍັດທີ່
+  const key = (withText ? 't|' : 'n|') + p.barcode;
+  let svg = cache.get(key);
+  if (svg === undefined){ svg = bcSvg(p.barcode, withText); cache.set(key, svg); }
+  if (live){
+    const pr = p.livePrice;
+    return `<div class="bcl bcl-live">${cfg.showName ? `<div class="bcl-n">${posEsc(p.name)}</div>` : ''}`
+      + `<div class="bcl-lr"><span class="bcl-code">${posEsc(p.liveCode)}</span>${cfg.showPrice && pr ? `<span class="bcl-lp">${fmt(pr)} <small>ກີບ</small></span>` : ''}</div>`
+      + `${cfg.showBarcode ? `<div class="bcl-b">${svg}</div>` : ''}</div>`;
+  }
   return `<div class="bcl">${cfg.showName ? `<div class="bcl-n">${posEsc(p.name)}</div>` : ''}<div class="bcl-b">${svg}</div>${cfg.showPrice ? `<div class="bcl-p">${fmt(p.p1)} ກີບ</div>` : ''}</div>`;
 }
 function bcSheetHtml(rows, cfg){
@@ -6903,7 +6929,13 @@ function bcLabelCss(cfg, mode){
     ${s}.bcl-n{font-size:2.6mm;line-height:1.3;font-weight:700;max-height:7mm;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
     ${s}.bcl-b{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
     ${s}.bcl-b svg{width:100%;height:100%;display:block}
-    ${s}.bcl-p{font-size:3mm;line-height:1.2;font-weight:700}`;
+    ${s}.bcl-p{font-size:3mm;line-height:1.2;font-weight:700}
+    ${s}.bcl-live .bcl-n{font-size:2.3mm;max-height:6.2mm}
+    ${s}.bcl-lr{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;white-space:nowrap}
+    ${s}.bcl-code{font-size:5.5mm;line-height:1.15;font-weight:700}
+    ${s}.bcl-lp{font-size:3mm;line-height:1.2;font-weight:700}
+    ${s}.bcl-lp small{font-size:2.2mm}
+    ${s}.bcl-live .bcl-b{flex:0 0 8.5mm}`;
   if (mode === 'preview'){
     return base + `
     #bcPreview{zoom:1.6}

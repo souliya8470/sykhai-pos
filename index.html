@@ -1987,7 +1987,8 @@ async function liveSetCurrent(productId){
 // v2.69 (Tar 2026-11-09, "ເອົາບາໂຄດອອກຈາກສະຕິກເກີ — ຊື່ສິນຄ້າແຖວ 1-2, ແຖວ 3 ລະຫັດ + ລາຄາ ໂຕໃຫຍ່ຂຶ້ນ"): ປ້າຍ Live (ຈາກແຖບ Live ຫຼື ນຳເຂົ້າ Excel) ບໍ່ມີຮູບບາໂຄດອີກ. ຊື່ສິນຄ້າສະແດງສູງສຸດ 2 ແຖວ (ຍາວເກີນຕັດ), ແຖວລຸ່ມສຸດ = ລະຫັດ Live (ຊ້າຍ) + ລາຄາ (ຂວາ, ໂຕໃຫຍ່ຂຶ້ນ). ເອົາຕົວເລືອກ "ສະແດງບາໂຄດໃນປ້າຍ Live" ອອກ. ປ້າຍທີ່ເພີ່ມເອງຈາກຊ່ອງເລືອກສິນຄ້າຍັງມີບາໂຄດຄືເກົ່າ.
 // v2.70 (URGENT 2026-11-09): ແກ້ v2.69 ທີ່ເຮັດໃຫ້ POS ໂຫຼດຂໍ້ມູນບໍ່ໄດ້ (ສິນຄ້າ/ບິນວ່າງ) — ແຖວ `const APP_VERSION` ຖືກຕໍ່ເຂົ້າໄປໃນແຖວ comment ດ້ວຍ \n ແທນຂຶ້ນແຖວໃໝ່ ເຮັດໃຫ້ APP_VERSION ບໍ່ມີຄ່າ ແລະ initApp ຢຸດກ່ອນໂຫຼດສິນຄ້າ. ຍ້າຍກັບເປັນແຖວແຍກ. ບໍ່ມີການປ່ຽນແປງອື່ນ.
 // v2.71 (Tar 2026-11-10, "ເອົາລະຫັດຂຶ້ນກ່ອນ ຕາມດ້ວຍລາຄາ ແລ້ວຈຶ່ງຊື່ສິນຄ້າຢູ່ລຸ່ມ"): ປ້າຍ Live ສະລັບຕຳແໜ່ງ — ແຖວເທິງ = ລະຫັດ (ຊ້າຍ) + ລາຄາ (ຂວາ), ລຸ່ມລົງມາ = ຊື່ສິນຄ້າ (ສູງສຸດ 2 ແຖວ, ຢູ່ກາງພື້ນທີ່ທີ່ເຫຼືອ).
-const APP_VERSION = 'v2.71';
+// v2.72 (Tar 2026-11-10, "ເພີ່ມຂະໜາດລະຫັດສິນຄ້າ ແລະ ລາຄາ ໃຫ້ໃຫຍ່ຂຶ້ນ" ຫຼັງເບິ່ງປ້າຍພິມຈິງ 40x30): ປ້າຍ Live ລະຫັດ ແລະ ລາຄາ ໃຫຍ່ຂຶ້ນ (ລະຫັດ 4.8→7 ມມ, ລາຄາ 3.7→5.2 ມມ ຕໍ່ປ້າຍມາດຕະຖານ) ແລະ ມີການຫຍໍ້ອັດຕະໂນມັດສະເພາະປ້າຍທີ່ລົ້ນຂອບ (ລາຄາຫຼັກແສນ-ລ້ານ ຫຼື ລະຫັດ 4 ໂຕ) — ປ້າຍທີ່ພໍດີໄດ້ຕົວໃຫຍ່ສຸດ.
+const APP_VERSION = 'v2.72';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -6943,6 +6944,14 @@ function bcCellHtml(p, cfg, cache){
   if (svg === undefined){ svg = bcSvg(p.barcode, true); cache.set(p.barcode, svg); }
   return `<div class="bcl">${cfg.showName ? `<div class="bcl-n">${posEsc(p.name)}</div>` : ''}<div class="bcl-b">${svg}</div>${cfg.showPrice ? `<div class="bcl-p">${fmt(p.p1)} ກີບ</div>` : ''}</div>`;
 }
+// ຫຍໍ້ຕົວໜັງສືແຖວ "ລະຫັດ + ລາຄາ" ເປັນຂັ້ນໆ ສະເພາະປ້າຍທີ່ລົ້ນຂອບ (ລາຄາຍາວ/ລະຫັດຍາວ) — ປ້າຍທີ່ພໍດີຈະໄດ້ຕົວໃຫຍ່ສຸດ
+function bcFitRows(doc){
+  doc.querySelectorAll('.bcl-lr').forEach(r => {
+    let f = 1, n = 0;
+    r.style.setProperty('--f', '1');
+    while (r.scrollWidth > r.clientWidth + 0.5 && f > 0.45 && n < 40){ f -= 0.03; r.style.setProperty('--f', f.toFixed(2)); n++; }
+  });
+}
 function bcSheetHtml(rows, cfg){
   const cache = new Map();
   return rows.map(r => `<div class="bcr">${r.map(p => bcCellHtml(p, cfg, cache)).join('')}</div>`).join('');
@@ -6964,9 +6973,9 @@ function bcLabelCss(cfg, mode){
     ${s}.bcl-nw{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
     ${s}.bcl-live .bcl-n{font-size:calc(3.4mm*var(--k));line-height:1.3;max-height:calc(8.5mm*var(--k));width:100%}
     ${s}.bcl-lr{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;white-space:nowrap;margin-bottom:calc(0.6mm*var(--k))}
-    ${s}.bcl-code{font-size:calc(4.8mm*var(--k));line-height:1.15;font-weight:700}
-    ${s}.bcl-lp{font-size:calc(3.7mm*var(--k));line-height:1.15;font-weight:700;margin-left:auto}
-    ${s}.bcl-lp small{font-size:calc(2.3mm*var(--k))}`;
+    ${s}.bcl-code{font-size:calc(7mm*var(--k)*var(--f,1));line-height:1.15;font-weight:700}
+    ${s}.bcl-lp{font-size:calc(5.2mm*var(--k)*var(--f,1));line-height:1.15;font-weight:700;margin-left:auto}
+    ${s}.bcl-lp small{font-size:calc(2.8mm*var(--k)*var(--f,1))}`;
   if (mode === 'preview'){
     return base + `
     #bcPreview{zoom:1.6}
@@ -7000,6 +7009,7 @@ function updateBarcodePreview(){
   const MAX_ROWS = 10; // ສະແດງຕົວຢ່າງສະເພາະ 10 ແຖວທຳອິດ
   wrap.innerHTML = `<style>${bcLabelCss(cfg, 'preview')}</style>` + bcSheetHtml(rows.slice(0, MAX_ROWS), cfg)
     + (rows.length > MAX_ROWS ? `<p style="font-size:13px;color:var(--text-muted);margin:6px 0 0;zoom:0.625">ສະແດງສະເພາະ ${MAX_ROWS} ແຖວທຳອິດໃນຕົວຢ່າງ — ຕອນພິມຈະອອກຄົບທັງໝົດ</p>` : '');
+  bcFitRows(wrap);
 }
 /* ---- ນຳເຂົ້າຈາກ Excel (ໄຟລ໌ສະຕັອກທີ່ສົ່ງໃຫ້ທີມ Live ແລ້ວທີມຕັດ/ແກ້ໄຂ) ---- */
 function bcNorm(v){ return String(v == null ? '' : v).replace(/[\u200b-\u200d\ufeff]/g, '').replace(/\s+/g, ' ').trim().toLowerCase(); }
@@ -7081,7 +7091,7 @@ function bcPrintLabels(labels, startSlot){
   win.document.close();
   win.onload = () => {
     const fontsReady = (win.document.fonts && win.document.fonts.ready) ? win.document.fonts.ready : Promise.resolve();
-    Promise.race([fontsReady, new Promise(r => setTimeout(r, 1500))]).then(() => setTimeout(() => { try{ win.focus(); win.print(); }catch(e){} }, 300));
+    Promise.race([fontsReady, new Promise(r => setTimeout(r, 1500))]).then(() => setTimeout(() => { try{ bcFitRows(win.document); }catch(e){} try{ win.focus(); win.print(); }catch(e){} }, 300));
   };
 }
 function quickPrintBarcode(id){

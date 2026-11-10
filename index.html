@@ -965,6 +965,7 @@
             <select id="bc-product" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px"></select>
           </div>
           <div class="field"><label>ຈຳນວນປ້າຍ</label><input type="text" inputmode="numeric" id="bc-qty" value="1" onkeydown="if(event.key==='Enter'){addBarcodeToQueue();}"></div>
+          <div class="field"><label>ລະຫັດ Live (ຖ້າມີ ເຊັ່ນ A1 — ບໍ່ໃສ່ກໍ່ໄດ້)</label><input type="text" id="bc-code" autocomplete="off" onkeydown="if(event.key==='Enter'){addBarcodeToQueue();}"></div>
           <button class="btn primary" style="width:100%;margin-bottom:14px" onclick="addBarcodeToQueue()">➕ ເພີ່ມເຂົ້າລາຍການພິມ</button>
 
           <p style="font-size:15px;color:var(--text-soft);margin:0 0 6px;font-weight:600">ລາຍການທີ່ຈະພິມ</p>
@@ -1988,7 +1989,8 @@ async function liveSetCurrent(productId){
 // v2.70 (URGENT 2026-11-09): ແກ້ v2.69 ທີ່ເຮັດໃຫ້ POS ໂຫຼດຂໍ້ມູນບໍ່ໄດ້ (ສິນຄ້າ/ບິນວ່າງ) — ແຖວ `const APP_VERSION` ຖືກຕໍ່ເຂົ້າໄປໃນແຖວ comment ດ້ວຍ \n ແທນຂຶ້ນແຖວໃໝ່ ເຮັດໃຫ້ APP_VERSION ບໍ່ມີຄ່າ ແລະ initApp ຢຸດກ່ອນໂຫຼດສິນຄ້າ. ຍ້າຍກັບເປັນແຖວແຍກ. ບໍ່ມີການປ່ຽນແປງອື່ນ.
 // v2.71 (Tar 2026-11-10, "ເອົາລະຫັດຂຶ້ນກ່ອນ ຕາມດ້ວຍລາຄາ ແລ້ວຈຶ່ງຊື່ສິນຄ້າຢູ່ລຸ່ມ"): ປ້າຍ Live ສະລັບຕຳແໜ່ງ — ແຖວເທິງ = ລະຫັດ (ຊ້າຍ) + ລາຄາ (ຂວາ), ລຸ່ມລົງມາ = ຊື່ສິນຄ້າ (ສູງສຸດ 2 ແຖວ, ຢູ່ກາງພື້ນທີ່ທີ່ເຫຼືອ).
 // v2.72 (Tar 2026-11-10, "ເພີ່ມຂະໜາດລະຫັດສິນຄ້າ ແລະ ລາຄາ ໃຫ້ໃຫຍ່ຂຶ້ນ" ຫຼັງເບິ່ງປ້າຍພິມຈິງ 40x30): ປ້າຍ Live ລະຫັດ ແລະ ລາຄາ ໃຫຍ່ຂຶ້ນ (ລະຫັດ 4.8→7 ມມ, ລາຄາ 3.7→5.2 ມມ ຕໍ່ປ້າຍມາດຕະຖານ) ແລະ ມີການຫຍໍ້ອັດຕະໂນມັດສະເພາະປ້າຍທີ່ລົ້ນຂອບ (ລາຄາຫຼັກແສນ-ລ້ານ ຫຼື ລະຫັດ 4 ໂຕ) — ປ້າຍທີ່ພໍດີໄດ້ຕົວໃຫຍ່ສຸດ.
-const APP_VERSION = 'v2.72';
+// v2.73 (Tar 2026-11-10, "ເພີ່ມສິນຄ້າໃໝ່ເຂົ້າລາຍການພິມເອງ ຍັງເປັນແບບເກົ່າມີບາໂຄດ"): ສິນຄ້າທີ່ເພີ່ມເອງຈາກຊ່ອງ "ເລືອກສິນຄ້າ" ໃຊ້ແບບປ້າຍໃໝ່ (ບໍ່ມີບາໂຄດ: ລາຄາໂຕໃຫຍ່ + ຊື່) ຄືກັບປ້າຍ Live. ເພີ່ມຊ່ອງ "ລະຫັດ Live" (ບໍ່ບັງຄັບ) — ຖ້າໃສ່ ຈະສະແດງລະຫັດ + ລາຄາ Live, ຖ້າບໍ່ໃສ່ ສະແດງລາຄາ (ລາຄາຂາຍ 1) ຢູ່ກາງແຖວເທິງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກ (ພິມບາໂຄດສິນຄ້າດຽວ) ຍັງເປັນແບບມີບາໂຄດ.
+const APP_VERSION = 'v2.73';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -6862,9 +6864,12 @@ function addBarcodeToQueue(){
   const sel = document.getElementById('bc-product');
   if (!sel || !sel.value){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
   const qty = Math.max(1, Math.min(500, parseInt(document.getElementById('bc-qty').value, 10) || 1));
-  const ex = BC_QUEUE.find(x => x.id === sel.value && !x.code && !x.live);
-  if (ex) ex.qty = Math.min(500, ex.qty + qty); else BC_QUEUE.push({ id: sel.value, qty });
+  const codeEl = document.getElementById('bc-code');
+  const code = String(codeEl ? codeEl.value : '').trim().toUpperCase();
+  const ex = BC_QUEUE.find(x => x.id === sel.value && (x.code || '') === code); // ປ້າຍແບບໃໝ່ (ບໍ່ມີບາໂຄດ) — ລະຫັດ Live ບໍ່ບັງຄັບ
+  if (ex) ex.qty = Math.min(500, ex.qty + qty); else BC_QUEUE.push({ id: sel.value, qty, code, live: true });
   document.getElementById('bc-qty').value = 1;
+  if (codeEl) codeEl.value = '';
   const s = document.getElementById('bc-search');
   if (s){ s.value = ''; filterBarcodeProductSelect(); s.focus(); }
   updateBarcodePreview();
@@ -6900,7 +6905,7 @@ function bcBuildLabels(){
   BC_QUEUE.forEach(it => {
     const p = PRODUCTS.find(x => x.id === it.id);
     if (!p) return;
-    const lab = (it.live || it.code) ? { ...p, isLive: true, liveCode: it.code || '', livePrice: p.onlinePrice || p.p1 || 0 } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
+    const lab = (it.live || it.code) ? { ...p, isLive: true, liveCode: it.code || '', livePrice: it.code ? (p.onlinePrice || p.p1 || 0) : (p.p1 || 0) } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
     for (let i = 0; i < it.qty; i++) out.push(lab);
   });
   return out;
@@ -6975,6 +6980,7 @@ function bcLabelCss(cfg, mode){
     ${s}.bcl-lr{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;white-space:nowrap;margin-bottom:calc(0.6mm*var(--k))}
     ${s}.bcl-code{font-size:calc(7mm*var(--k)*var(--f,1));line-height:1.15;font-weight:700}
     ${s}.bcl-lp{font-size:calc(5.2mm*var(--k)*var(--f,1));line-height:1.15;font-weight:700;margin-left:auto}
+    ${s}.bcl-lp:only-child{margin:0 auto}
     ${s}.bcl-lp small{font-size:calc(2.8mm*var(--k)*var(--f,1))}`;
   if (mode === 'preview'){
     return base + `

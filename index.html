@@ -1159,6 +1159,17 @@
         </div>
       </div>
 
+      <div class="panel" style="margin-bottom:12px">
+        <p style="font-size:15px;font-weight:600;margin:0 0 8px;color:var(--text-soft)">ເພີ່ມສິນຄ້ານອກ POS (ເຊັ່ນ ສິນຄ້າເຄື່ອງເຊວ ທີ່ບໍ່ມີໃນ POS)</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;align-items:end">
+          <div class="field" style="grid-column:1/-1"><label>ຊື່ສິນຄ້າ</label><input type="text" id="ll-free-name" autocomplete="off"></div>
+          <div class="field"><label>ລະຫັດ Live</label><input type="text" id="ll-free-code" autocomplete="off"></div>
+          <div class="field"><label>ລາຄາຂາຍ (ກີບ)</label><input type="text" inputmode="numeric" id="ll-free-price"></div>
+          <div class="field"><label>ຈຳນວນປ້າຍ</label><input type="text" inputmode="numeric" id="ll-free-qty" value="1"></div>
+          <button class="btn primary" onclick="llAddFree()">➕ ເພີ່ມ</button>
+        </div>
+      </div>
+
       <div class="panel">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px">
           <input type="text" id="ll-search" placeholder="ຄົ້ນຫາ ຊື່ / ລະຫັດ / ບາໂຄດ" style="flex:1;min-width:180px;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" oninput="llSearchChanged()">
@@ -2044,7 +2055,8 @@ async function liveSetCurrent(productId){
 // v2.74 (Tar 2026-11-10, ເບິ່ງໄຟລ໌ຈິງຂອງທີມ Live: A ລຳດັບ, B ຊື່ສິນຄ້າ, C ສະຕັອກ, D ລາຄາຂາຍ 1, E ລາຄາຂາຍ 2, F ລະຫັດ): ນຳເຂົ້າ Excel ອ່ານ "ລາຄາຂາຍ 2" (ຖັນ E) ເປັນລາຄາເທິງປ້າຍ Live, "ລະຫັດ" (ຖັນ F) ເປັນລະຫັດ Live, "ຊື່ສິນຄ້າ" (ຖັນ B) ຈັບຄູ່ສິນຄ້າໃນ POS. ບໍ່ໃຊ້ສະຕັອກ ແລະ ລາຄາຂາຍ 1. ຖ້າບໍ່ມີຖັນ "ລາຄາຂາຍ 2" ກັບໄປໃຊ້ລາຄາຈາກ POS ແລະ ແຈ້ງເຕືອນໃນກ່ອງຂໍ້ມູນນຳເຂົ້າ.
 // v2.75 (Tar 2026-11-10, "ໃຫ້ພະນັກງານແກ້ໄຂ/ເພີ່ມສິນຄ້າໃນລາຍການປ້າຍໃນ POS ເອງ ບໍ່ຕ້ອງແກ້ Excel"): ເພີ່ມໜ້າ "ປ້າຍ Live" (ປຸ່ມໜ້າຫຼັກ) — ລາຍການປ້າຍທີ່ເກັບຖາວອນໃນຕາຕະລາງໃໝ່ pos_live_labels: ນຳເຂົ້າຈາກ Excel 740 ແຖວເປັນຖານ, ແກ້ລະຫັດ/ລາຄາ/ຈຳນວນປ້າຍໃນຕາຕະລາງ, ເພີ່ມສິນຄ້າໃໝ່ໄດ້ເລື້ອຍໆ (ລະບົບແນະນຳລະຫັດຖັດໄປ), ຄົ້ນຫາ/ກັ່ນຕອງ, ເລືອກແຖວ, ພິມທັງໝົດ/ສະເພາະທີ່ເລືອກ/ສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ ໃນຄັ້ງຕໍ່ໄປ. ຫຼັງພິມມີແຖບໃຫ້ກົດ "ໝາຍວ່າພິມແລ້ວ". ໂຫຼດຂໍ້ມູນເມື່ອເປີດໜ້າ ແລະ ກົດ "ໂຫຼດໃໝ່" ເທົ່ານັ້ນ (ບໍ່ມີ polling).
 // v2.76 (Tar 2026-11-10, "ໄຟລ໌ 786 ແຖວ ແຕ່ນຳເຂົ້າໄດ້ 739"): ຫຼັງນຳເຂົ້າ Excel (ໜ້າ "ປ້າຍ Live" ແລະ "ສ້າງບາໂຄດ") ສະແດງລາຍຊື່ທັງໝົດຂອງແຖວທີ່ບໍ່ພົບໃນ POS (ເດີມສະແດງແຕ່ 8 ຊື່ທຳອິດ) ເປັນລາຍການເລກລຽງ ເລື່ອນເບິ່ງໄດ້. ບໍ່ມີການປ່ຽນແປງການນຳເຂົ້າ.
-const APP_VERSION = 'v2.76';
+// v2.77 (Tar 2026-11-10, "ສິນຄ້າເຄື່ອງເຊວ 46 ແຖວບໍ່ມີໃນ POS ແຕ່ຕ້ອງໄລ້ສົດ + ຢາກເບິ່ງສິນຄ້າທີ່ຊ້ຳ"): ໜ້າ "ປ້າຍ Live" ຮອງຮັບ "ສິນຄ້ານອກ POS" — ແຖວທີ່ບໍ່ພົບຊື່ໃນ POS ຈະຖືກເພີ່ມເປັນສິນຄ້ານອກ POS ອັດຕະໂນມັດຕອນນຳເຂົ້າ Excel (ເກັບຊື່ + ລະຫັດ + ລາຄາ + ຈຳນວນປ້າຍ ໃນຕາຕະລາງ pos_live_labels, ຄໍລຳ product_id ເປັນ NULL ໄດ້ ແລະ ເພີ່ມຄໍລຳ name), ເພີ່ມເອງໄດ້ໃນກ່ອງ "ເພີ່ມສິນຄ້ານອກ POS", ແກ້ຊື່/ລະຫັດ/ລາຄາໄດ້ໃນຕາຕະລາງ ແລະພິມປ້າຍແບບດຽວກັນ. ຫຼັງນຳເຂົ້າສະແດງຊື່ສິນຄ້າທີ່ຊ້ຳໃນໄຟລ໌ ແລະ ຊື່ທີ່ຊ້ຳກັນໃນ POS. ຖ້າສິນຄ້ານັ້ນຖືກເພີ່ມເຂົ້າ POS ພາຍຫຼັງ ໃຫ້ລຶບແຖວນອກ POS ແລ້ວເພີ່ມຈາກ POS ແທນ.
+const APP_VERSION = 'v2.77';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7088,7 +7100,8 @@ function bcParseImportRows(rows, products, defQty){
     if (p.barcode) byBarcode.set(String(p.barcode).trim(), p);
     const k = bcNorm(p.name); if (!byName.has(k)) byName.set(k, []); byName.get(k).push(p);
   });
-  const merged = new Map(); const unmatched = []; let total = 0, ambiguous = 0, withCode = 0, withPrice = 0;
+  const merged = new Map(); const unmatched = []; const unmatchedRows = []; const dupNames = []; const ambiguousNames = []; const seenIds = new Set();
+  let total = 0, ambiguous = 0, withCode = 0, withPrice = 0;
   for (let i = 1; i < rows.length; i++){
     const r = rows[i] || [];
     const nm = String(r[nameCol] == null ? '' : r[nameCol]).trim();
@@ -7098,20 +7111,21 @@ function bcParseImportRows(rows, products, defQty){
     let p = bc ? byBarcode.get(bc) : null;
     if (!p && nm){
       const list = byName.get(bcNorm(nm));
-      if (list && list.length){ p = list[0]; if (list.length > 1) ambiguous++; }
+      if (list && list.length){ p = list[0]; if (list.length > 1){ ambiguous++; ambiguousNames.push(nm); } }
     }
-    if (!p){ unmatched.push(nm || bc); continue; }
     const code = codeCol >= 0 ? String(r[codeCol] == null ? '' : r[codeCol]).trim().toUpperCase() : '';
-    if (code) withCode++;
     const q = qtyCol >= 0 ? (parseInt(r[qtyCol], 10) || defQty) : defQty;
     const pr = priceCol >= 0 ? parseFloat(String(r[priceCol] == null ? '' : r[priceCol]).replace(/[^0-9.]/g, '')) : NaN;
     const price = pr > 0 ? pr : 0;
+    if (!p){ unmatched.push(nm || bc); unmatchedRows.push({ name: nm || bc, code, price, qty: Math.min(500, Math.max(1, q)) }); continue; }
+    if (seenIds.has(p.id)) dupNames.push(nm || bc); else seenIds.add(p.id);
+    if (code) withCode++;
     if (price) withPrice++;
     const key = p.id + '|' + code + '|' + price;
     const ex = merged.get(key);
     if (ex) ex.qty = Math.min(500, ex.qty + q); else merged.set(key, { id: p.id, qty: Math.min(500, Math.max(1, q)), code, price, live: true });
   }
-  return { entries: Array.from(merged.values()), unmatched, ambiguous, total, withCode, withPrice, hasCodeCol: codeCol >= 0, hasPriceCol: priceCol >= 0 };
+  return { entries: Array.from(merged.values()), unmatched, unmatchedRows, dupNames, ambiguousNames, ambiguous, total, withCode, withPrice, hasCodeCol: codeCol >= 0, hasPriceCol: priceCol >= 0 };
 }
 function bcImportExcel(ev){
   const input = ev.target;
@@ -7189,7 +7203,7 @@ function printQuickBarcode(){
    ============================================================ */
 const LL = { rows: [], loaded: false, loading: false, sel: new Set(), page: 1, pageSize: 50, justPrinted: [] };
 function llMapRow(r){
-  return { id: r.id, productId: r.product_id, code: r.code || '', price: r.price == null ? null : Number(r.price), qty: Number(r.qty) || 1, printedAt: r.printed_at || null, createdAt: r.created_at };
+  return { id: r.id, productId: r.product_id || null, name: r.name || '', code: r.code || '', price: r.price == null ? null : Number(r.price), qty: Number(r.qty) || 1, printedAt: r.printed_at || null, createdAt: r.created_at };
 }
 async function llLoad(){
   if (LL.loading) return;
@@ -7212,7 +7226,8 @@ async function initLiveLabelsView(){
   llFillPresetSelect();
   llFilterAddSelect();
   llRender();
-  if (!LL.loaded){ await llLoad(); llRender(); }
+  if (!LL.loaded){ await llLoad(); llRender(); llFilterAddSelect(); }
+  const fc = document.getElementById('ll-free-code'); if (fc && !fc.value) fc.value = llNextCode();
 }
 function llFillPresetSelect(){ const pr = document.getElementById('ll-preset'); if (pr) pr.value = bcPresetKey(bcLoadCfg()); }
 function llFillStartSelect(){
@@ -7240,7 +7255,11 @@ function llSortedRows(){
     return a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' });
   });
 }
-function llProduct(r){ return PRODUCTS.find(p => p.id === r.productId); }
+// ແຖວທີ່ບໍ່ມີ product_id = ສິນຄ້ານອກ POS (ເຊັ່ນ ສິນຄ້າເຄື່ອງເຊວ) — ໃຊ້ຊື່ທີ່ເກັບໄວ້ໃນແຖວ ແລະ ລາຄາຕ້ອງໃສ່ເອງ
+function llProduct(r){
+  if (!r.productId) return { id: null, free: true, name: r.name || '', barcode: '', p1: 0, p2: 0, p3: 0, onlinePrice: 0 };
+  return PRODUCTS.find(p => p.id === r.productId);
+}
 function llDefaultPrice(p){ return (p && (p.p2 > 0 ? p.p2 : (p.onlinePrice || p.p1))) || 0; }
 function llNextCode(){
   let max = 0;
@@ -7290,7 +7309,7 @@ function llRender(){
       return `<tr style="border-bottom:1px solid var(--border)">
         <td style="padding:4px"><input type="checkbox" ${LL.sel.has(r.id) ? 'checked' : ''} onchange="llToggleSel('${r.id}', this.checked)"></td>
         <td style="padding:4px"><input type="text" value="${escAttr(r.code)}" style="width:80px;font-weight:700" onchange="llEdit('${r.id}','code',this.value)"></td>
-        <td style="padding:4px">${name}<br><span style="font-size:13px;color:var(--text-muted)">${p ? posEsc(p.barcode) : ''}</span></td>
+        <td style="padding:4px">${r.productId ? name : `<input type="text" value="${escAttr(r.name)}" style="width:100%;min-width:160px" onchange="llEdit('${r.id}','name',this.value)">`}<br><span style="font-size:13px;color:var(--text-muted)">${r.productId ? (p ? posEsc(p.barcode) : '') : '<span class="badge warn">ນອກ POS</span>'}</span></td>
         <td style="padding:4px"><input type="text" inputmode="numeric" value="${r.price == null ? '' : r.price}" placeholder="${escAttr(ph)}" style="width:110px" onchange="llEdit('${r.id}','price',this.value)"></td>
         <td style="padding:4px"><input type="text" inputmode="numeric" value="${r.qty}" style="width:56px;text-align:center" onchange="llEdit('${r.id}','qty',this.value)"></td>
         <td style="padding:4px">${r.printedAt ? '<span class="badge ok">ພິມແລ້ວ</span>' : '<span class="badge warn">ໃໝ່</span>'}</td>
@@ -7314,6 +7333,10 @@ async function llEdit(id, field, raw){
     const code = String(raw || '').trim().toUpperCase();
     if (code && LL.rows.some(x => x.id !== id && x.code.toUpperCase() === code)){ showToast(`⚠️ ລະຫັດ ${code} ມີແລ້ວ`); llRender(); return; }
     upd.code = code;
+  } else if (field === 'name'){
+    const nm = String(raw || '').trim();
+    if (!nm){ showToast('⚠️ ຊື່ສິນຄ້າຫ້າມວ່າງ'); llRender(); return; }
+    upd.name = nm;
   } else if (field === 'price'){
     const n = parseFloat(String(raw || '').replace(/[^0-9.]/g, ''));
     upd.price = n > 0 ? n : null;
@@ -7323,6 +7346,7 @@ async function llEdit(id, field, raw){
   const { error } = await sb.from('pos_live_labels').update(upd).eq('id', id);
   if (error){ showToast('⚠️ ບັນທຶກບໍ່ສຳເລັດ: ' + (error.message || '')); llRender(); return; }
   if (upd.code !== undefined) r.code = upd.code;
+  if (upd.name !== undefined) r.name = upd.name;
   if ('price' in upd) r.price = upd.price;
   if (upd.qty !== undefined) r.qty = upd.qty;
   llRender();
@@ -7377,6 +7401,24 @@ async function llAddRow(){
   document.getElementById('ll-search-add').focus();
   llRender();
 }
+async function llAddFree(){
+  const g = id => document.getElementById(id);
+  const name = String(g('ll-free-name').value || '').trim();
+  const code = String(g('ll-free-code').value || '').trim().toUpperCase();
+  const price = parseFloat(String(g('ll-free-price').value || '').replace(/[^0-9.]/g, ''));
+  const qty = Math.max(1, Math.min(500, parseInt(g('ll-free-qty').value, 10) || 1));
+  if (!name){ showToast('ກະລຸນາໃສ່ຊື່ສິນຄ້າ'); return; }
+  if (code && LL.rows.some(r => r.code.toUpperCase() === code)){ showToast(`⚠️ ລະຫັດ ${code} ມີແລ້ວ — ໃຊ້ລະຫັດອື່ນ`); return; }
+  const payload = { shop_id: SHOP_ID, product_id: null, name, code, price: price > 0 ? price : null, qty, printed_at: null, created_by: currentUser ? currentUser.displayName : null };
+  const { data, error } = await sb.from('pos_live_labels').insert(payload).select().single();
+  if (error){ showToast('⚠️ ເພີ່ມບໍ່ສຳເລັດ: ' + (error.message || '')); return; }
+  LL.rows.push(llMapRow(data));
+  showToast(`ເພີ່ມ ${code || name} ແລ້ວ`);
+  g('ll-free-name').value = ''; g('ll-free-price').value = ''; g('ll-free-qty').value = 1;
+  g('ll-free-code').value = llNextCode();
+  g('ll-free-name').focus();
+  llRender();
+}
 /* ---- ນຳເຂົ້າ Excel (ໄຟລ໌ທີ່ທີມ Live ແກ້ໄຂ) ---- */
 function llImportExcel(ev){
   const input = ev.target;
@@ -7390,36 +7432,60 @@ function llImportExcel(ev){
       const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
       const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
       const res = bcParseImportRows(rows, PRODUCTS, 1);
-      if (!res.entries.length){ info.innerHTML = `<span style="color:var(--danger)">ບໍ່ພົບລາຍການທີ່ຈັບຄູ່ກັບ POS ໄດ້ (ອ່ານ ${res.total} ແຖວ)</span>`; input.value = ''; return; }
-      // 1 ສິນຄ້າ = 1 ແຖວ — ຖ້າສິນຄ້າດຽວກັນຊ້ຳໃນໄຟລ໌ ເອົາແຖວທຳອິດ
+      // 1 ສິນຄ້າ POS = 1 ແຖວ — ຖ້າສິນຄ້າດຽວກັນຊ້ຳໃນໄຟລ໌ ເອົາແຖວທຳອິດ
       const seen = new Set(); const uniq = [];
       res.entries.forEach(x => { if (!seen.has(x.id)){ seen.add(x.id); uniq.push(x); } });
-      const dupInFile = res.entries.length - uniq.length;
-      const existing = new Set(LL.rows.map(r => r.productId));
+      // ແຖວທີ່ບໍ່ພົບໃນ POS → ສິນຄ້ານອກ POS (ຈັບຄູ່ກັບຂອງເກົ່າດ້ວຍຊື່)
+      const seenFree = new Set(); const freeRows = [];
+      res.unmatchedRows.forEach(x => { const k = bcNorm(x.name); if (k && !seenFree.has(k)){ seenFree.add(k); freeRows.push(x); } });
+      if (!uniq.length && !freeRows.length){ info.innerHTML = `<span style="color:var(--danger)">ບໍ່ພົບລາຍການທີ່ນຳເຂົ້າໄດ້ (ອ່ານ ${res.total} ແຖວ)</span>`; input.value = ''; return; }
+      const existing = new Set(LL.rows.filter(r => r.productId).map(r => r.productId));
+      const freeExisting = new Map(LL.rows.filter(r => !r.productId).map(r => [bcNorm(r.name), r]));
       const nUpdate = uniq.filter(x => existing.has(x.id)).length;
-      const msg = `ນຳເຂົ້າ ${uniq.length} ລາຍການ: ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດທີ່ມີແລ້ວ ${nUpdate}\n(ລະຫັດ/ລາຄາ ຂອງແຖວທີ່ມີແລ້ວຈະຖືກແທນດ້ວຍຄ່າໃນໄຟລ໌ ແລະ ກັບເປັນ "ຍັງບໍ່ໄດ້ພິມ")\nດຳເນີນຕໍ່?`;
+      const nFreeUpdate = freeRows.filter(x => freeExisting.has(bcNorm(x.name))).length;
+      const msg = `ນຳເຂົ້າສິນຄ້າໃນ POS ${uniq.length} ລາຍການ: ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດທີ່ມີແລ້ວ ${nUpdate}\n`
+        + (freeRows.length ? `ສິນຄ້ານອກ POS ${freeRows.length} ລາຍການ: ເພີ່ມໃໝ່ ${freeRows.length - nFreeUpdate} · ອັບເດດທີ່ມີແລ້ວ ${nFreeUpdate}\n` : '')
+        + `(ລະຫັດ/ລາຄາ ຂອງແຖວທີ່ມີແລ້ວຈະຖືກແທນດ້ວຍຄ່າໃນໄຟລ໌ ແລະ ກັບເປັນ "ຍັງບໍ່ໄດ້ພິມ")\nດຳເນີນຕໍ່?`;
       if (!confirm(msg)){ input.value = ''; return; }
       info.textContent = 'ກຳລັງບັນທຶກ...';
       const now = new Date().toISOString();
       const who = currentUser ? currentUser.displayName : null;
-      const payload = uniq.map(x => {
-        const o = { shop_id: SHOP_ID, product_id: x.id, qty: x.qty, printed_at: null, updated_at: now, created_by: who };
-        o.code = res.hasCodeCol ? x.code : (LL.rows.find(r => r.productId === x.id) || {}).code || '';
-        o.price = res.hasPriceCol && x.price > 0 ? x.price : null;
-        return o;
-      });
-      for (let i = 0; i < payload.length; i += 200){
-        const { error } = await sb.from('pos_live_labels').upsert(payload.slice(i, i + 200), { onConflict: 'shop_id,product_id' });
+      if (uniq.length){
+        const payload = uniq.map(x => {
+          const o = { shop_id: SHOP_ID, product_id: x.id, qty: x.qty, printed_at: null, updated_at: now, created_by: who };
+          o.code = res.hasCodeCol ? x.code : (LL.rows.find(r => r.productId === x.id) || {}).code || '';
+          o.price = res.hasPriceCol && x.price > 0 ? x.price : null;
+          return o;
+        });
+        for (let i = 0; i < payload.length; i += 200){
+          const { error } = await sb.from('pos_live_labels').upsert(payload.slice(i, i + 200), { onConflict: 'shop_id,product_id' });
+          if (error) throw error;
+        }
+      }
+      // ສິນຄ້ານອກ POS: ແຖວໃໝ່ insert ເປັນຊຸດ, ແຖວທີ່ມີແລ້ວ update ຕາມ id
+      const freeNew = freeRows.filter(x => !freeExisting.has(bcNorm(x.name)));
+      for (let i = 0; i < freeNew.length; i += 200){
+        const chunk = freeNew.slice(i, i + 200).map(x => ({ shop_id: SHOP_ID, product_id: null, name: x.name, code: res.hasCodeCol ? x.code : '', price: res.hasPriceCol && x.price > 0 ? x.price : null, qty: x.qty, printed_at: null, updated_at: now, created_by: who }));
+        const { error } = await sb.from('pos_live_labels').insert(chunk);
+        if (error) throw error;
+      }
+      for (const x of freeRows.filter(x => freeExisting.has(bcNorm(x.name)))){
+        const row = freeExisting.get(bcNorm(x.name));
+        const upd = { qty: x.qty, printed_at: null, updated_at: now };
+        if (res.hasCodeCol) upd.code = x.code;
+        if (res.hasPriceCol) upd.price = x.price > 0 ? x.price : null;
+        const { error } = await sb.from('pos_live_labels').update(upd).eq('id', row.id);
         if (error) throw error;
       }
       await llLoad();
       LL.page = 1;
-      const parts = [`ນຳເຂົ້າສຳເລັດ ${uniq.length} ລາຍການ (ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດ ${nUpdate})`];
+      const li = arr => `<ol style="margin:4px 0 0;padding-left:26px;max-height:200px;overflow:auto;color:var(--text)">${arr.map(n => `<li>${posEsc(n)}</li>`).join('')}</ol>`;
+      const parts = [`ນຳເຂົ້າສຳເລັດ: ສິນຄ້າໃນ POS ${uniq.length} (ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດ ${nUpdate})` + (freeRows.length ? ` · ສິນຄ້ານອກ POS ${freeRows.length} (ເພີ່ມໃໝ່ ${freeRows.length - nFreeUpdate} · ອັບເດດ ${nFreeUpdate})` : '')];
       if (!res.hasCodeCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລະຫັດ" ໃນໄຟລ໌</span>');
-      if (!res.hasPriceCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລາຄາຂາຍ 2" — ໃຊ້ລາຄາຂາຍ 2 ຈາກ POS</span>');
-      if (dupInFile) parts.push(`ສິນຄ້າຊ້ຳໃນໄຟລ໌ ${dupInFile} ແຖວ (ເອົາແຖວທຳອິດ)`);
-      if (res.ambiguous) parts.push(`ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguous} ແຖວ (ເລືອກຕົວທຳອິດ)`);
-      if (res.unmatched.length) parts.push(`<details open style="color:var(--danger)"><summary style="cursor:pointer;font-weight:600">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ (ກົດເພື່ອເປີດ/ປິດລາຍຊື່)</summary><ol style="margin:4px 0 0;padding-left:26px;max-height:260px;overflow:auto;color:var(--text)">${res.unmatched.map(n => `<li>${posEsc(n)}</li>`).join('')}</ol></details>`);
+      if (!res.hasPriceCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລາຄາຂາຍ 2" — ໃຊ້ລາຄາຂາຍ 2 ຈາກ POS (ສິນຄ້ານອກ POS ຈະບໍ່ມີລາຄາ)</span>');
+      if (res.dupNames.length) parts.push(`<details><summary style="cursor:pointer;font-weight:600">ສິນຄ້າຊ້ຳໃນໄຟລ໌ ${res.dupNames.length} ແຖວ (ເອົາແຖວທຳອິດ) — ກົດເບິ່ງຊື່</summary>${li(res.dupNames)}</details>`);
+      if (res.ambiguousNames.length) parts.push(`<details><summary style="cursor:pointer;font-weight:600">ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguousNames.length} ແຖວ (ເລືອກຕົວທຳອິດ) — ກົດເບິ່ງຊື່</summary>${li(res.ambiguousNames)}</details>`);
+      if (freeRows.length) parts.push(`<details><summary style="cursor:pointer;font-weight:600">ສິນຄ້ານອກ POS ${freeRows.length} ແຖວ (ບໍ່ມີໃນ POS) — ກົດເບິ່ງຊື່</summary>${li(freeRows.map(x => x.name))}</details>`);
       info.innerHTML = parts.join('<br>');
       llRender();
     }catch(err){ info.innerHTML = `<span style="color:var(--danger)">⚠️ ນຳເຂົ້າບໍ່ສຳເລັດ: ${posEsc(err.message || '')}</span>`; }

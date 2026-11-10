@@ -466,6 +466,7 @@
           <a class="home-btn" data-btnkey="shop" href="#settings" onclick="switchView('settings'); switchSettingsTab('shop');return false;"><span class="hi">🏬</span>ຮ້ານ ສາຂາ</a>
           <a class="home-btn" data-btnkey="printer" href="#settings" onclick="switchView('settings'); switchSettingsTab('receipt');return false;"><span class="hi">🖨️</span>ເຄື່ອງພິມ</a>
           <a class="home-btn" data-btnkey="barcode" href="#barcode" onclick="switchView('barcode');return false;"><span class="hi">▤</span>ສ້າງບາໂຄດ</a>
+          <a class="home-btn" data-btnkey="livelabels" href="#livelabels" onclick="switchView('livelabels');return false;"><span class="hi">🏷️</span>ປ້າຍ Live</a>
           <a class="home-btn" data-btnkey="editbill" href="#bills" onclick="switchView('bills');return false;"><span class="hi">✏️</span>ແກ້ໄຂບິນ</a>
           <a class="home-btn" data-btnkey="leave" href="#staff" onclick="switchView('staff');return false;"><span class="hi">📅</span>ຂາດ ລາ ມາສວຍ</a>
           <button class="home-btn" data-btnkey="backup" onclick="showToast('Backup ສຳເລັດ (demo)')"><span class="hi">💾</span>Backup DB</button>
@@ -1123,6 +1124,56 @@
     <div id="activityDetailContent" style="max-height:60vh;overflow-y:auto"></div>
   </div>
 </div>
+
+<div class="view" id="view-livelabels">
+      <h2 class="page-title">ປ້າຍ Live</h2>
+      <div class="panel" style="margin-bottom:12px">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
+          <label class="btn" style="cursor:pointer">📥 ນຳເຂົ້າຈາກ Excel<input type="file" id="ll-import-file" accept=".xls,.xlsx,.csv" style="display:none" onchange="llImportExcel(event)"></label>
+          <span class="btn" onclick="llReload()">🔄 ໂຫຼດໃໝ່</span>
+          <select id="ll-preset" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="llPresetChanged()">
+            <option value="p32">32x25 ມມ · 3 ປ້າຍຕໍ່ແຖວ</option>
+            <option value="p40">40x30 ມມ · 1 ປ້າຍຕໍ່ແຖວ</option>
+            <option value="custom">ກຳນົດເອງ (ຕັ້ງຄ່າໃນໜ້າສ້າງບາໂຄດ)</option>
+          </select>
+          <select id="ll-start" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px"></select>
+        </div>
+        <div id="llImportInfo" style="font-size:14px;margin-bottom:8px"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <button class="btn primary" onclick="llPrint('new')">🖨️ ພິມສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ <b id="llNewCount"></b></button>
+          <button class="btn" onclick="llPrint('sel')">🖨️ ພິມທີ່ເລືອກ <b id="llSelCount"></b></button>
+          <button class="btn" onclick="llPrint('all')">🖨️ ພິມທັງໝົດ</button>
+        </div>
+        <div id="llPrintedBanner" style="display:none;margin-top:10px;padding:8px 10px;border:1px solid #f0c48a;background:#fff7ec;border-radius:var(--radius);font-size:15px"></div>
+      </div>
+
+      <div class="panel" style="margin-bottom:12px">
+        <p style="font-size:15px;font-weight:600;margin:0 0 8px;color:var(--text-soft)">ເພີ່ມສິນຄ້າໃໝ່ເຂົ້າລາຍການ</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;align-items:end">
+          <div class="field" style="grid-column:1/-1"><label>ຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ)</label><input type="text" id="ll-search-add" oninput="llFilterAddSelect()"></div>
+          <div class="field" style="grid-column:1/-1"><label>ເລືອກສິນຄ້າ</label><select id="ll-add-product" style="width:100%;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="llAddProductChanged()"></select></div>
+          <div class="field"><label>ລະຫັດ Live</label><input type="text" id="ll-add-code" autocomplete="off"></div>
+          <div class="field"><label>ລາຄາຂາຍ (ກີບ)</label><input type="text" inputmode="numeric" id="ll-add-price"></div>
+          <div class="field"><label>ຈຳນວນປ້າຍ</label><input type="text" inputmode="numeric" id="ll-add-qty" value="1"></div>
+          <button class="btn primary" onclick="llAddRow()">➕ ເພີ່ມ</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px">
+          <input type="text" id="ll-search" placeholder="ຄົ້ນຫາ ຊື່ / ລະຫັດ / ບາໂຄດ" style="flex:1;min-width:180px;height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" oninput="llSearchChanged()">
+          <select id="ll-filter" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="llSearchChanged()">
+            <option value="all">ທັງໝົດ</option>
+            <option value="new">ຍັງບໍ່ໄດ້ພິມ</option>
+            <option value="sel">ທີ່ເລືອກ</option>
+          </select>
+          <span class="btn" onclick="llMarkAllPrinted()">ໝາຍທັງໝົດວ່າພິມແລ້ວ</span>
+        </div>
+        <p id="llSummary" style="font-size:15px;margin:0 0 8px;color:var(--text);font-weight:600"></p>
+        <div id="llTable" style="overflow-x:auto"></div>
+        <div id="llPager" style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:10px"></div>
+      </div>
+    </div>
 
 <div class="view" id="view-bills">
       <h2 class="page-title">ຄົ້ນຫາບິນ (ແກ້ໄຂ/ຍົກເລີກ)</h2>
@@ -1991,7 +2042,8 @@ async function liveSetCurrent(productId){
 // v2.72 (Tar 2026-11-10, "ເພີ່ມຂະໜາດລະຫັດສິນຄ້າ ແລະ ລາຄາ ໃຫ້ໃຫຍ່ຂຶ້ນ" ຫຼັງເບິ່ງປ້າຍພິມຈິງ 40x30): ປ້າຍ Live ລະຫັດ ແລະ ລາຄາ ໃຫຍ່ຂຶ້ນ (ລະຫັດ 4.8→7 ມມ, ລາຄາ 3.7→5.2 ມມ ຕໍ່ປ້າຍມາດຕະຖານ) ແລະ ມີການຫຍໍ້ອັດຕະໂນມັດສະເພາະປ້າຍທີ່ລົ້ນຂອບ (ລາຄາຫຼັກແສນ-ລ້ານ ຫຼື ລະຫັດ 4 ໂຕ) — ປ້າຍທີ່ພໍດີໄດ້ຕົວໃຫຍ່ສຸດ.
 // v2.73 (Tar 2026-11-10, "ເພີ່ມສິນຄ້າໃໝ່ເຂົ້າລາຍການພິມເອງ ຍັງເປັນແບບເກົ່າມີບາໂຄດ"): ສິນຄ້າທີ່ເພີ່ມເອງຈາກຊ່ອງ "ເລືອກສິນຄ້າ" ໃຊ້ແບບປ້າຍໃໝ່ (ບໍ່ມີບາໂຄດ: ລາຄາໂຕໃຫຍ່ + ຊື່) ຄືກັບປ້າຍ Live. ເພີ່ມຊ່ອງ "ລະຫັດ Live" (ບໍ່ບັງຄັບ) — ຖ້າໃສ່ ຈະສະແດງລະຫັດ + ລາຄາ Live, ຖ້າບໍ່ໃສ່ ສະແດງລາຄາ (ລາຄາຂາຍ 1) ຢູ່ກາງແຖວເທິງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກ (ພິມບາໂຄດສິນຄ້າດຽວ) ຍັງເປັນແບບມີບາໂຄດ.
 // v2.74 (Tar 2026-11-10, ເບິ່ງໄຟລ໌ຈິງຂອງທີມ Live: A ລຳດັບ, B ຊື່ສິນຄ້າ, C ສະຕັອກ, D ລາຄາຂາຍ 1, E ລາຄາຂາຍ 2, F ລະຫັດ): ນຳເຂົ້າ Excel ອ່ານ "ລາຄາຂາຍ 2" (ຖັນ E) ເປັນລາຄາເທິງປ້າຍ Live, "ລະຫັດ" (ຖັນ F) ເປັນລະຫັດ Live, "ຊື່ສິນຄ້າ" (ຖັນ B) ຈັບຄູ່ສິນຄ້າໃນ POS. ບໍ່ໃຊ້ສະຕັອກ ແລະ ລາຄາຂາຍ 1. ຖ້າບໍ່ມີຖັນ "ລາຄາຂາຍ 2" ກັບໄປໃຊ້ລາຄາຈາກ POS ແລະ ແຈ້ງເຕືອນໃນກ່ອງຂໍ້ມູນນຳເຂົ້າ.
-const APP_VERSION = 'v2.74';
+// v2.75 (Tar 2026-11-10, "ໃຫ້ພະນັກງານແກ້ໄຂ/ເພີ່ມສິນຄ້າໃນລາຍການປ້າຍໃນ POS ເອງ ບໍ່ຕ້ອງແກ້ Excel"): ເພີ່ມໜ້າ "ປ້າຍ Live" (ປຸ່ມໜ້າຫຼັກ) — ລາຍການປ້າຍທີ່ເກັບຖາວອນໃນຕາຕະລາງໃໝ່ pos_live_labels: ນຳເຂົ້າຈາກ Excel 740 ແຖວເປັນຖານ, ແກ້ລະຫັດ/ລາຄາ/ຈຳນວນປ້າຍໃນຕາຕະລາງ, ເພີ່ມສິນຄ້າໃໝ່ໄດ້ເລື້ອຍໆ (ລະບົບແນະນຳລະຫັດຖັດໄປ), ຄົ້ນຫາ/ກັ່ນຕອງ, ເລືອກແຖວ, ພິມທັງໝົດ/ສະເພາະທີ່ເລືອກ/ສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ ໃນຄັ້ງຕໍ່ໄປ. ຫຼັງພິມມີແຖບໃຫ້ກົດ "ໝາຍວ່າພິມແລ້ວ". ໂຫຼດຂໍ້ມູນເມື່ອເປີດໜ້າ ແລະ ກົດ "ໂຫຼດໃໝ່" ເທົ່ານັ້ນ (ບໍ່ມີ polling).
+const APP_VERSION = 'v2.75';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -2842,7 +2894,7 @@ function setupLockedTablePolling(){
 /* ============================================================
    UI SHELL (view switching, toast, beep — ບໍ່ຕ້ອງການ Supabase)
    ============================================================ */
-const VALID_VIEWS = ['home','sales','stock','purchase','customers','reports','staff','barcode','bills','activitylog','settings','dashboard'];
+const VALID_VIEWS = ['home','sales','stock','purchase','customers','reports','staff','barcode','livelabels','bills','activitylog','settings','dashboard'];
 const SUBTAB_VIEWS = ['stock','reports','purchase','customers','settings']; // ໜ້າທີ່ມີແທັບຍ່ອຍ ແລະ ຕ້ອງການຄ້າງໄວ້ບ່ອນເກົ່າ ຫຼັງ reload/ເປີດແທັບໃໝ່
 let suppressHashUpdate = false;
 function switchView(name, skipHashUpdate, subtab){
@@ -2871,6 +2923,7 @@ function switchView(name, skipHashUpdate, subtab){
   }
   if (name === 'staff') renderStaffTable();
   if (name === 'barcode') initBarcodeProductSelect();
+  if (name === 'livelabels') initLiveLabelsView();
   if (name === 'bills') { renderBillSearch(); }
   if (name === 'activitylog'){ resetActivityDateFilter(); loadActivityLog(); } // v2.46: ເຂົ້າໜ້າປະຫວັດ → ວັນນີ້
   if (name === 'sales') updateShiftButton();
@@ -4713,13 +4766,13 @@ async function goToTodayReport(){
 const HOME_BTN_LABELS = {
   sales:'ຂາຍສິນຄ້າ', customers:'ລູກຄ້າສະມາຊິກ', stock:'ສິນຄ້າ ສະຕ໊ອກ', purchase:'ຈັດຊື້',
   reports:'ລາຍງານ', activitylog:'ປະຫວັດການກະທຳ', staff:'ພະນັກງານ', settings:'ຕັ້ງຄ່າ',
-  users:'ຜູ້ໃຊ້ງານ', shop:'ຮ້ານ ສາຂາ', printer:'ເຄື່ອງພິມ', barcode:'ສ້າງບາໂຄດ',
+  users:'ຜູ້ໃຊ້ງານ', shop:'ຮ້ານ ສາຂາ', printer:'ເຄື່ອງພິມ', barcode:'ສ້າງບາໂຄດ', livelabels:'ປ້າຍ Live',
   editbill:'ແກ້ໄຂບິນ', leave:'ຂາດ ລາ ມາສວຍ', backup:'Backup DB'
 };
 const HOME_BTN_COLORS_DEFAULT = {
   sales:'#1f9d6f', customers:'#2f6fed', stock:'#2f6fed', purchase:'#e08a2c',
   reports:'#17959c', activitylog:'#e08a2c', staff:'#7c5cd6', settings:'#d64545',
-  users:'#5b616e', shop:'#5b616e', printer:'#2c2f38', barcode:'#2c2f38',
+  users:'#5b616e', shop:'#5b616e', printer:'#2c2f38', barcode:'#2c2f38', livelabels:'#e08a2c',
   editbill:'#17959c', leave:'#2f6fed', backup:'#2c2f38'
 };
 function loadHomeButtonColors(){
@@ -7127,6 +7180,297 @@ function printQuickBarcode(){
   const qty = Math.max(1, Math.min(300, parseInt(document.getElementById('qb-qty').value,10) || 1));
   bcPrintLabels(new Array(qty).fill(p), 1);
   closeQuickBarcode();
+}
+
+/* ============================================================
+   ປ້າຍ Live (v2.75) — ລາຍການປ້າຍ Live ທີ່ພະນັກງານແກ້ໄຂ/ເພີ່ມ/ພິມໃນ POS ເອງ (ຕາຕະລາງ pos_live_labels)
+   ໂຫຼດຂໍ້ມູນຕອນເປີດໜ້າຄັ້ງທຳອິດ ແລະ ເມື່ອກົດ "ໂຫຼດໃໝ່" ເທົ່ານັ້ນ (ບໍ່ມີ polling)
+   ============================================================ */
+const LL = { rows: [], loaded: false, loading: false, sel: new Set(), page: 1, pageSize: 50, justPrinted: [] };
+function llMapRow(r){
+  return { id: r.id, productId: r.product_id, code: r.code || '', price: r.price == null ? null : Number(r.price), qty: Number(r.qty) || 1, printedAt: r.printed_at || null, createdAt: r.created_at };
+}
+async function llLoad(){
+  if (LL.loading) return;
+  LL.loading = true;
+  const info = document.getElementById('llImportInfo');
+  try{
+    const data = await fetchAllRows((from, to) => sb.from('pos_live_labels').select('*').eq('shop_id', SHOP_ID).order('created_at').order('id').range(from, to));
+    LL.rows = (data || []).map(llMapRow);
+    LL.loaded = true;
+    const ids = new Set(LL.rows.map(r => r.id));
+    LL.sel.forEach(id => { if (!ids.has(id)) LL.sel.delete(id); });
+  }catch(e){
+    if (info) info.innerHTML = `<span style="color:var(--danger)">⚠️ ໂຫຼດລາຍການບໍ່ໄດ້: ${posEsc(e.message || '')}</span>`;
+  }
+  LL.loading = false;
+}
+async function llReload(){ await llLoad(); llRender(); showToast('ໂຫຼດລາຍການແລ້ວ'); }
+async function initLiveLabelsView(){
+  llFillStartSelect();
+  llFillPresetSelect();
+  llFilterAddSelect();
+  llRender();
+  if (!LL.loaded){ await llLoad(); llRender(); }
+}
+function llFillPresetSelect(){ const pr = document.getElementById('ll-preset'); if (pr) pr.value = bcPresetKey(bcLoadCfg()); }
+function llFillStartSelect(){
+  const sel = document.getElementById('ll-start');
+  if (!sel) return;
+  const cols = bcLoadCfg().cols;
+  const prev = parseInt(sel.value, 10) || 1;
+  sel.style.display = cols > 1 ? '' : 'none';
+  sel.innerHTML = Array.from({ length: cols }, (_, i) => `<option value="${i + 1}">ເລີ່ມພິມຊ່ອງທີ ${i + 1}</option>`).join('');
+  sel.value = String(Math.min(prev, cols));
+}
+function llPresetChanged(){
+  const k = document.getElementById('ll-preset').value;
+  const q = BC_PRESETS[k];
+  if (!q) return;
+  const c = bcLoadCfg();
+  try{ localStorage.setItem('bc_label_cfg', JSON.stringify(bcCleanCfg({ ...c, ...q }))); }catch(e){}
+  llFillStartSelect();
+}
+// ຈັດລຽງຕາມລະຫັດ A1, A2, A10 (ຕົວເລກຈິງ), ແຖວທີ່ບໍ່ມີລະຫັດຢູ່ທ້າຍ
+function llSortedRows(){
+  return LL.rows.slice().sort((a, b) => {
+    if (!a.code && !b.code) return String(a.createdAt).localeCompare(String(b.createdAt));
+    if (!a.code) return 1; if (!b.code) return -1;
+    return a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' });
+  });
+}
+function llProduct(r){ return PRODUCTS.find(p => p.id === r.productId); }
+function llDefaultPrice(p){ return (p && (p.p2 > 0 ? p.p2 : (p.onlinePrice || p.p1))) || 0; }
+function llNextCode(){
+  let max = 0;
+  LL.rows.forEach(r => { const m = /^A(\d+)$/i.exec(r.code); if (m) max = Math.max(max, parseInt(m[1], 10)); });
+  return 'A' + (max + 1);
+}
+function llFilteredRows(){
+  const q = bcNorm((document.getElementById('ll-search') || {}).value || '');
+  const f = (document.getElementById('ll-filter') || {}).value || 'all';
+  return llSortedRows().filter(r => {
+    if (f === 'new' && r.printedAt) return false;
+    if (f === 'sel' && !LL.sel.has(r.id)) return false;
+    if (!q) return true;
+    const p = llProduct(r);
+    return bcNorm(r.code).includes(q) || (p && (bcNorm(p.name).includes(q) || bcNorm(p.barcode).includes(q)));
+  });
+}
+function llSearchChanged(){ LL.page = 1; llRender(); }
+function llRender(){
+  const tbl = document.getElementById('llTable');
+  if (!tbl) return;
+  const rows = llFilteredRows();
+  const newCount = LL.rows.filter(r => !r.printedAt).length;
+  const s = id => document.getElementById(id);
+  s('llNewCount').textContent = newCount ? `(${newCount})` : '';
+  s('llSelCount').textContent = LL.sel.size ? `(${LL.sel.size})` : '';
+  s('llSummary').textContent = `ທັງໝົດ ${LL.rows.length} ແຖວ · ຍັງບໍ່ໄດ້ພິມ ${newCount} · ເລືອກ ${LL.sel.size}` + (rows.length !== LL.rows.length ? ` · ກົງເງື່ອນໄຂ ${rows.length}` : '');
+  const pages = Math.max(1, Math.ceil(rows.length / LL.pageSize));
+  LL.page = Math.min(LL.page, pages);
+  const slice = rows.slice((LL.page - 1) * LL.pageSize, LL.page * LL.pageSize);
+  if (!slice.length){
+    tbl.innerHTML = `<p style="font-size:15px;color:var(--text-muted)">${LL.loading ? 'ກຳລັງໂຫຼດ...' : 'ຍັງບໍ່ມີລາຍການ — ນຳເຂົ້າຈາກ Excel ຫຼື ເພີ່ມສິນຄ້າດ້ານເທິງ'}</p>`;
+    s('llPager').innerHTML = '';
+    return;
+  }
+  const allChecked = slice.every(r => LL.sel.has(r.id));
+  tbl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:15px">
+    <thead><tr style="text-align:left;color:var(--text-soft);border-bottom:1px solid var(--border)">
+      <th style="padding:4px"><input type="checkbox" ${allChecked ? 'checked' : ''} onchange="llToggleAll(this.checked)"></th>
+      <th style="padding:4px;width:90px">ລະຫັດ</th><th style="padding:4px">ສິນຄ້າ</th>
+      <th style="padding:4px;width:120px">ລາຄາຂາຍ</th><th style="padding:4px;width:70px">ຈຳນວນປ້າຍ</th>
+      <th style="padding:4px;width:70px">ສະຖານະ</th><th style="padding:4px;width:40px"></th></tr></thead><tbody>` +
+    slice.map(r => {
+      const p = llProduct(r);
+      const name = p ? posEsc(p.name) : '<span style="color:var(--danger)">(ບໍ່ພົບສິນຄ້າໃນ POS)</span>';
+      const ph = p ? fmt(llDefaultPrice(p)) : '';
+      return `<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:4px"><input type="checkbox" ${LL.sel.has(r.id) ? 'checked' : ''} onchange="llToggleSel('${r.id}', this.checked)"></td>
+        <td style="padding:4px"><input type="text" value="${escAttr(r.code)}" style="width:80px;font-weight:700" onchange="llEdit('${r.id}','code',this.value)"></td>
+        <td style="padding:4px">${name}<br><span style="font-size:13px;color:var(--text-muted)">${p ? posEsc(p.barcode) : ''}</span></td>
+        <td style="padding:4px"><input type="text" inputmode="numeric" value="${r.price == null ? '' : r.price}" placeholder="${escAttr(ph)}" style="width:110px" onchange="llEdit('${r.id}','price',this.value)"></td>
+        <td style="padding:4px"><input type="text" inputmode="numeric" value="${r.qty}" style="width:56px;text-align:center" onchange="llEdit('${r.id}','qty',this.value)"></td>
+        <td style="padding:4px">${r.printedAt ? '<span class="badge ok">ພິມແລ້ວ</span>' : '<span class="badge warn">ໃໝ່</span>'}</td>
+        <td style="padding:4px"><span class="btn" style="padding:2px 8px" onclick="llDelete('${r.id}')">✕</span></td></tr>`;
+    }).join('') + '</tbody></table>';
+  s('llPager').innerHTML = pages > 1
+    ? `<span class="btn" onclick="llGoPage(${LL.page - 1})">‹</span><span style="font-size:15px">ໜ້າ ${LL.page} / ${pages}</span><span class="btn" onclick="llGoPage(${LL.page + 1})">›</span>` : '';
+}
+function llGoPage(n){ LL.page = Math.max(1, n); llRender(); }
+function llToggleSel(id, on){ if (on) LL.sel.add(id); else LL.sel.delete(id); llRender(); }
+function llToggleAll(on){
+  const rows = llFilteredRows().slice((LL.page - 1) * LL.pageSize, LL.page * LL.pageSize);
+  rows.forEach(r => { if (on) LL.sel.add(r.id); else LL.sel.delete(r.id); });
+  llRender();
+}
+async function llEdit(id, field, raw){
+  const r = LL.rows.find(x => x.id === id);
+  if (!r) return;
+  const upd = { updated_at: new Date().toISOString() };
+  if (field === 'code'){
+    const code = String(raw || '').trim().toUpperCase();
+    if (code && LL.rows.some(x => x.id !== id && x.code.toUpperCase() === code)){ showToast(`⚠️ ລະຫັດ ${code} ມີແລ້ວ`); llRender(); return; }
+    upd.code = code;
+  } else if (field === 'price'){
+    const n = parseFloat(String(raw || '').replace(/[^0-9.]/g, ''));
+    upd.price = n > 0 ? n : null;
+  } else if (field === 'qty'){
+    upd.qty = Math.max(1, Math.min(500, parseInt(raw, 10) || 1));
+  }
+  const { error } = await sb.from('pos_live_labels').update(upd).eq('id', id);
+  if (error){ showToast('⚠️ ບັນທຶກບໍ່ສຳເລັດ: ' + (error.message || '')); llRender(); return; }
+  if (upd.code !== undefined) r.code = upd.code;
+  if ('price' in upd) r.price = upd.price;
+  if (upd.qty !== undefined) r.qty = upd.qty;
+  llRender();
+}
+async function llDelete(id){
+  const r = LL.rows.find(x => x.id === id);
+  const p = r && llProduct(r);
+  if (!confirm(`ລຶບ ${r ? r.code : ''} ${p ? p.name : ''} ອອກຈາກລາຍການປ້າຍ?`)) return;
+  const { error } = await sb.from('pos_live_labels').delete().eq('id', id);
+  if (error){ showToast('⚠️ ລຶບບໍ່ສຳເລັດ: ' + (error.message || '')); return; }
+  LL.rows = LL.rows.filter(x => x.id !== id); LL.sel.delete(id);
+  llRender();
+}
+/* ---- ເພີ່ມສິນຄ້າໃໝ່ ---- */
+function llFilterAddSelect(){
+  const sel = document.getElementById('ll-add-product');
+  if (!sel) return;
+  const q = bcNorm((document.getElementById('ll-search-add') || {}).value || '');
+  let list = q ? PRODUCTS.filter(p => bcNorm(p.name).includes(q) || bcNorm(p.barcode).includes(q)) : PRODUCTS;
+  const total = list.length;
+  list = list.slice(0, 200);
+  sel.innerHTML = list.map(p => `<option value="${escAttr(p.id)}">${posEsc(p.name)} (${posEsc(p.barcode)})</option>`).join('')
+    + (total > list.length ? `<option disabled>… ມີອີກ ${total - list.length} ລາຍການ — ພິມຄົ້ນຫາເພື່ອຫຍໍ້</option>` : '');
+  llAddProductChanged();
+}
+function llAddProductChanged(){
+  const sel = document.getElementById('ll-add-product');
+  const p = sel && PRODUCTS.find(x => x.id === sel.value);
+  const code = document.getElementById('ll-add-code'), price = document.getElementById('ll-add-price');
+  const ex = p && LL.rows.find(r => r.productId === p.id);
+  if (code) code.value = ex ? ex.code : llNextCode();
+  if (price) price.value = p ? (ex && ex.price ? ex.price : llDefaultPrice(p)) : '';
+}
+async function llAddRow(){
+  const sel = document.getElementById('ll-add-product');
+  const p = sel && PRODUCTS.find(x => x.id === sel.value);
+  if (!p){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ'); return; }
+  const code = String(document.getElementById('ll-add-code').value || '').trim().toUpperCase();
+  const price = parseFloat(String(document.getElementById('ll-add-price').value || '').replace(/[^0-9.]/g, ''));
+  const qty = Math.max(1, Math.min(500, parseInt(document.getElementById('ll-add-qty').value, 10) || 1));
+  const ex = LL.rows.find(r => r.productId === p.id);
+  if (code && LL.rows.some(r => r.id !== (ex && ex.id) && r.code.toUpperCase() === code)){ showToast(`⚠️ ລະຫັດ ${code} ມີແລ້ວ — ໃຊ້ລະຫັດອື່ນ`); return; }
+  const payload = { shop_id: SHOP_ID, product_id: p.id, code, price: price > 0 ? price : null, qty, printed_at: null, updated_at: new Date().toISOString(), created_by: currentUser ? currentUser.displayName : null };
+  const { data, error } = await sb.from('pos_live_labels').upsert(payload, { onConflict: 'shop_id,product_id' }).select().single();
+  if (error){ showToast('⚠️ ເພີ່ມບໍ່ສຳເລັດ: ' + (error.message || '')); return; }
+  const m = llMapRow(data);
+  if (ex) Object.assign(ex, m); else LL.rows.push(m);
+  showToast(ex ? 'ອັບເດດສິນຄ້ານີ້ແລ້ວ (ມີໃນລາຍການຢູ່ແລ້ວ)' : `ເພີ່ມ ${code || p.name} ແລ້ວ`);
+  document.getElementById('ll-search-add').value = '';
+  document.getElementById('ll-add-qty').value = 1;
+  llFilterAddSelect();
+  document.getElementById('ll-search-add').focus();
+  llRender();
+}
+/* ---- ນຳເຂົ້າ Excel (ໄຟລ໌ທີ່ທີມ Live ແກ້ໄຂ) ---- */
+function llImportExcel(ev){
+  const input = ev.target;
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const info = document.getElementById('llImportInfo');
+  if (typeof XLSX === 'undefined'){ showToast('⚠️ ຕ້ອງການອິນເຕີເນັດເພື່ອໂຫຼດຕົວອ່ານ Excel — ລອງໃໝ່'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try{
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
+      const res = bcParseImportRows(rows, PRODUCTS, 1);
+      if (!res.entries.length){ info.innerHTML = `<span style="color:var(--danger)">ບໍ່ພົບລາຍການທີ່ຈັບຄູ່ກັບ POS ໄດ້ (ອ່ານ ${res.total} ແຖວ)</span>`; input.value = ''; return; }
+      // 1 ສິນຄ້າ = 1 ແຖວ — ຖ້າສິນຄ້າດຽວກັນຊ້ຳໃນໄຟລ໌ ເອົາແຖວທຳອິດ
+      const seen = new Set(); const uniq = [];
+      res.entries.forEach(x => { if (!seen.has(x.id)){ seen.add(x.id); uniq.push(x); } });
+      const dupInFile = res.entries.length - uniq.length;
+      const existing = new Set(LL.rows.map(r => r.productId));
+      const nUpdate = uniq.filter(x => existing.has(x.id)).length;
+      const msg = `ນຳເຂົ້າ ${uniq.length} ລາຍການ: ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດທີ່ມີແລ້ວ ${nUpdate}\n(ລະຫັດ/ລາຄາ ຂອງແຖວທີ່ມີແລ້ວຈະຖືກແທນດ້ວຍຄ່າໃນໄຟລ໌ ແລະ ກັບເປັນ "ຍັງບໍ່ໄດ້ພິມ")\nດຳເນີນຕໍ່?`;
+      if (!confirm(msg)){ input.value = ''; return; }
+      info.textContent = 'ກຳລັງບັນທຶກ...';
+      const now = new Date().toISOString();
+      const who = currentUser ? currentUser.displayName : null;
+      const payload = uniq.map(x => {
+        const o = { shop_id: SHOP_ID, product_id: x.id, qty: x.qty, printed_at: null, updated_at: now, created_by: who };
+        o.code = res.hasCodeCol ? x.code : (LL.rows.find(r => r.productId === x.id) || {}).code || '';
+        o.price = res.hasPriceCol && x.price > 0 ? x.price : null;
+        return o;
+      });
+      for (let i = 0; i < payload.length; i += 200){
+        const { error } = await sb.from('pos_live_labels').upsert(payload.slice(i, i + 200), { onConflict: 'shop_id,product_id' });
+        if (error) throw error;
+      }
+      await llLoad();
+      LL.page = 1;
+      const parts = [`ນຳເຂົ້າສຳເລັດ ${uniq.length} ລາຍການ (ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດ ${nUpdate})`];
+      if (!res.hasCodeCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລະຫັດ" ໃນໄຟລ໌</span>');
+      if (!res.hasPriceCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລາຄາຂາຍ 2" — ໃຊ້ລາຄາຂາຍ 2 ຈາກ POS</span>');
+      if (dupInFile) parts.push(`ສິນຄ້າຊ້ຳໃນໄຟລ໌ ${dupInFile} ແຖວ (ເອົາແຖວທຳອິດ)`);
+      if (res.ambiguous) parts.push(`ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguous} ແຖວ (ເລືອກຕົວທຳອິດ)`);
+      if (res.unmatched.length) parts.push(`<span style="color:var(--danger)">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ: ${posEsc(res.unmatched.slice(0, 8).join(', '))}${res.unmatched.length > 8 ? ' …' : ''}</span>`);
+      info.innerHTML = parts.join('<br>');
+      llRender();
+    }catch(err){ info.innerHTML = `<span style="color:var(--danger)">⚠️ ນຳເຂົ້າບໍ່ສຳເລັດ: ${posEsc(err.message || '')}</span>`; }
+    input.value = '';
+  };
+  reader.readAsArrayBuffer(file);
+}
+/* ---- ພິມ ---- */
+function llPrint(mode){
+  let rows = llSortedRows();
+  if (mode === 'new') rows = rows.filter(r => !r.printedAt);
+  else if (mode === 'sel') rows = rows.filter(r => LL.sel.has(r.id));
+  if (!rows.length){ showToast(mode === 'new' ? 'ບໍ່ມີແຖວທີ່ຍັງບໍ່ໄດ້ພິມ' : mode === 'sel' ? 'ຍັງບໍ່ໄດ້ເລືອກແຖວ' : 'ຍັງບໍ່ມີລາຍການ'); return; }
+  const labels = []; const used = [];
+  rows.forEach(r => {
+    const p = llProduct(r);
+    if (!p) return;
+    used.push(r.id);
+    const lab = { ...p, isLive: true, liveCode: r.code, livePrice: r.price > 0 ? r.price : llDefaultPrice(p) };
+    for (let i = 0; i < r.qty; i++) labels.push(lab);
+  });
+  if (!labels.length){ showToast('ບໍ່ພົບສິນຄ້າໃນ POS'); return; }
+  const slotEl = document.getElementById('ll-start');
+  const start = slotEl && slotEl.style.display !== 'none' ? parseInt(slotEl.value, 10) || 1 : 1;
+  bcPrintLabels(labels, start);
+  // ບໍ່ໃຊ້ confirm() ເພາະຈະຄ້າງໜ້າຕ່າງພິມ — ສະແດງແຖບໃຫ້ກົດຢືນຢັນເອງຫຼັງພິມສຳເລັດ
+  LL.justPrinted = used;
+  const b = document.getElementById('llPrintedBanner');
+  b.style.display = 'block';
+  b.innerHTML = `ພິມ ${labels.length} ປ້າຍ (${used.length} ແຖວ) ສຳເລັດບໍ? <span class="btn primary" style="margin-left:8px" onclick="llMarkPrinted()">✓ ໝາຍວ່າພິມແລ້ວ</span> <span class="btn" onclick="llDismissBanner()">ຍັງບໍ່ໝາຍ</span>`;
+}
+function llDismissBanner(){ LL.justPrinted = []; document.getElementById('llPrintedBanner').style.display = 'none'; }
+async function llSetPrinted(ids){
+  const now = new Date().toISOString();
+  for (let i = 0; i < ids.length; i += 100){
+    const { error } = await sb.from('pos_live_labels').update({ printed_at: now }).in('id', ids.slice(i, i + 100));
+    if (error){ showToast('⚠️ ບັນທຶກບໍ່ສຳເລັດ: ' + (error.message || '')); return false; }
+  }
+  const set = new Set(ids);
+  LL.rows.forEach(r => { if (set.has(r.id)) r.printedAt = now; });
+  return true;
+}
+async function llMarkPrinted(){
+  const ids = LL.justPrinted.slice();
+  llDismissBanner();
+  if (ids.length && await llSetPrinted(ids)){ showToast(`ໝາຍວ່າພິມແລ້ວ ${ids.length} ແຖວ`); llRender(); }
+}
+async function llMarkAllPrinted(){
+  const ids = LL.rows.filter(r => !r.printedAt).map(r => r.id);
+  if (!ids.length){ showToast('ທຸກແຖວໝາຍວ່າພິມແລ້ວທັງໝົດ'); return; }
+  if (!confirm(`ໝາຍ ${ids.length} ແຖວທີ່ຍັງບໍ່ໄດ້ພິມ ວ່າ "ພິມແລ້ວ"?`)) return;
+  if (await llSetPrinted(ids)){ showToast(`ໝາຍວ່າພິມແລ້ວ ${ids.length} ແຖວ`); llRender(); }
 }
 
 /* ============================================================

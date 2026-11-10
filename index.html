@@ -2043,7 +2043,8 @@ async function liveSetCurrent(productId){
 // v2.73 (Tar 2026-11-10, "ເພີ່ມສິນຄ້າໃໝ່ເຂົ້າລາຍການພິມເອງ ຍັງເປັນແບບເກົ່າມີບາໂຄດ"): ສິນຄ້າທີ່ເພີ່ມເອງຈາກຊ່ອງ "ເລືອກສິນຄ້າ" ໃຊ້ແບບປ້າຍໃໝ່ (ບໍ່ມີບາໂຄດ: ລາຄາໂຕໃຫຍ່ + ຊື່) ຄືກັບປ້າຍ Live. ເພີ່ມຊ່ອງ "ລະຫັດ Live" (ບໍ່ບັງຄັບ) — ຖ້າໃສ່ ຈະສະແດງລະຫັດ + ລາຄາ Live, ຖ້າບໍ່ໃສ່ ສະແດງລາຄາ (ລາຄາຂາຍ 1) ຢູ່ກາງແຖວເທິງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກ (ພິມບາໂຄດສິນຄ້າດຽວ) ຍັງເປັນແບບມີບາໂຄດ.
 // v2.74 (Tar 2026-11-10, ເບິ່ງໄຟລ໌ຈິງຂອງທີມ Live: A ລຳດັບ, B ຊື່ສິນຄ້າ, C ສະຕັອກ, D ລາຄາຂາຍ 1, E ລາຄາຂາຍ 2, F ລະຫັດ): ນຳເຂົ້າ Excel ອ່ານ "ລາຄາຂາຍ 2" (ຖັນ E) ເປັນລາຄາເທິງປ້າຍ Live, "ລະຫັດ" (ຖັນ F) ເປັນລະຫັດ Live, "ຊື່ສິນຄ້າ" (ຖັນ B) ຈັບຄູ່ສິນຄ້າໃນ POS. ບໍ່ໃຊ້ສະຕັອກ ແລະ ລາຄາຂາຍ 1. ຖ້າບໍ່ມີຖັນ "ລາຄາຂາຍ 2" ກັບໄປໃຊ້ລາຄາຈາກ POS ແລະ ແຈ້ງເຕືອນໃນກ່ອງຂໍ້ມູນນຳເຂົ້າ.
 // v2.75 (Tar 2026-11-10, "ໃຫ້ພະນັກງານແກ້ໄຂ/ເພີ່ມສິນຄ້າໃນລາຍການປ້າຍໃນ POS ເອງ ບໍ່ຕ້ອງແກ້ Excel"): ເພີ່ມໜ້າ "ປ້າຍ Live" (ປຸ່ມໜ້າຫຼັກ) — ລາຍການປ້າຍທີ່ເກັບຖາວອນໃນຕາຕະລາງໃໝ່ pos_live_labels: ນຳເຂົ້າຈາກ Excel 740 ແຖວເປັນຖານ, ແກ້ລະຫັດ/ລາຄາ/ຈຳນວນປ້າຍໃນຕາຕະລາງ, ເພີ່ມສິນຄ້າໃໝ່ໄດ້ເລື້ອຍໆ (ລະບົບແນະນຳລະຫັດຖັດໄປ), ຄົ້ນຫາ/ກັ່ນຕອງ, ເລືອກແຖວ, ພິມທັງໝົດ/ສະເພາະທີ່ເລືອກ/ສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ ໃນຄັ້ງຕໍ່ໄປ. ຫຼັງພິມມີແຖບໃຫ້ກົດ "ໝາຍວ່າພິມແລ້ວ". ໂຫຼດຂໍ້ມູນເມື່ອເປີດໜ້າ ແລະ ກົດ "ໂຫຼດໃໝ່" ເທົ່ານັ້ນ (ບໍ່ມີ polling).
-const APP_VERSION = 'v2.75';
+// v2.76 (Tar 2026-11-10, "ໄຟລ໌ 786 ແຖວ ແຕ່ນຳເຂົ້າໄດ້ 739"): ຫຼັງນຳເຂົ້າ Excel (ໜ້າ "ປ້າຍ Live" ແລະ "ສ້າງບາໂຄດ") ສະແດງລາຍຊື່ທັງໝົດຂອງແຖວທີ່ບໍ່ພົບໃນ POS (ເດີມສະແດງແຕ່ 8 ຊື່ທຳອິດ) ເປັນລາຍການເລກລຽງ ເລື່ອນເບິ່ງໄດ້. ບໍ່ມີການປ່ຽນແປງການນຳເຂົ້າ.
+const APP_VERSION = 'v2.76';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7134,7 +7135,7 @@ function bcImportExcel(ev){
       if (res.hasCodeCol) parts.push(`ມີລະຫັດ Live ${res.withCode} ແຖວ`);
       parts.push(res.hasPriceCol ? `ໃຊ້ລາຄາຂາຍ 2 ຈາກໄຟລ໌ ${res.withPrice} ແຖວ` : '<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລາຄາຂາຍ 2" — ໃຊ້ລາຄາຈາກ POS ແທນ</span>');
       if (res.ambiguous) parts.push(`ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguous} ແຖວ (ເລືອກຕົວທຳອິດ)`);
-      if (res.unmatched.length) parts.push(`<span style="color:var(--danger)">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ: ${posEsc(res.unmatched.slice(0, 8).join(', '))}${res.unmatched.length > 8 ? ' …' : ''}</span>`);
+      if (res.unmatched.length) parts.push(`<details open style="color:var(--danger)"><summary style="cursor:pointer;font-weight:600">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ (ກົດເພື່ອເປີດ/ປິດລາຍຊື່)</summary><ol style="margin:4px 0 0;padding-left:26px;max-height:260px;overflow:auto;color:var(--text)">${res.unmatched.map(n => `<li>${posEsc(n)}</li>`).join('')}</ol></details>`);
       if (info) info.innerHTML = parts.join('<br>');
       updateBarcodePreview();
     }catch(err){ showToast('⚠️ ອ່ານໄຟລ໌ບໍ່ໄດ້: ' + (err.message || '')); }
@@ -7418,7 +7419,7 @@ function llImportExcel(ev){
       if (!res.hasPriceCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລາຄາຂາຍ 2" — ໃຊ້ລາຄາຂາຍ 2 ຈາກ POS</span>');
       if (dupInFile) parts.push(`ສິນຄ້າຊ້ຳໃນໄຟລ໌ ${dupInFile} ແຖວ (ເອົາແຖວທຳອິດ)`);
       if (res.ambiguous) parts.push(`ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguous} ແຖວ (ເລືອກຕົວທຳອິດ)`);
-      if (res.unmatched.length) parts.push(`<span style="color:var(--danger)">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ: ${posEsc(res.unmatched.slice(0, 8).join(', '))}${res.unmatched.length > 8 ? ' …' : ''}</span>`);
+      if (res.unmatched.length) parts.push(`<details open style="color:var(--danger)"><summary style="cursor:pointer;font-weight:600">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ (ກົດເພື່ອເປີດ/ປິດລາຍຊື່)</summary><ol style="margin:4px 0 0;padding-left:26px;max-height:260px;overflow:auto;color:var(--text)">${res.unmatched.map(n => `<li>${posEsc(n)}</li>`).join('')}</ol></details>`);
       info.innerHTML = parts.join('<br>');
       llRender();
     }catch(err){ info.innerHTML = `<span style="color:var(--danger)">⚠️ ນຳເຂົ້າບໍ່ສຳເລັດ: ${posEsc(err.message || '')}</span>`; }

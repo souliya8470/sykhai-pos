@@ -1990,7 +1990,8 @@ async function liveSetCurrent(productId){
 // v2.71 (Tar 2026-11-10, "ເອົາລະຫັດຂຶ້ນກ່ອນ ຕາມດ້ວຍລາຄາ ແລ້ວຈຶ່ງຊື່ສິນຄ້າຢູ່ລຸ່ມ"): ປ້າຍ Live ສະລັບຕຳແໜ່ງ — ແຖວເທິງ = ລະຫັດ (ຊ້າຍ) + ລາຄາ (ຂວາ), ລຸ່ມລົງມາ = ຊື່ສິນຄ້າ (ສູງສຸດ 2 ແຖວ, ຢູ່ກາງພື້ນທີ່ທີ່ເຫຼືອ).
 // v2.72 (Tar 2026-11-10, "ເພີ່ມຂະໜາດລະຫັດສິນຄ້າ ແລະ ລາຄາ ໃຫ້ໃຫຍ່ຂຶ້ນ" ຫຼັງເບິ່ງປ້າຍພິມຈິງ 40x30): ປ້າຍ Live ລະຫັດ ແລະ ລາຄາ ໃຫຍ່ຂຶ້ນ (ລະຫັດ 4.8→7 ມມ, ລາຄາ 3.7→5.2 ມມ ຕໍ່ປ້າຍມາດຕະຖານ) ແລະ ມີການຫຍໍ້ອັດຕະໂນມັດສະເພາະປ້າຍທີ່ລົ້ນຂອບ (ລາຄາຫຼັກແສນ-ລ້ານ ຫຼື ລະຫັດ 4 ໂຕ) — ປ້າຍທີ່ພໍດີໄດ້ຕົວໃຫຍ່ສຸດ.
 // v2.73 (Tar 2026-11-10, "ເພີ່ມສິນຄ້າໃໝ່ເຂົ້າລາຍການພິມເອງ ຍັງເປັນແບບເກົ່າມີບາໂຄດ"): ສິນຄ້າທີ່ເພີ່ມເອງຈາກຊ່ອງ "ເລືອກສິນຄ້າ" ໃຊ້ແບບປ້າຍໃໝ່ (ບໍ່ມີບາໂຄດ: ລາຄາໂຕໃຫຍ່ + ຊື່) ຄືກັບປ້າຍ Live. ເພີ່ມຊ່ອງ "ລະຫັດ Live" (ບໍ່ບັງຄັບ) — ຖ້າໃສ່ ຈະສະແດງລະຫັດ + ລາຄາ Live, ຖ້າບໍ່ໃສ່ ສະແດງລາຄາ (ລາຄາຂາຍ 1) ຢູ່ກາງແຖວເທິງ. ປຸ່ມ ▤ ພິມ ໃນໜ້າສະຕັອກ (ພິມບາໂຄດສິນຄ້າດຽວ) ຍັງເປັນແບບມີບາໂຄດ.
-const APP_VERSION = 'v2.73';
+// v2.74 (Tar 2026-11-10, ເບິ່ງໄຟລ໌ຈິງຂອງທີມ Live: A ລຳດັບ, B ຊື່ສິນຄ້າ, C ສະຕັອກ, D ລາຄາຂາຍ 1, E ລາຄາຂາຍ 2, F ລະຫັດ): ນຳເຂົ້າ Excel ອ່ານ "ລາຄາຂາຍ 2" (ຖັນ E) ເປັນລາຄາເທິງປ້າຍ Live, "ລະຫັດ" (ຖັນ F) ເປັນລະຫັດ Live, "ຊື່ສິນຄ້າ" (ຖັນ B) ຈັບຄູ່ສິນຄ້າໃນ POS. ບໍ່ໃຊ້ສະຕັອກ ແລະ ລາຄາຂາຍ 1. ຖ້າບໍ່ມີຖັນ "ລາຄາຂາຍ 2" ກັບໄປໃຊ້ລາຄາຈາກ POS ແລະ ແຈ້ງເຕືອນໃນກ່ອງຂໍ້ມູນນຳເຂົ້າ.
+const APP_VERSION = 'v2.74';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -6905,7 +6906,7 @@ function bcBuildLabels(){
   BC_QUEUE.forEach(it => {
     const p = PRODUCTS.find(x => x.id === it.id);
     if (!p) return;
-    const lab = (it.live || it.code) ? { ...p, isLive: true, liveCode: it.code || '', livePrice: it.code ? (p.onlinePrice || p.p1 || 0) : (p.p1 || 0) } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
+    const lab = (it.live || it.code) ? { ...p, isLive: true, liveCode: it.code || '', livePrice: it.price > 0 ? it.price : (it.code ? (p.onlinePrice || p.p1 || 0) : (p.p1 || 0)) } : p; // ປ້າຍ Live: ມີລະຫັດ + ລາຄາຕາມໜ້າ Live
     for (let i = 0; i < it.qty; i++) out.push(lab);
   });
   return out;
@@ -7027,12 +7028,13 @@ function bcParseImportRows(rows, products, defQty){
   const bcCol = find(h => h.includes('ບາໂຄດ') || h.includes('barcode'));
   const codeCol = find(h => !h.includes('ບາໂຄດ') && !h.includes('barcode') && (h.includes('ລະຫັດ') || h.includes('code') || h.includes('live') || h === 'cf'));
   const qtyCol = find(h => h.includes('ຈຳນວນປ້າຍ'));
+  const priceCol = find(h => /ລາຄາ(ຂາຍ)?\s*2/.test(h) || /price\s*2/.test(h)); // ລາຄາຂາຍ 2 = ລາຄາທີ່ໃຊ້ເທິງປ້າຍ Live (ບໍ່ໃຊ້ສະຕັອກ / ລາຄາຂາຍ 1)
   const byBarcode = new Map(), byName = new Map();
   products.forEach(p => {
     if (p.barcode) byBarcode.set(String(p.barcode).trim(), p);
     const k = bcNorm(p.name); if (!byName.has(k)) byName.set(k, []); byName.get(k).push(p);
   });
-  const merged = new Map(); const unmatched = []; let total = 0, ambiguous = 0, withCode = 0;
+  const merged = new Map(); const unmatched = []; let total = 0, ambiguous = 0, withCode = 0, withPrice = 0;
   for (let i = 1; i < rows.length; i++){
     const r = rows[i] || [];
     const nm = String(r[nameCol] == null ? '' : r[nameCol]).trim();
@@ -7048,11 +7050,14 @@ function bcParseImportRows(rows, products, defQty){
     const code = codeCol >= 0 ? String(r[codeCol] == null ? '' : r[codeCol]).trim().toUpperCase() : '';
     if (code) withCode++;
     const q = qtyCol >= 0 ? (parseInt(r[qtyCol], 10) || defQty) : defQty;
-    const key = p.id + '|' + code;
+    const pr = priceCol >= 0 ? parseFloat(String(r[priceCol] == null ? '' : r[priceCol]).replace(/[^0-9.]/g, '')) : NaN;
+    const price = pr > 0 ? pr : 0;
+    if (price) withPrice++;
+    const key = p.id + '|' + code + '|' + price;
     const ex = merged.get(key);
-    if (ex) ex.qty = Math.min(500, ex.qty + q); else merged.set(key, { id: p.id, qty: Math.min(500, Math.max(1, q)), code, live: true });
+    if (ex) ex.qty = Math.min(500, ex.qty + q); else merged.set(key, { id: p.id, qty: Math.min(500, Math.max(1, q)), code, price, live: true });
   }
-  return { entries: Array.from(merged.values()), unmatched, ambiguous, total, withCode, hasCodeCol: codeCol >= 0 };
+  return { entries: Array.from(merged.values()), unmatched, ambiguous, total, withCode, withPrice, hasCodeCol: codeCol >= 0, hasPriceCol: priceCol >= 0 };
 }
 function bcImportExcel(ev){
   const input = ev.target;
@@ -7074,6 +7079,7 @@ function bcImportExcel(ev){
       BC_QUEUE = res.entries;
       const parts = [`ອ່ານໄດ້ ${res.total} ແຖວ · ຈັບຄູ່ກັບ POS ໄດ້ <b>${res.entries.length}</b> ລາຍການ`];
       if (res.hasCodeCol) parts.push(`ມີລະຫັດ Live ${res.withCode} ແຖວ`);
+      parts.push(res.hasPriceCol ? `ໃຊ້ລາຄາຂາຍ 2 ຈາກໄຟລ໌ ${res.withPrice} ແຖວ` : '<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລາຄາຂາຍ 2" — ໃຊ້ລາຄາຈາກ POS ແທນ</span>');
       if (res.ambiguous) parts.push(`ຊື່ຊ້ຳກັນໃນ POS ${res.ambiguous} ແຖວ (ເລືອກຕົວທຳອິດ)`);
       if (res.unmatched.length) parts.push(`<span style="color:var(--danger)">ບໍ່ພົບໃນ POS ${res.unmatched.length} ແຖວ: ${posEsc(res.unmatched.slice(0, 8).join(', '))}${res.unmatched.length > 8 ? ' …' : ''}</span>`);
       if (info) info.innerHTML = parts.join('<br>');

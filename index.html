@@ -2058,7 +2058,8 @@ async function liveSetCurrent(productId){
 // v2.77 (Tar 2026-11-10, "ສິນຄ້າເຄື່ອງເຊວ 46 ແຖວບໍ່ມີໃນ POS ແຕ່ຕ້ອງໄລ້ສົດ + ຢາກເບິ່ງສິນຄ້າທີ່ຊ້ຳ"): ໜ້າ "ປ້າຍ Live" ຮອງຮັບ "ສິນຄ້ານອກ POS" — ແຖວທີ່ບໍ່ພົບຊື່ໃນ POS ຈະຖືກເພີ່ມເປັນສິນຄ້ານອກ POS ອັດຕະໂນມັດຕອນນຳເຂົ້າ Excel (ເກັບຊື່ + ລະຫັດ + ລາຄາ + ຈຳນວນປ້າຍ ໃນຕາຕະລາງ pos_live_labels, ຄໍລຳ product_id ເປັນ NULL ໄດ້ ແລະ ເພີ່ມຄໍລຳ name), ເພີ່ມເອງໄດ້ໃນກ່ອງ "ເພີ່ມສິນຄ້ານອກ POS", ແກ້ຊື່/ລະຫັດ/ລາຄາໄດ້ໃນຕາຕະລາງ ແລະພິມປ້າຍແບບດຽວກັນ. ຫຼັງນຳເຂົ້າສະແດງຊື່ສິນຄ້າທີ່ຊ້ຳໃນໄຟລ໌ ແລະ ຊື່ທີ່ຊ້ຳກັນໃນ POS. ຖ້າສິນຄ້ານັ້ນຖືກເພີ່ມເຂົ້າ POS ພາຍຫຼັງ ໃຫ້ລຶບແຖວນອກ POS ແລ້ວເພີ່ມຈາກ POS ແທນ.
 // v2.78 (Tar 2026-11-11, "ໜ້າ ຂາຍແຍກລາຍການສິນຄ້າ ບໍ່ມີຊ່ອງຄົ້ນຫາ ຕ້ອງເລື່ອນເບິ່ງເອງ"): ເພີ່ມຊ່ອງຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ, ພິມຫຼາຍຄຳໄດ້) ໃນລາຍງານ "ຂາຍແຍກລາຍການສິນຄ້າ". ເມື່ອຄົ້ນຫາ ຈະຄົ້ນຕະຫຼອດເວລາ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່) ແລະ ສະແດງຈຳນວນຂາຍລວມຂອງສິ່ງທີ່ພົບ. ບໍ່ແຕະສ່ວນອື່ນ.
 // v2.79 (Tar 2026-11-11, ຄົ້ນຫາສິນຄ້າໃນລາຍງານຂາຍແຍກລາຍການ ເຫັນຂາຍ 1 ອັນ 95,000 ແຕ່ຄວນຈະ 2 ອັນ): (1) ຊ່ອງຄົ້ນຫາ ຕອນນີ້ມີກ່ອງສະຫຼຸບຕະຫຼອດເວລາ ຄິດຈາກບິນທີ່ສຳເລັດໂດຍກົງ (ຈຳນວນ, ຈຳນວນບິນ, ຍອດຂາຍ, ຄັ້ງທຳອິດ/ຫຼ້າສຸດ) ບໍ່ຖືກຈຳກັດດ້ວຍຊ່ວງວັນທີ່ — v2.78 ຄົ້ນໄດ້ແຕ່ຍອດຂາຍຂອງມື້ທີ່ເລືອກ. (2) ແກ້ຄໍລຳ ຈຳນວນຂາຍ ຕະຫຼອດການ ໃຫ້ນັບສຸດທິ: ບວກ sale/sale_edit_add ແລະ ຫັກ sale_edit_remove/cancel (ເມື່ອກ່ອນບິນທີ່ຖືກແກ້ນັບເກີນ ເຊັ່ນ 2 ອັນສະແດງ 3).
-const APP_VERSION = 'v2.79';
+// v2.80 (Tar 2026-11-11, ສິນຄ້າສະຕັອກ 0 ໃຫ້ກົດຂາຍບໍ່ໄດ້ + ສຽງເຕືອນ ແລະ ສຽງຂາຍສຳເລັດຕ່າງກັນ): ເພີ່ມເຂົ້າກະຕ່າ/ເພີ່ມຈຳນວນ (+, ພິມຈຳນວນ, ຍິງບາໂຄດ) ບໍ່ໄດ້ ຖ້າສະຕັອກ 0 ຫຼື ເກີນສະຕັອກ → ສຽງ buzzer ຕ່ຳ 2 ຄັ້ງ + ຂໍ້ຄວາມ ⛔. ໃນໂໝດແກ້ບິນເກົ່າ ນັບຈຳນວນເດີມໃນບິນເປັນສະຕັອກທີ່ຂາຍໄດ້. ກວດກະຕ່າອີກເທື່ອຕອນກົດ ຮັບເງິນ ແລະ ຕອນຢືນຢັນ. ປຸ່ມສິນຄ້າໃນໜ້າຂາຍຈາງລົງ + ປ້າຍ ໝົດ ເມື່ອສະຕັອກ 0. ຂາຍສຳເລັດ (ແລະ ແກ້ບິນສຳເລັດ) = ສຽງ ຕິງ-ຕິງ-ຕິງ ຂຶ້ນສູງ (ຕ່າງຈາກສຽງເພີ່ມເຂົ້າກະຕ່າ ແລະ ສຽງເຕືອນ).
+const APP_VERSION = 'v2.80';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -3551,6 +3552,44 @@ function playBeep(freq = 1700, duration = 100){
   }catch(e){}
 }
 
+// v2.80: ສຽງຕ່າງກັນ — ເພີ່ມເຂົ້າກະຕ່າ = ບີບສັ້ນສູງ (playBeep ເກົ່າ) · ສະຕັອກໝົດ/ເກີນ = ສຽງຕ່ຳ buzzer 2 ຄັ້ງ · ຂາຍສຳເລັດ = ສຽງ "ຕິງ-ຕິງ-ຕິງ" ຂຶ້ນສູງ
+function playTone(freq, startMs, durMs, type, vol){
+  try{
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = type || 'sine'; osc.frequency.value = freq;
+    const t0 = audioCtx.currentTime + startMs/1000, t1 = t0 + durMs/1000, v = vol || 0.3;
+    gain.gain.setValueAtTime(0, t0);
+    gain.gain.linearRampToValueAtTime(v, t0 + 0.01);
+    gain.gain.setValueAtTime(v, t1 - 0.02);
+    gain.gain.linearRampToValueAtTime(0, t1);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t1);
+  }catch(e){}
+}
+function playStockWarn(){ playTone(180, 0, 260, 'sawtooth', 0.35); playTone(180, 330, 260, 'sawtooth', 0.35); }
+function playSaleDone(){ playTone(784, 0, 130, 'sine', 0.3); playTone(988, 150, 130, 'sine', 0.3); playTone(1319, 300, 260, 'sine', 0.3); }
+// ສະຕັອກທີ່ຂາຍໄດ້ຂອງສິນຄ້າ: ສະຕັອກປັດຈຸບັນ (+ ຈຳນວນເດີມໃນບິນ ຖ້າກຳລັງແກ້ໄຂບິນເກົ່າ ເພາະຈຳນວນນັ້ນຖືກຫັກໄປແລ້ວ)
+function sellableStock(productId){
+  const pr = PRODUCTS.find(x => x.id === productId);
+  let avail = pr ? (Number(pr.stock)||0) : 0;
+  if (editingBillContext && editingBillContext.originalItems){
+    editingBillContext.originalItems.forEach(o => { if (o.product_id === productId) avail += Number(o.qty)||0; });
+  }
+  return avail;
+}
+function cartQtyOfProduct(productId){ return cart.filter(i => i.id === productId).reduce((a,i)=>a+(Number(i.qty)||0),0); }
+// ກວດທັງກະຕ່າ: ສົ່ງຂໍ້ຄວາມເຕືອນຂໍ້ທຳອິດທີ່ເກີນສະຕັອກ (ຫຼື null ຖ້າຜ່ານ)
+function cartStockProblem(){
+  const seen = new Set();
+  for (const it of cart){
+    if (seen.has(it.id)) continue; seen.add(it.id);
+    const avail = sellableStock(it.id), qty = cartQtyOfProduct(it.id);
+    if (qty > avail) return avail <= 0 ? `⛔ ${it.name} — ສະຕັອກ 0 ຂາຍບໍ່ໄດ້` : `⛔ ${it.name} — ສະຕັອກເຫຼືອ ${avail} ອັນ (ໃນກະຕ່າ ${qty})`;
+  }
+  return null;
+}
+
 /* ============================================================
    SALES / POS CHECKOUT
    ============================================================ */
@@ -3591,7 +3630,10 @@ function renderGrid(){
     const card = document.createElement('button');
     card.className = 'card';
     card.onclick = () => addToCart(p);
-    const low = p.stock <= (p.lowStockAlert ?? 10) ? `<span class="badge warn" style="position:absolute;top:2px;right:2px;font-size:12px;padding:1px 4px;z-index:1">ໃກ້ໝົດ</span>` : '';
+    const soldOut = !(Number(p.stock) > 0); // v2.80
+    if (soldOut) card.style.opacity = '0.45';
+    const low = soldOut ? `<span class="badge" style="position:absolute;top:2px;right:2px;font-size:12px;padding:1px 6px;z-index:1;background:var(--danger);color:#fff">ໝົດ</span>`
+      : p.stock <= (p.lowStockAlert ?? 10) ? `<span class="badge warn" style="position:absolute;top:2px;right:2px;font-size:12px;padding:1px 4px;z-index:1">ໃກ້ໝົດ</span>` : '';
     const thumbHtml = p.imageUrl ? `<div class="thumb"><img src="${p.imageUrl}" class="thumb-img"></div>` : `<div class="thumb"></div>`;
     const priceVal = currentPrice(p);
     const priceHtml = priceTier===3 && !priceVal
@@ -3631,6 +3673,13 @@ function addToCart(product){
     showToast('⚠️ ສິນຄ້ານີ້ຍັງບໍ່ໄດ້ຕັ້ງລາຄາ 3 (ບາດ) — ໄປຕັ້ງຢູ່ໜ້າ "ຈັດການສິນຄ້າ" ກ່ອນ');
     return;
   }
+  // v2.80: ສະຕັອກ 0 ຫຼື ເກີນສະຕັອກ → ເພີ່ມເຂົ້າກະຕ່າບໍ່ໄດ້ + ສຽງເຕືອນ
+  const availNow = sellableStock(product.id);
+  if (cartQtyOfProduct(product.id) + 1 > availNow){
+    playStockWarn();
+    showToast(availNow <= 0 ? `⛔ ${product.name} — ສະຕັອກ 0 ຂາຍບໍ່ໄດ້` : `⛔ ${product.name} — ສະຕັອກເຫຼືອ ${availNow} ອັນ ເພີ່ມບໍ່ໄດ້`);
+    return;
+  }
   const itemCurrency = priceTier === 3 ? 'baht' : 'kip';
   const existing = cart.find(i => i.id === product.id && i.currency === itemCurrency);
   if (existing){ existing.qty += 1; } else { cart.push({id:product.id, name:product.name, price:currentPrice(product), qty:1, currency:itemCurrency}); }
@@ -3643,6 +3692,9 @@ function addToCart(product){
 function changeQty(idx, delta){
   const item = cart[idx];
   if (!item) return;
+  if (delta > 0 && cartQtyOfProduct(item.id) + delta > sellableStock(item.id)){ // v2.80
+    playStockWarn(); showToast(`⛔ ${item.name} — ສະຕັອກເຫຼືອ ${sellableStock(item.id)} ອັນ ເພີ່ມບໍ່ໄດ້`); return;
+  }
   item.qty += delta;
   if (item.qty <= 0) cart.splice(idx,1);
   renderCart();
@@ -3650,7 +3702,16 @@ function changeQty(idx, delta){
 function setQtyDirect(idx, val){
   const qty = parseInt(val,10) || 0;
   if (qty <= 0){ cart.splice(idx,1); }
-  else { const item = cart[idx]; if (item) item.qty = qty; }
+  else {
+    const item = cart[idx];
+    if (item){
+      const others = cartQtyOfProduct(item.id) - (Number(item.qty)||0);
+      if (others + qty > sellableStock(item.id)){ // v2.80
+        playStockWarn(); showToast(`⛔ ${item.name} — ສະຕັອກເຫຼືອ ${sellableStock(item.id)} ອັນ`);
+        item.qty = Math.max(1, Math.min(Number(item.qty)||1, sellableStock(item.id) - others)); // ຖອຍຄືນໃນຂອບເຂດສະຕັອກ
+      } else item.qty = qty;
+    }
+  }
   renderCart();
 }
 function setPriceDirect(idx, val){
@@ -3900,6 +3961,8 @@ let activePayField = null; // ກີບ: channelKey ທຳມະດາ, ບາ�
 let splitPaymentsBaht = {}; // { channelKey: amount } — ບາດ
 function openPayModal(){
   if (cart.length===0) return;
+  const stockProb = cartStockProblem(); // v2.80
+  if (stockProb){ playStockWarn(); showToast(stockProb); return; }
   splitPayments = {};
   splitPaymentsBaht = {};
   activePayField = null;
@@ -4462,6 +4525,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) sync
 window.addEventListener('focus', () => syncOfflineQueue());
 async function confirmPayment(){
   if (editingBillContext) return await confirmBillEditPayment(); // ກຳລັງແກ້ໄຂບິນເກົ່າຢູ່ — ໃຊ້ logic ບັນທຶກ version ໃໝ່ ແທນການສ້າງບິນໃໝ່
+  { const stockProb = cartStockProblem(); if (stockProb){ playStockWarn(); showToast(stockProb); return; } } // v2.80
   if (isSubmittingPayment) return; // ບໍລິເວນນີ້ນອກ try/finally ໂດຍຕັ້ງໃຈ — ຖ້າຖືກກັນໄວ້ ບໍ່ຕ້ອງໄປແຕະ isSubmittingPayment ອີກ
   const totals = cartTotals();
   const paidKip = Object.values(splitPayments).reduce((s,v)=>s+(v||0),0);
@@ -4513,6 +4577,7 @@ async function confirmPayment(){
       await Promise.all([loadTodayStats(), loadTodayTopProducts(), loadExpiringLots()]);
       renderGrid(); renderStockTable(); renderHomeSidebar(); renderCustSelect(); renderBills();
       closePayModal(); clearCart(); resetCustomerForNextSale(); // clearCart() ລ້າງ pendingLabelRef ນຳ; v2.49 ລ້າງລູກຄ້າດ້ວຍ
+      playSaleDone(); // v2.80
       showToast('ບັນທຶກບິນສຳເລັດ');
     })(), 20000, 'ການບັນທຶກບິນ');
   }catch(err){
@@ -6656,6 +6721,7 @@ async function openBillEdit(no){
 }
 async function confirmBillEditPayment(){
   if (isSubmittingPayment) return;
+  { const stockProb = cartStockProblem(); if (stockProb){ playStockWarn(); showToast(stockProb); return; } } // v2.80
   const totals = cartTotals();
   const paidKip = Object.values(splitPayments).reduce((s,v)=>s+(v||0),0);
   const paidBaht = Object.values(splitPaymentsBaht).reduce((s,v)=>s+(v||0),0);
@@ -6706,6 +6772,7 @@ async function confirmBillEditPayment(){
       await loadRecentBills();
       await Promise.all([loadTodayStats(), loadTodayTopProducts(), loadExpiringLots()]);
       renderGrid(); renderStockTable(); renderHomeSidebar(); renderBills();
+      playSaleDone(); // v2.80
       showToast(`ບັນທຶກການແກ້ໄຂບິນ ${savedTxnNo} ສຳເລັດ (v${savedVersionNo})`);
     })(), 20000, 'ການບັນທຶກແກ້ໄຂບິນ');
   }catch(err){ showToast('⚠️ ບັນທຶກບໍ່ສຳເລັດ: ' + (err.message||'')); }

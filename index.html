@@ -2056,7 +2056,8 @@ async function liveSetCurrent(productId){
 // v2.75 (Tar 2026-11-10, "ໃຫ້ພະນັກງານແກ້ໄຂ/ເພີ່ມສິນຄ້າໃນລາຍການປ້າຍໃນ POS ເອງ ບໍ່ຕ້ອງແກ້ Excel"): ເພີ່ມໜ້າ "ປ້າຍ Live" (ປຸ່ມໜ້າຫຼັກ) — ລາຍການປ້າຍທີ່ເກັບຖາວອນໃນຕາຕະລາງໃໝ່ pos_live_labels: ນຳເຂົ້າຈາກ Excel 740 ແຖວເປັນຖານ, ແກ້ລະຫັດ/ລາຄາ/ຈຳນວນປ້າຍໃນຕາຕະລາງ, ເພີ່ມສິນຄ້າໃໝ່ໄດ້ເລື້ອຍໆ (ລະບົບແນະນຳລະຫັດຖັດໄປ), ຄົ້ນຫາ/ກັ່ນຕອງ, ເລືອກແຖວ, ພິມທັງໝົດ/ສະເພາະທີ່ເລືອກ/ສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ ໃນຄັ້ງຕໍ່ໄປ. ຫຼັງພິມມີແຖບໃຫ້ກົດ "ໝາຍວ່າພິມແລ້ວ". ໂຫຼດຂໍ້ມູນເມື່ອເປີດໜ້າ ແລະ ກົດ "ໂຫຼດໃໝ່" ເທົ່ານັ້ນ (ບໍ່ມີ polling).
 // v2.76 (Tar 2026-11-10, "ໄຟລ໌ 786 ແຖວ ແຕ່ນຳເຂົ້າໄດ້ 739"): ຫຼັງນຳເຂົ້າ Excel (ໜ້າ "ປ້າຍ Live" ແລະ "ສ້າງບາໂຄດ") ສະແດງລາຍຊື່ທັງໝົດຂອງແຖວທີ່ບໍ່ພົບໃນ POS (ເດີມສະແດງແຕ່ 8 ຊື່ທຳອິດ) ເປັນລາຍການເລກລຽງ ເລື່ອນເບິ່ງໄດ້. ບໍ່ມີການປ່ຽນແປງການນຳເຂົ້າ.
 // v2.77 (Tar 2026-11-10, "ສິນຄ້າເຄື່ອງເຊວ 46 ແຖວບໍ່ມີໃນ POS ແຕ່ຕ້ອງໄລ້ສົດ + ຢາກເບິ່ງສິນຄ້າທີ່ຊ້ຳ"): ໜ້າ "ປ້າຍ Live" ຮອງຮັບ "ສິນຄ້ານອກ POS" — ແຖວທີ່ບໍ່ພົບຊື່ໃນ POS ຈະຖືກເພີ່ມເປັນສິນຄ້ານອກ POS ອັດຕະໂນມັດຕອນນຳເຂົ້າ Excel (ເກັບຊື່ + ລະຫັດ + ລາຄາ + ຈຳນວນປ້າຍ ໃນຕາຕະລາງ pos_live_labels, ຄໍລຳ product_id ເປັນ NULL ໄດ້ ແລະ ເພີ່ມຄໍລຳ name), ເພີ່ມເອງໄດ້ໃນກ່ອງ "ເພີ່ມສິນຄ້ານອກ POS", ແກ້ຊື່/ລະຫັດ/ລາຄາໄດ້ໃນຕາຕະລາງ ແລະພິມປ້າຍແບບດຽວກັນ. ຫຼັງນຳເຂົ້າສະແດງຊື່ສິນຄ້າທີ່ຊ້ຳໃນໄຟລ໌ ແລະ ຊື່ທີ່ຊ້ຳກັນໃນ POS. ຖ້າສິນຄ້ານັ້ນຖືກເພີ່ມເຂົ້າ POS ພາຍຫຼັງ ໃຫ້ລຶບແຖວນອກ POS ແລ້ວເພີ່ມຈາກ POS ແທນ.
-const APP_VERSION = 'v2.77';
+// v2.78 (Tar 2026-11-11, "ໜ້າ ຂາຍແຍກລາຍການສິນຄ້າ ບໍ່ມີຊ່ອງຄົ້ນຫາ ຕ້ອງເລື່ອນເບິ່ງເອງ"): ເພີ່ມຊ່ອງຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ, ພິມຫຼາຍຄຳໄດ້) ໃນລາຍງານ "ຂາຍແຍກລາຍການສິນຄ້າ". ເມື່ອຄົ້ນຫາ ຈະຄົ້ນຕະຫຼອດເວລາ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່) ແລະ ສະແດງຈຳນວນຂາຍລວມຂອງສິ່ງທີ່ພົບ. ບໍ່ແຕະສ່ວນອື່ນ.
+const APP_VERSION = 'v2.78';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -8003,6 +8004,42 @@ async function reportRangeChanged(){
   if (reloaded || currentReportType === 'returns_report' || currentReportType === 'by_shift') await loadReportTypeData(currentReportType);
   renderReport();
 }
+// v2.78: ຕາຕະລາງ "ຂາຍແຍກລາຍການສິນຄ້າ" + ຊ່ອງຄົ້ນຫາ (ຊື່/ບາໂຄດ). ຖ້າພິມຄຳຄົ້ນຫາ → ຄົ້ນຫາຕະຫຼອດເວລາ ບໍ່ຈຳກັດຊ່ວງວັນທີ່
+let salesByItemQuery = '';
+function renderSalesByItemTable(){
+  const q = (salesByItemQuery||'').trim().toLowerCase();
+  let rows = computeSalesByItemReport(q ? null : getReportDateRange());
+  if (q){
+    const toks = q.split(/\s+/).filter(Boolean);
+    rows = rows.filter(p => { const hay = ((p.name||'')+' '+(p.barcode||'')).toLowerCase(); return toks.every(t => hay.includes(t)); });
+  }
+  const note = q ? `<p style="font-size:14px;color:var(--text-muted);margin:0 0 8px">🔍 ພົບ ${rows.length} ລາຍການ · ຄົ້ນຫາຕະຫຼອດເວລາ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່) · ຂາຍລວມ <b>${fmt(rows.reduce((a,r)=>a+(Number(r.totalQty)||0),0))}</b> ອັນ</p>` : '';
+  return note + `<div style="overflow-x:auto"><table class="table-bordered" style="min-width:1300px"><thead><tr>
+      <th>ບາໂຄດ</th><th>ຊື່ສິນຄ້າ</th><th>ສະຕ໊ອກ (ອັນ)</th><th>ຈຳນວນຂາຍ (ອັນ)</th><th>ສະຕ໊ອກທີ່ຍັງເຫຼືອ (ອັນ)</th>
+      <th>ຍອດຂາຍ (ກີບ)</th><th class="cost-only">ຕົ້ນທຶນ (ກີບ)</th><th class="cost-only">ກຳໄລ (ກີບ)</th><th class="cost-only">ROI (ກີບ)</th>
+      <th>ຈຳນວນຂາຍ (ບາດ)</th><th>ຍອດຂາຍ (ບາດ)</th><th class="cost-only">ຕົ້ນທຶນ (ບາດ)</th><th class="cost-only">ກຳໄລ (ບາດ)</th><th class="cost-only">ROI (ບາດ)</th>
+    </tr></thead><tbody>${rows.map(p => {
+      const roiBaht = p.costBaht>0 ? (p.profitBaht/p.costBaht*100) : 0;
+      return `<tr>
+      <td style="font-weight:900;letter-spacing:0.3px">${posEsc(p.barcode)}</td><td>${posEsc(p.name)}</td>
+      <td style="text-align:right">${p.totalReceived||'-'}</td>
+      <td style="text-align:right;font-weight:600">${p.totalQty}</td>
+      <td style="text-align:right;color:var(--text-muted)">${p.stockRemaining!==null?p.stockRemaining:'-'}</td>
+      <td style="text-align:right">${fmt(p.revenueKip)}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? fmt(p.costKip) : ''}</td>
+      <td class="cost-only" style="text-align:right;color:${p.profitKip<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? fmt(p.profitKip) : ''}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? p.roiKip.toFixed(1)+'%' : ''}</td>
+      <td style="text-align:right">${p.qtyBaht||'-'}</td>
+      <td style="text-align:right">${p.revenueBaht?'฿'+fmt(p.revenueBaht):'-'}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.costBaht?'฿'+fmt(p.costBaht):'-') : ''}</td>
+      <td class="cost-only" style="text-align:right;color:${p.profitBaht<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? (p.qtyBaht?'฿'+fmt(p.profitBaht):'-') : ''}</td>
+      <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.qtyBaht?roiBaht.toFixed(1)+'%':'-') : ''}</td>
+    </tr>`;}).join('') || '<tr><td colspan="13" style="text-align:center;color:var(--text-muted)">ບໍ່ມີຂໍ້ມູນ</td></tr>'}</tbody></table></div>`;
+}
+function sbiRefreshTable(){
+  const el = document.getElementById('sbiTable');
+  if (el) el.innerHTML = renderSalesByItemTable();
+}
 async function renderReport(){
   const type = currentReportType;
   const wrap = document.getElementById('reportContent');
@@ -8199,29 +8236,7 @@ async function renderReport(){
       <td>${s.status==='open'?'<span class="badge ok">ເປີດຢູ່</span>':'<span class="badge">ປິດແລ້ວ</span>'}</td>
     </tr>`).join('') || '<tr><td colspan="11" style="text-align:center;color:var(--text-muted)">ຍັງບໍ່ມີກະ</td></tr>'}</tbody></table></div>`;
   } else if (type === 'sales_by_item'){
-    const range = getReportDateRange();
-    const rows = computeSalesByItemReport(range);
-    wrap.innerHTML = renderReportDateFilterBar() + `<div style="overflow-x:auto"><table class="table-bordered" style="min-width:1300px"><thead><tr>
-      <th>ບາໂຄດ</th><th>ຊື່ສິນຄ້າ</th><th>ສະຕ໊ອກ (ອັນ)</th><th>ຈຳນວນຂາຍ (ອັນ)</th><th>ສະຕ໊ອກທີ່ຍັງເຫຼືອ (ອັນ)</th>
-      <th>ຍອດຂາຍ (ກີບ)</th><th class="cost-only">ຕົ້ນທຶນ (ກີບ)</th><th class="cost-only">ກຳໄລ (ກີບ)</th><th class="cost-only">ROI (ກີບ)</th>
-      <th>ຈຳນວນຂາຍ (ບາດ)</th><th>ຍອດຂາຍ (ບາດ)</th><th class="cost-only">ຕົ້ນທຶນ (ບາດ)</th><th class="cost-only">ກຳໄລ (ບາດ)</th><th class="cost-only">ROI (ບາດ)</th>
-    </tr></thead><tbody>${rows.map(p => {
-      const roiBaht = p.costBaht>0 ? (p.profitBaht/p.costBaht*100) : 0;
-      return `<tr>
-      <td style="font-weight:900;letter-spacing:0.3px">${p.barcode}</td><td>${p.name}</td>
-      <td style="text-align:right">${p.totalReceived||'-'}</td>
-      <td style="text-align:right;font-weight:600">${p.totalQty}</td>
-      <td style="text-align:right;color:var(--text-muted)">${p.stockRemaining!==null?p.stockRemaining:'-'}</td>
-      <td style="text-align:right">${fmt(p.revenueKip)}</td>
-      <td class="cost-only" style="text-align:right">${canSeeCost() ? fmt(p.costKip) : ''}</td>
-      <td class="cost-only" style="text-align:right;color:${p.profitKip<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? fmt(p.profitKip) : ''}</td>
-      <td class="cost-only" style="text-align:right">${canSeeCost() ? p.roiKip.toFixed(1)+'%' : ''}</td>
-      <td style="text-align:right">${p.qtyBaht||'-'}</td>
-      <td style="text-align:right">${p.revenueBaht?'฿'+fmt(p.revenueBaht):'-'}</td>
-      <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.costBaht?'฿'+fmt(p.costBaht):'-') : ''}</td>
-      <td class="cost-only" style="text-align:right;color:${p.profitBaht<0?'var(--danger)':'var(--success)'}">${canSeeCost() ? (p.qtyBaht?'฿'+fmt(p.profitBaht):'-') : ''}</td>
-      <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.qtyBaht?roiBaht.toFixed(1)+'%':'-') : ''}</td>
-    </tr>`;}).join('') || '<tr><td colspan="13" style="text-align:center;color:var(--text-muted)">ບໍ່ມີຂໍ້ມູນ</td></tr>'}</tbody></table></div>`;
+    wrap.innerHTML = renderReportDateFilterBar() + `<div class="row" style="margin-bottom:10px"><div class="search-box grow"><span>🔍</span><input type="text" id="sbiSearchInput" placeholder="ຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ) ເພື່ອເບິ່ງຈຳນວນທີ່ຂາຍ..." value="${escAttr(salesByItemQuery)}" oninput="salesByItemQuery=this.value; sbiRefreshTable()"></div></div><div id="sbiTable">${renderSalesByItemTable()}</div>`;
   } else if (type === 'by_category'){
     const range = getReportDateRange();
     const rows = computeCategoryReport(range);

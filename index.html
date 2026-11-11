@@ -2057,7 +2057,8 @@ async function liveSetCurrent(productId){
 // v2.76 (Tar 2026-11-10, "ໄຟລ໌ 786 ແຖວ ແຕ່ນຳເຂົ້າໄດ້ 739"): ຫຼັງນຳເຂົ້າ Excel (ໜ້າ "ປ້າຍ Live" ແລະ "ສ້າງບາໂຄດ") ສະແດງລາຍຊື່ທັງໝົດຂອງແຖວທີ່ບໍ່ພົບໃນ POS (ເດີມສະແດງແຕ່ 8 ຊື່ທຳອິດ) ເປັນລາຍການເລກລຽງ ເລື່ອນເບິ່ງໄດ້. ບໍ່ມີການປ່ຽນແປງການນຳເຂົ້າ.
 // v2.77 (Tar 2026-11-10, "ສິນຄ້າເຄື່ອງເຊວ 46 ແຖວບໍ່ມີໃນ POS ແຕ່ຕ້ອງໄລ້ສົດ + ຢາກເບິ່ງສິນຄ້າທີ່ຊ້ຳ"): ໜ້າ "ປ້າຍ Live" ຮອງຮັບ "ສິນຄ້ານອກ POS" — ແຖວທີ່ບໍ່ພົບຊື່ໃນ POS ຈະຖືກເພີ່ມເປັນສິນຄ້ານອກ POS ອັດຕະໂນມັດຕອນນຳເຂົ້າ Excel (ເກັບຊື່ + ລະຫັດ + ລາຄາ + ຈຳນວນປ້າຍ ໃນຕາຕະລາງ pos_live_labels, ຄໍລຳ product_id ເປັນ NULL ໄດ້ ແລະ ເພີ່ມຄໍລຳ name), ເພີ່ມເອງໄດ້ໃນກ່ອງ "ເພີ່ມສິນຄ້ານອກ POS", ແກ້ຊື່/ລະຫັດ/ລາຄາໄດ້ໃນຕາຕະລາງ ແລະພິມປ້າຍແບບດຽວກັນ. ຫຼັງນຳເຂົ້າສະແດງຊື່ສິນຄ້າທີ່ຊ້ຳໃນໄຟລ໌ ແລະ ຊື່ທີ່ຊ້ຳກັນໃນ POS. ຖ້າສິນຄ້ານັ້ນຖືກເພີ່ມເຂົ້າ POS ພາຍຫຼັງ ໃຫ້ລຶບແຖວນອກ POS ແລ້ວເພີ່ມຈາກ POS ແທນ.
 // v2.78 (Tar 2026-11-11, "ໜ້າ ຂາຍແຍກລາຍການສິນຄ້າ ບໍ່ມີຊ່ອງຄົ້ນຫາ ຕ້ອງເລື່ອນເບິ່ງເອງ"): ເພີ່ມຊ່ອງຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ, ພິມຫຼາຍຄຳໄດ້) ໃນລາຍງານ "ຂາຍແຍກລາຍການສິນຄ້າ". ເມື່ອຄົ້ນຫາ ຈະຄົ້ນຕະຫຼອດເວລາ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່) ແລະ ສະແດງຈຳນວນຂາຍລວມຂອງສິ່ງທີ່ພົບ. ບໍ່ແຕະສ່ວນອື່ນ.
-const APP_VERSION = 'v2.78';
+// v2.79 (Tar 2026-11-11, ຄົ້ນຫາສິນຄ້າໃນລາຍງານຂາຍແຍກລາຍການ ເຫັນຂາຍ 1 ອັນ 95,000 ແຕ່ຄວນຈະ 2 ອັນ): (1) ຊ່ອງຄົ້ນຫາ ຕອນນີ້ມີກ່ອງສະຫຼຸບຕະຫຼອດເວລາ ຄິດຈາກບິນທີ່ສຳເລັດໂດຍກົງ (ຈຳນວນ, ຈຳນວນບິນ, ຍອດຂາຍ, ຄັ້ງທຳອິດ/ຫຼ້າສຸດ) ບໍ່ຖືກຈຳກັດດ້ວຍຊ່ວງວັນທີ່ — v2.78 ຄົ້ນໄດ້ແຕ່ຍອດຂາຍຂອງມື້ທີ່ເລືອກ. (2) ແກ້ຄໍລຳ ຈຳນວນຂາຍ ຕະຫຼອດການ ໃຫ້ນັບສຸດທິ: ບວກ sale/sale_edit_add ແລະ ຫັກ sale_edit_remove/cancel (ເມື່ອກ່ອນບິນທີ່ຖືກແກ້ນັບເກີນ ເຊັ່ນ 2 ອັນສະແດງ 3).
+const APP_VERSION = 'v2.79';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -2660,8 +2661,10 @@ async function loadReportItemsBulk(){
     const { data: lots } = await sb.from('pos_product_lots').select('product_id, received_qty').in('product_id', productIds).or('lot_no.is.null,lot_no.not.in.(OPEN-20261013,OPEN-AUTO,ADJ,RET)'); // v2.55: ບໍ່ນັບ LOT ເປີດຍອດ/ປັບຍອດ/ຄືນ ເພາະບໍ່ແມ່ນການຮັບເຂົ້າ
     (lots||[]).forEach(l => { productReceivedTotals[l.product_id] = (productReceivedTotals[l.product_id]||0) + Number(l.received_qty); });
     // ຈຳນວນຂາຍທັງໝົດຕະຫຼອດການ — ຄິດຈາກ stock_movements ທັງໝົດ (ບໍ່ຈຳກັດ 500 ບິນລ່າສຸດ) ໃຫ້ບວກ-ລົບກັບສະຕ໊ອກເຂົ້າ ອອກມາກົງກັບສະຕ໊ອກຈິງ
-    const { data: movements } = await sb.from('pos_stock_movements').select('product_id, qty_change, movement_type').in('product_id', productIds).in('movement_type', ['sale','sale_edit_add']);
-    (movements||[]).forEach(m => { productSoldAllTimeTotals[m.product_id] = (productSoldAllTimeTotals[m.product_id]||0) + Math.abs(Number(m.qty_change)); });
+    const { data: movements } = await sb.from('pos_stock_movements').select('product_id, qty_change, movement_type').in('product_id', productIds).in('movement_type', ['sale','sale_edit_add','sale_edit_remove','cancel']);
+    // v2.79: ນັບສຸດທິ (ຂາຍ − ຄືນຈາກການແກ້ບິນ/ຍົກເລີກບິນ) — ເມື່ອກ່ອນນັບ sale_edit_add ເພີ່ມແຕ່ບໍ່ຫັກ sale_edit_remove ເຮັດໃຫ້ບິນທີ່ຖືກແກ້ນັບເກີນ
+    (movements||[]).forEach(m => { productSoldAllTimeTotals[m.product_id] = (productSoldAllTimeTotals[m.product_id]||0) - Number(m.qty_change); });
+    Object.keys(productSoldAllTimeTotals).forEach(k => { if (productSoldAllTimeTotals[k] < 0) productSoldAllTimeTotals[k] = 0; });
   }
 }
 function computeSalesByItemReport(range){
@@ -8004,16 +8007,18 @@ async function reportRangeChanged(){
   if (reloaded || currentReportType === 'returns_report' || currentReportType === 'by_shift') await loadReportTypeData(currentReportType);
   renderReport();
 }
-// v2.78: ຕາຕະລາງ "ຂາຍແຍກລາຍການສິນຄ້າ" + ຊ່ອງຄົ້ນຫາ (ຊື່/ບາໂຄດ). ຖ້າພິມຄຳຄົ້ນຫາ → ຄົ້ນຫາຕະຫຼອດເວລາ ບໍ່ຈຳກັດຊ່ວງວັນທີ່
+// v2.78/v2.79: ຕາຕະລາງ "ຂາຍແຍກລາຍການສິນຄ້າ" + ຊ່ອງຄົ້ນຫາ (ຊື່/ບາໂຄດ).
+// ຕາຕະລາງລຸ່ມ = ຕາມຊ່ວງວັນທີ່ທີ່ເລືອກ (ກອງຕາມຄຳຄົ້ນຫາ). ກ່ອງເທິງ (#sbiAllTime) = ສະຫຼຸບຕະຫຼອດເວລາ ຂອງສິນຄ້າທີ່ຄົ້ນພົບ ຄິດຈາກບິນທີ່ສຳເລັດ (version ປັດຈຸບັນ) ບໍ່ຂຶ້ນກັບຊ່ວງວັນທີ່
 let salesByItemQuery = '';
+let sbiTimer = null, sbiSeq = 0;
 function renderSalesByItemTable(){
   const q = (salesByItemQuery||'').trim().toLowerCase();
-  let rows = computeSalesByItemReport(q ? null : getReportDateRange());
+  let rows = computeSalesByItemReport(getReportDateRange());
   if (q){
     const toks = q.split(/\s+/).filter(Boolean);
     rows = rows.filter(p => { const hay = ((p.name||'')+' '+(p.barcode||'')).toLowerCase(); return toks.every(t => hay.includes(t)); });
   }
-  const note = q ? `<p style="font-size:14px;color:var(--text-muted);margin:0 0 8px">🔍 ພົບ ${rows.length} ລາຍການ · ຄົ້ນຫາຕະຫຼອດເວລາ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່) · ຂາຍລວມ <b>${fmt(rows.reduce((a,r)=>a+(Number(r.totalQty)||0),0))}</b> ອັນ</p>` : '';
+  const note = q ? `<p style="font-size:14px;color:var(--text-muted);margin:0 0 8px">ຕາຕະລາງລຸ່ມນີ້ = ສະເພາະຊ່ວງວັນທີ່ທີ່ເລືອກ · ພົບ ${rows.length} ລາຍການ</p>` : '';
   return note + `<div style="overflow-x:auto"><table class="table-bordered" style="min-width:1300px"><thead><tr>
       <th>ບາໂຄດ</th><th>ຊື່ສິນຄ້າ</th><th>ສະຕ໊ອກ (ອັນ)</th><th>ຈຳນວນຂາຍ (ອັນ)</th><th>ສະຕ໊ອກທີ່ຍັງເຫຼືອ (ອັນ)</th>
       <th>ຍອດຂາຍ (ກີບ)</th><th class="cost-only">ຕົ້ນທຶນ (ກີບ)</th><th class="cost-only">ກຳໄລ (ກີບ)</th><th class="cost-only">ROI (ກີບ)</th>
@@ -8036,9 +8041,57 @@ function renderSalesByItemTable(){
       <td class="cost-only" style="text-align:right">${canSeeCost() ? (p.qtyBaht?roiBaht.toFixed(1)+'%':'-') : ''}</td>
     </tr>`;}).join('') || '<tr><td colspan="13" style="text-align:center;color:var(--text-muted)">ບໍ່ມີຂໍ້ມູນ</td></tr>'}</tbody></table></div>`;
 }
+function sbiMatchProducts(q){
+  const toks = q.split(/\s+/).filter(Boolean);
+  return PRODUCTS.filter(p => { const hay = ((p.name||'')+' '+(p.barcode||'')).toLowerCase(); return toks.every(t => hay.includes(t)); });
+}
+async function sbiAllTimeHtml(q){
+  const matches = sbiMatchProducts(q);
+  if (!matches.length) return `<p style="font-size:14px;color:var(--text-muted);margin:0 0 10px">🔍 ບໍ່ພົບສິນຄ້າທີ່ຊື່/ບາໂຄດກົງກັບ "${posEsc(q)}"</p>`;
+  if (matches.length > 12) return `<p style="font-size:14px;color:var(--warning);margin:0 0 10px">🔍 ພົບ ${matches.length} ລາຍການ ຫຼາຍເກີນໄປ — ພິມໃຫ້ແຄບລົງ (ເຊັ່ນ ເພີ່ມຄຳໃນຊື່)</p>`;
+  const out = [];
+  for (const pr of matches){
+    const items = await fetchAllRows((from,to) => sb.from('pos_transaction_items')
+      .select('qty, line_total, currency, pos_transaction_versions!inner(version_no, pos_transactions!inner(status, current_version_no, created_at))')
+      .eq('product_id', pr.id).order('id').range(from,to));
+    let qty=0, kip=0, baht=0, first=null, last=null; const bills = new Set();
+    items.forEach(i => {
+      const v = i.pos_transaction_versions, t = v && v.pos_transactions;
+      if (!t || t.status !== 'completed' || v.version_no !== t.current_version_no) return;
+      qty += Number(i.qty);
+      if (i.currency === 'baht') baht += Number(i.line_total); else kip += Number(i.line_total);
+      bills.add(t.created_at + '|' + v.version_no + '|' + i.qty + '|' + i.line_total);
+      if (!first || t.created_at < first) first = t.created_at;
+      if (!last || t.created_at > last) last = t.created_at;
+    });
+    out.push({ pr, qty, kip, baht, first, last, billCount: items.filter(i => { const v=i.pos_transaction_versions, t=v&&v.pos_transactions; return t && t.status==='completed' && v.version_no===t.current_version_no; }).length });
+  }
+  const d = x => x ? String(fmtDT(x)).split(' ')[0].replace(/,$/, '') : '-';
+  return `<div style="border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:12px;background:var(--surface-1)">
+    <p style="margin:0 0 6px;font-weight:700">🔍 ຜົນຄົ້ນຫາ — ຍອດຂາຍຕະຫຼອດເວລາ (ບໍ່ຈຳກັດຊ່ວງວັນທີ່ · ນັບສະເພາະບິນທີ່ສຳເລັດ)</p>
+    <div style="overflow-x:auto"><table class="table-bordered"><thead><tr><th>ບາໂຄດ</th><th>ຊື່ສິນຄ້າ</th><th>ຂາຍທັງໝົດ (ອັນ)</th><th>ຈຳນວນບິນ</th><th>ຍອດຂາຍ (ກີບ)</th><th>ຍອດຂາຍ (ບາດ)</th><th>ສະຕ໊ອກເຫຼືອ</th><th>ຂາຍຄັ້ງທຳອິດ</th><th>ຂາຍຄັ້ງຫຼ້າສຸດ</th></tr></thead><tbody>${
+      out.map(o => `<tr><td style="font-weight:900">${posEsc(o.pr.barcode)}</td><td>${posEsc(o.pr.name)}</td><td style="text-align:right;font-weight:700">${fmt(o.qty)}</td><td style="text-align:right">${o.billCount}</td><td style="text-align:right">${fmt(o.kip)}</td><td style="text-align:right">${o.baht?'฿'+fmt(o.baht):'-'}</td><td style="text-align:right">${fmt(o.pr.stock)}</td><td>${d(o.first)}</td><td>${d(o.last)}</td></tr>`).join('')
+    }</tbody></table></div></div>`;
+}
 function sbiRefreshTable(){
   const el = document.getElementById('sbiTable');
   if (el) el.innerHTML = renderSalesByItemTable();
+  const box = document.getElementById('sbiAllTime');
+  if (!box) return;
+  clearTimeout(sbiTimer);
+  const q = (salesByItemQuery||'').trim().toLowerCase();
+  if (!q){ box.innerHTML = ''; sbiSeq++; return; }
+  box.innerHTML = '<p style="font-size:14px;color:var(--text-muted);margin:0 0 10px">⏳ ກຳລັງຄິດຍອດຂາຍຕະຫຼອດເວລາ...</p>';
+  const my = ++sbiSeq;
+  sbiTimer = setTimeout(async () => {
+    try{
+      const html = await sbiAllTimeHtml(q);
+      if (my === sbiSeq){ const b2 = document.getElementById('sbiAllTime'); if (b2) b2.innerHTML = html; }
+    }catch(err){
+      console.error('sbiAllTimeHtml', err);
+      if (my === sbiSeq){ const b2 = document.getElementById('sbiAllTime'); if (b2) b2.innerHTML = '<p style="font-size:14px;color:var(--danger);margin:0 0 10px">⚠️ ຄິດຍອດຂາຍບໍ່ສຳເລັດ ລອງໃໝ່</p>'; }
+    }
+  }, 400);
 }
 async function renderReport(){
   const type = currentReportType;
@@ -8236,7 +8289,7 @@ async function renderReport(){
       <td>${s.status==='open'?'<span class="badge ok">ເປີດຢູ່</span>':'<span class="badge">ປິດແລ້ວ</span>'}</td>
     </tr>`).join('') || '<tr><td colspan="11" style="text-align:center;color:var(--text-muted)">ຍັງບໍ່ມີກະ</td></tr>'}</tbody></table></div>`;
   } else if (type === 'sales_by_item'){
-    wrap.innerHTML = renderReportDateFilterBar() + `<div class="row" style="margin-bottom:10px"><div class="search-box grow"><span>🔍</span><input type="text" id="sbiSearchInput" placeholder="ຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ) ເພື່ອເບິ່ງຈຳນວນທີ່ຂາຍ..." value="${escAttr(salesByItemQuery)}" oninput="salesByItemQuery=this.value; sbiRefreshTable()"></div></div><div id="sbiTable">${renderSalesByItemTable()}</div>`;
+    wrap.innerHTML = renderReportDateFilterBar() + `<div class="row" style="margin-bottom:10px"><div class="search-box grow"><span>🔍</span><input type="text" id="sbiSearchInput" placeholder="ຄົ້ນຫາສິນຄ້າ (ຊື່ ຫຼື ບາໂຄດ) ເພື່ອເບິ່ງຈຳນວນທີ່ຂາຍ..." value="${escAttr(salesByItemQuery)}" oninput="salesByItemQuery=this.value; sbiRefreshTable()"></div></div><div id="sbiAllTime"></div><div id="sbiTable">${renderSalesByItemTable()}</div>`; if ((salesByItemQuery||'').trim()) sbiRefreshTable();
   } else if (type === 'by_category'){
     const range = getReportDateRange();
     const rows = computeCategoryReport(range);

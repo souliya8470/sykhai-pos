@@ -2082,7 +2082,8 @@ async function liveSetCurrent(productId){
 // v2.80 (Tar 2026-11-11, ສິນຄ້າສະຕັອກ 0 ໃຫ້ກົດຂາຍບໍ່ໄດ້ + ສຽງເຕືອນ ແລະ ສຽງຂາຍສຳເລັດຕ່າງກັນ): ເພີ່ມເຂົ້າກະຕ່າ/ເພີ່ມຈຳນວນ (+, ພິມຈຳນວນ, ຍິງບາໂຄດ) ບໍ່ໄດ້ ຖ້າສະຕັອກ 0 ຫຼື ເກີນສະຕັອກ → ສຽງ buzzer ຕ່ຳ 2 ຄັ້ງ + ຂໍ້ຄວາມ ⛔. ໃນໂໝດແກ້ບິນເກົ່າ ນັບຈຳນວນເດີມໃນບິນເປັນສະຕັອກທີ່ຂາຍໄດ້. ກວດກະຕ່າອີກເທື່ອຕອນກົດ ຮັບເງິນ ແລະ ຕອນຢືນຢັນ. ປຸ່ມສິນຄ້າໃນໜ້າຂາຍຈາງລົງ + ປ້າຍ ໝົດ ເມື່ອສະຕັອກ 0. ຂາຍສຳເລັດ (ແລະ ແກ້ບິນສຳເລັດ) = ສຽງ ຕິງ-ຕິງ-ຕິງ ຂຶ້ນສູງ (ຕ່າງຈາກສຽງເພີ່ມເຂົ້າກະຕ່າ ແລະ ສຽງເຕືອນ).
 // v2.81 (Tar 2026-11-11, ຄລິກຂວາໃສ່ເມນູ POS ເພື່ອເປີດແທັບໃໝ່ບໍ່ໄດ້): ອະນຸຍາດເມນູຄລິກຂວາ (ເປີດໃນແທັບໃໝ່/ໜ້າຕ່າງໃໝ່) ສະເພາະເທິງລິ້ງເມນູ ແລະ ເຮັດໃຫ້ Ctrl/Shift+ຄລິກ ເປີດແທັບໃໝ່ໄດ້. ບ່ອນອື່ນຄລິກຂວາຍັງຖືກກັນຄືເກົ່າ (v2.40).
 // v2.82 (Tar 2026-11-11, "ຮັບເງິນແບບໂອນ ໃຫ້ອອກ QR ຕາມຍອດເງິນ ແລ້ວພິມອອກເຄື່ອງພິມໃບເສີດ"): ໃນໜ້າຮັບເງິນ ແຖວ "ໂອນ" ມີປຸ່ມ 📱 QR → ສະແດງ QR ນິ້ງຂອງຮ້ານ (BCEL/LDB ຈາກ payment_banks) ພ້ອມຍອດເງິນ (ແກ້ໄຂຍອດໄດ້) ແລະ ປຸ່ມ 🖨️ ພິມ QR ອອກເຄື່ອງພິມໃບເສີດ. ໃຊ້ວິທີສ້າງ QR ແບບດຽວກັບຮ້ານອອນລາຍ (ໃສ່ tag54 + CRC16). ເພີ່ມ library QR (qrcode-generator, MIT) ໃນໄຟລ໌. ບໍ່ປ່ຽນການບັນທຶກບິນ.
-const APP_VERSION = 'v2.82';
+// v2.83 (Tar 2026-11-11, ວິດີໂອ IMG_2646: (1) ຫຼັງກົດບັນທຶກບິນສຳເລັດ ໃຫ້ເດັ້ງໃບເສັດຂຶ້ນມາເລີຍ ເລືອກພິມ/ບໍ່ພິມ ແທນທີ່ຈະໄປກົດໄອຄອນເຄື່ອງພິມຢູ່ໜ້າລາຍງານ; (2) ຊ່ອງຄົ້ນຫາສິນຄ້າໜ້າຂາຍ ເມື່ອເລືອກສິນຄ້າແລ້ວ ໃຫ້ລ້າງຄຳຄົ້ນຫາເອງ): ບັນທຶກບິນໃໝ່ສຳເລັດ → ເປີດ popup ໃບເສັດ (ປຸ່ມ ພິມ ຖືກໂຟກັດ ກົດ Enter ພິມໄດ້, Esc ຫຼື Close ປິດ). ກົດເລືອກສິນຄ້າເຂົ້າກະຕ່າ → ລ້າງຊ່ອງຄົ້ນຫາ ແລະ ໂຟກັດຊ່ອງຄົ້ນຫາຄືນ. ບິນ offline/ແກ້ບິນບໍ່ເດັ້ງ popup.
+const APP_VERSION = 'v2.83';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -3652,7 +3653,7 @@ function renderGrid(){
   pageItems.forEach(p => {
     const card = document.createElement('button');
     card.className = 'card';
-    card.onclick = () => addToCart(p);
+    card.onclick = () => { if (addToCart(p)) clearProductSearch(); }; // v2.83: ເລືອກສິນຄ້າສຳເລັດ → ລ້າງຊ່ອງຄົ້ນຫາ
     const soldOut = !(Number(p.stock) > 0); // v2.80
     if (soldOut) card.style.opacity = '0.45';
     const low = soldOut ? `<span class="badge" style="position:absolute;top:2px;right:2px;font-size:12px;padding:1px 6px;z-index:1;background:var(--danger);color:#fff">ໝົດ</span>`
@@ -3667,6 +3668,14 @@ function renderGrid(){
   });
 }
 let searchDebounceTimer = null;
+function clearProductSearch(){
+  const el = document.getElementById('searchInput');
+  if (!el || !el.value) return;
+  el.value = '';
+  clearTimeout(searchDebounceTimer);
+  renderGrid();
+  el.focus(); // ພ້ອມພິມຄຳຄົ້ນໃໝ່ຕໍ່ໄດ້ເລີຍ
+}
 function onSearchInput(){
   clearTimeout(searchDebounceTimer);
   searchDebounceTimer = setTimeout(() => { renderGrid(); }, 150);
@@ -3711,6 +3720,7 @@ function addToCart(product){
   // ເລື່ອນລົງຫາລາຍການລ່າສຸດອັດຕະໂນມັດ ເມື່ອກະຕ່າຍາວເກີນຈໍ
   const cartWrap = document.getElementById('cartItems');
   cartWrap.scrollTop = cartWrap.scrollHeight;
+  return true; // v2.83: ບອກຜູ້ເອີ້ນວ່າເພີ່ມເຂົ້າກະຕ່າສຳເລັດ
 }
 function changeQty(idx, delta){
   const item = cart[idx];
@@ -4589,7 +4599,7 @@ async function confirmPayment(){
         queueOfflineSale(payload);
         return;
       }
-      const { txnNo } = await executeSaleWrite(payload);
+      const { txnNo, version: savedVersion } = await executeSaleWrite(payload);
       if (selectedCustomerId){
         const c = CUSTOMERS.find(x=>x.id===selectedCustomerId);
         const earned = c ? Math.floor(totals.kip / 10000) : 0;
@@ -4603,6 +4613,13 @@ async function confirmPayment(){
       closePayModal(); clearCart(); resetCustomerForNextSale(); // clearCart() ລ້າງ pendingLabelRef ນຳ; v2.49 ລ້າງລູກຄ້າດ້ວຍ
       playSaleDone(); // v2.80
       showToast('ບັນທຶກບິນສຳເລັດ');
+      // v2.83: ເດັ້ງໃບເສັດຂຶ້ນທັນທີຫຼັງບັນທຶກ — ເລືອກ "ພິມ" ຫຼື "Close" ໄດ້ເລີຍ (ບໍ່ຕ້ອງໄປກົດໄອຄອນເຄື່ອງພິມຢູ່ຕາຕະລາງບິນ). ຖ້າສ້າງໃບເສັດບໍ່ໄດ້ ບິນກໍບັນທຶກສຳເລັດແລ້ວ ບໍ່ກະທົບ
+      if (savedVersion && savedVersion.id){
+        printBillReceipt(savedVersion.id, txnNo).then(() => {
+          const pb = document.querySelector('#receiptPreviewOverlay .receipt-actions .confirm-btn');
+          if (pb) pb.focus(); // ກົດ Enter = ພິມ
+        }).catch(err => console.error('auto receipt popup failed', err));
+      }
     })(), 20000, 'ການບັນທຶກບິນ');
   }catch(err){
     console.error(err);
@@ -8613,6 +8630,9 @@ document.addEventListener('keydown', e => {
   if (document.getElementById('transferQrOverlay').classList.contains('open')){ // v2.82: QR ໂອນເງິນເປີດຢູ່ — Enter ບໍ່ໃຫ້ໄປຢືນຢັນບິນ, Esc ປິດສະເພາະ QR
     if (e.code==='Escape') closeTransferQr();
     return;
+  }
+  if (e.code==='Escape' && document.getElementById('receiptPreviewOverlay').classList.contains('open')){ // v2.83: Esc = ປິດໃບເສັດ
+    document.getElementById('receiptPreviewOverlay').classList.remove('open'); return;
   }
   if (e.code==='Space' && !modalOpen && document.getElementById('view-sales').classList.contains('active') && cart.length>0 && document.activeElement.tagName!=='INPUT'){
     e.preventDefault(); openPayModal();

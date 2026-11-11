@@ -1515,7 +1515,8 @@
     <div style="font-size:14px;color:var(--text-muted);margin-bottom:4px">ຍອດທີ່ລູກຄ້າຕ້ອງໂອນ (ກີບ)</div>
     <input type="text" inputmode="numeric" id="tqAmount" oninput="onTransferQrAmount(this.value)" style="width:70%;height:44px;border:1px solid var(--border);border-radius:var(--radius);padding:0 10px;font-size:24px;font-weight:700;text-align:center;margin-bottom:10px">
     <div id="tqQrBox" style="min-height:240px;display:flex;align-items:center;justify-content:center"></div>
-    <div id="tqAcct" style="font-size:14px;color:var(--text-soft);margin:6px 0 10px"></div>
+    <div id="tqAcct" style="font-size:14px;color:var(--text-soft);margin:6px 0 8px"></div>
+    <div id="tqSizeRow" style="display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:10px"></div>
     <div class="row" style="gap:8px">
       <button class="confirm-btn" style="flex:1" onclick="printTransferQr()">🖨️ ພິມ QR</button>
       <button class="btn" style="flex:1" onclick="closeTransferQr()">ປິດ</button>
@@ -2083,7 +2084,8 @@ async function liveSetCurrent(productId){
 // v2.81 (Tar 2026-11-11, ຄລິກຂວາໃສ່ເມນູ POS ເພື່ອເປີດແທັບໃໝ່ບໍ່ໄດ້): ອະນຸຍາດເມນູຄລິກຂວາ (ເປີດໃນແທັບໃໝ່/ໜ້າຕ່າງໃໝ່) ສະເພາະເທິງລິ້ງເມນູ ແລະ ເຮັດໃຫ້ Ctrl/Shift+ຄລິກ ເປີດແທັບໃໝ່ໄດ້. ບ່ອນອື່ນຄລິກຂວາຍັງຖືກກັນຄືເກົ່າ (v2.40).
 // v2.82 (Tar 2026-11-11, "ຮັບເງິນແບບໂອນ ໃຫ້ອອກ QR ຕາມຍອດເງິນ ແລ້ວພິມອອກເຄື່ອງພິມໃບເສີດ"): ໃນໜ້າຮັບເງິນ ແຖວ "ໂອນ" ມີປຸ່ມ 📱 QR → ສະແດງ QR ນິ້ງຂອງຮ້ານ (BCEL/LDB ຈາກ payment_banks) ພ້ອມຍອດເງິນ (ແກ້ໄຂຍອດໄດ້) ແລະ ປຸ່ມ 🖨️ ພິມ QR ອອກເຄື່ອງພິມໃບເສີດ. ໃຊ້ວິທີສ້າງ QR ແບບດຽວກັບຮ້ານອອນລາຍ (ໃສ່ tag54 + CRC16). ເພີ່ມ library QR (qrcode-generator, MIT) ໃນໄຟລ໌. ບໍ່ປ່ຽນການບັນທຶກບິນ.
 // v2.83 (Tar 2026-11-11, ວິດີໂອ IMG_2646: (1) ຫຼັງກົດບັນທຶກບິນສຳເລັດ ໃຫ້ເດັ້ງໃບເສັດຂຶ້ນມາເລີຍ ເລືອກພິມ/ບໍ່ພິມ ແທນທີ່ຈະໄປກົດໄອຄອນເຄື່ອງພິມຢູ່ໜ້າລາຍງານ; (2) ຊ່ອງຄົ້ນຫາສິນຄ້າໜ້າຂາຍ ເມື່ອເລືອກສິນຄ້າແລ້ວ ໃຫ້ລ້າງຄຳຄົ້ນຫາເອງ): ບັນທຶກບິນໃໝ່ສຳເລັດ → ເປີດ popup ໃບເສັດ (ປຸ່ມ ພິມ ຖືກໂຟກັດ ກົດ Enter ພິມໄດ້, Esc ຫຼື Close ປິດ). ກົດເລືອກສິນຄ້າເຂົ້າກະຕ່າ → ລ້າງຊ່ອງຄົ້ນຫາ ແລະ ໂຟກັດຊ່ອງຄົ້ນຫາຄືນ. ບິນ offline/ແກ້ບິນບໍ່ເດັ້ງ popup.
-const APP_VERSION = 'v2.83';
+// v2.84 (Tar 2026-11-11, QR ໂອນເງິນຜ່ານເຄື່ອງພິມໃຊ້ໄດ້ແລ້ວ — ຢາກໃຫ້ອອກທ້າຍໃບບິນ ແລະ ທົດລອງຫຼຸດຂະໜາດ QR ເພື່ອປະຢັດເຈ້ຍ): ໃບເສັດຂອງບິນທີ່ມີຍອດຈ່າຍຊ່ອງ ໂອນ ມີ QR ທ້າຍບິນ (ຍອດ = ສ່ວນທີ່ໂອນ; ເງິນສົດ/ເຄດິດລ້ວນບໍ່ອອກ). ຂະໜາດ QR ຕອນພິມເລືອກໄດ້ 4 ລະດັບ (ນ້ອຍ 140 / ກາງ 170 ຄ່າເລີ່ມຕົ້ນ / ໃຫຍ່ 200 / ໃຫຍ່ຫຼາຍ 260 = ຂະໜາດເກົ່າ) ໃນໜ້າຕ່າງ 📱 QR, ເກັບຕໍ່ເຄື່ອງ. ຍັງບໍ່ໃສ່ເລກບິນໃນ QR (ລໍທົດສອບກັບແອັບທະນາຄານກ່ອນ).
+const APP_VERSION = 'v2.84';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -8039,6 +8041,39 @@ function qrImageDataUrl(text){
   const q = qrcode(0, 'M'); q.addData(text); q.make();
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }));
 }
+const QR_PRINT_SIZES = [ {px:140, label:'ນ້ອຍ'}, {px:170, label:'ກາງ'}, {px:200, label:'ໃຫຍ່'}, {px:260, label:'ໃຫຍ່ຫຼາຍ'} ];
+function qrPrintPx(){
+  let v = 170; try{ v = parseInt(localStorage.getItem('pos_qr_print_px'),10) || 170; }catch(e){}
+  return QR_PRINT_SIZES.some(z => z.px === v) ? v : 170; // ຄ່າເລີ່ມຕົ້ນ ~45 ມມ ໃນເຈ້ຍ 80 ມມ (ເຄື່ອງພິມຕໍ່ເຄື່ອງ — ເກັບຕໍ່ເຄື່ອງ)
+}
+function setQrPrintPx(px){ try{ localStorage.setItem('pos_qr_print_px', String(px)); }catch(e){} renderTqSizeRow(); }
+function renderTqSizeRow(){
+  const el = document.getElementById('tqSizeRow'); if (!el) return;
+  const cur = qrPrintPx();
+  el.innerHTML = '<span style="font-size:13px;color:var(--text-muted)">ຂະໜາດ QR ຕອນພິມ:</span>' + QR_PRINT_SIZES.map(z =>
+    `<button class="btn" style="padding:4px 10px;font-size:13px;${z.px===cur ? 'background:var(--accent);color:#fff;border-color:var(--accent)' : ''}" onclick="setQrPrintPx(${z.px})">${z.label}</button>`).join('');
+}
+// v2.84: QR ໂອນເງິນທ້າຍໃບບິນ — ສະເພາະບິນທີ່ມີຍອດຈ່າຍຊ່ອງ "ໂອນ" (ກີບ); ຍອດໃນ QR = ສ່ວນທີ່ໂອນ. ເງິນສົດ/ເຄດິດລ້ວນ = ບໍ່ອອກ. ຜິດພາດຢູ່ບ່ອນນີ້ບໍ່ກະທົບການພິມໃບບິນ
+async function receiptTransferQrHtml(versionId){
+  try{
+    const { data, error } = await sb.from('pos_transaction_payments').select('channel_key, amount, currency').eq('version_id', versionId);
+    if (error) throw error;
+    const amt = (data||[]).filter(x => x.channel_key === 'transfer' && (x.currency||'kip') !== 'baht').reduce((a,x) => a + (Number(x.amount)||0), 0);
+    if (!(amt > 0)) return '';
+    const banks = await loadPaymentBanks();
+    if (!banks || !banks.length) return '';
+    let saved = null; try{ saved = localStorage.getItem('pos_qr_bank'); }catch(e){}
+    const bank = banks.find(b => b.id === saved) || banks[0];
+    const px = qrPrintPx();
+    return `
+      <div class="receipt-divider"></div>
+      <div style="text-align:center">
+        <div style="font-size:17px">ສະແກນເພື່ອໂອນເງິນ · ${posEsc(bank.bank_name)}</div>
+        <div style="font-size:22px;font-weight:800">${fmt(amt)} ກີບ</div>
+        <img alt="QR" style="width:${px}px;height:${px}px;display:block;margin:4px auto;image-rendering:pixelated" src="${qrImageDataUrl(buildDynamicLaoQr(bank.qr_payload, amt))}">
+      </div>`;
+  }catch(err){ console.error('receipt QR skipped', err); return ''; }
+}
 function currentTransferQrBank(){ return (PAYMENT_BANKS||[]).find(b => b.id === tqBankId) || (PAYMENT_BANKS||[])[0] || null; }
 async function openTransferQr(){
   try{
@@ -8073,6 +8108,7 @@ function renderTransferQr(){
   const tabs = document.getElementById('tqBankTabs');
   const cur = currentTransferQrBank();
   tabs.innerHTML = (PAYMENT_BANKS||[]).map(b => `<button class="btn" style="${cur && b.id===cur.id ? 'background:var(--accent);color:#fff;border-color:var(--accent)' : ''}" onclick="pickTransferQrBank('${b.id}')">${posEsc(b.bank_name)}</button>`).join('');
+  renderTqSizeRow();
   const box = document.getElementById('tqQrBox'), acct = document.getElementById('tqAcct');
   if (!cur || tqAmountVal <= 0){
     box.innerHTML = '<span style="color:var(--text-muted)">ໃສ່ຍອດເງິນເພື່ອສ້າງ QR</span>'; acct.textContent = ''; return;
@@ -8111,7 +8147,7 @@ async function printTransferQr(){
     <div style="font-size:15px;font-weight:600">${posEsc(cur.account_name||'')}</div>
     <div style="font-size:15px;margin-top:6px">ຍອດທີ່ຕ້ອງໂອນ</div>
     <div style="font-size:32px;font-weight:800">${fmt(tqAmountVal)} ກີບ</div>
-    <img id="tqPrintImg" alt="QR" style="width:260px;height:260px;display:block;margin:6px auto;image-rendering:pixelated" src="${qrImageDataUrl(payload)}">
+    <img id="tqPrintImg" alt="QR" style="width:${qrPrintPx()}px;height:${qrPrintPx()}px;display:block;margin:6px auto;image-rendering:pixelated" src="${qrImageDataUrl(payload)}">
     <div style="font-size:14px">${posEsc(now)}</div>
     <div style="font-size:15px;margin-top:4px">ໂອນແລ້ວ ກະລຸນາສະແດງສະລິບໃຫ້ພະນັກງານ 🙏</div>
   `;
@@ -8155,6 +8191,7 @@ async function printBillReceipt(versionId, billNo){
   if (r.show_seller_name!==false) metaLines.push(`ພະນັກງານ: ${(currentUser&&currentUser.displayName)||'-'}`);
   if (r.show_customer_name!==false) metaLines.push(`ລູກຄ້າ: ${cust}`);
 
+  const transferQrHtml = await receiptTransferQrHtml(versionId); // v2.84
   const html = `
     <style>
       @media print{ ${pageSizeCss} }
@@ -8187,6 +8224,7 @@ async function printBillReceipt(versionId, billNo){
       <div class="receipt-trow"><span>ເງິນທອນ</span><span>${fmt(change)}</span></div>
     </div>
     ${r.confirm_amount_on_bill ? '<p class="receipt-sub" style="margin-top:10px">*** ກະລຸນາກວດຈຳນວນເງິນກ່ອນອອກຈາກຮ້ານ ***</p>' : ''}
+    ${transferQrHtml}
     <div class="receipt-divider"></div>
     <p class="receipt-foot">${r.footer_text ? posEsc(r.footer_text) : 'ຂອບໃຈລູກຄ້າທີ່ມາອຸດໜູນ 🙏'}</p>
     ${r.confirm_amount_on_bill ? `<div class="receipt-sig"><div>ຜູ້ຂາຍ</div><div>ຜູ້ຊື້</div></div>` : ''}

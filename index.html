@@ -2088,7 +2088,8 @@ async function liveSetCurrent(productId){
 // v2.83 (Tar 2026-11-11, ວິດີໂອ IMG_2646: (1) ຫຼັງກົດບັນທຶກບິນສຳເລັດ ໃຫ້ເດັ້ງໃບເສັດຂຶ້ນມາເລີຍ ເລືອກພິມ/ບໍ່ພິມ ແທນທີ່ຈະໄປກົດໄອຄອນເຄື່ອງພິມຢູ່ໜ້າລາຍງານ; (2) ຊ່ອງຄົ້ນຫາສິນຄ້າໜ້າຂາຍ ເມື່ອເລືອກສິນຄ້າແລ້ວ ໃຫ້ລ້າງຄຳຄົ້ນຫາເອງ): ບັນທຶກບິນໃໝ່ສຳເລັດ → ເປີດ popup ໃບເສັດ (ປຸ່ມ ພິມ ຖືກໂຟກັດ ກົດ Enter ພິມໄດ້, Esc ຫຼື Close ປິດ). ກົດເລືອກສິນຄ້າເຂົ້າກະຕ່າ → ລ້າງຊ່ອງຄົ້ນຫາ ແລະ ໂຟກັດຊ່ອງຄົ້ນຫາຄືນ. ບິນ offline/ແກ້ບິນບໍ່ເດັ້ງ popup.
 // v2.84 (Tar 2026-11-11, QR ໂອນເງິນຜ່ານເຄື່ອງພິມໃຊ້ໄດ້ແລ້ວ — ຢາກໃຫ້ອອກທ້າຍໃບບິນ ແລະ ທົດລອງຫຼຸດຂະໜາດ QR ເພື່ອປະຢັດເຈ້ຍ): ໃບເສັດຂອງບິນທີ່ມີຍອດຈ່າຍຊ່ອງ ໂອນ ມີ QR ທ້າຍບິນ (ຍອດ = ສ່ວນທີ່ໂອນ; ເງິນສົດ/ເຄດິດລ້ວນບໍ່ອອກ). ຂະໜາດ QR ຕອນພິມເລືອກໄດ້ 4 ລະດັບ (ນ້ອຍ 140 / ກາງ 170 ຄ່າເລີ່ມຕົ້ນ / ໃຫຍ່ 200 / ໃຫຍ່ຫຼາຍ 260 = ຂະໜາດເກົ່າ) ໃນໜ້າຕ່າງ 📱 QR, ເກັບຕໍ່ເຄື່ອງ. ຍັງບໍ່ໃສ່ເລກບິນໃນ QR (ລໍທົດສອບກັບແອັບທະນາຄານກ່ອນ).
 // v2.85 (Tar 2026-11-15, ຢາກໃຫ້ QR ທີ່ແນບກັບບິນໂອນ ມີ description/ເລກບິນ ໃຫ້ເຫັນໃນແອັບທະນາຄານ): ເພີ່ມທາງເລືອກ "ເລກບິນໃນ QR" (ປິດ / ແບບ A ຈຸດປະສົງ tag62.08 / ແບບ B ເລກອ້າງອີງ tag62.05 / ແບບ C ເລກບິນ tag62.01) ໃນໜ້າຕ່າງ 📱 QR ເກັບຕໍ່ເຄື່ອງ ຄ່າເລີ່ມຕົ້ນ = ປິດ (QR ຄືເກົ່າ). ເປີດແລ້ວ QR ທ້າຍໃບບິນໃສ່ເລກບິນຈິງ; ໜ້າຕ່າງ QR ສະແດງເລກຕົວຢ່າງ POS-TEST ໃຫ້ສະແກນທົດສອບໂດຍບໍ່ເສຍເຈ້ຍ.
-const APP_VERSION = 'v2.85';
+// v2.86 (Tar 2026-11-15: ເວັບຮ້ານອອນລາຍມີການຝັງເລກອໍເດີໃນ QR ແລ້ວ ໃຊ້ງານຈິງ — ກວດຖານຂໍ້ມູນຢືນຢັນ: online_order_no_reservations 119 ເລກ): POS ປ່ຽນມາໃຊ້ວິທີດຽວກັນ — ໃສ່ເລກບິນໃນ tag 62 ສອງຊ່ອງ 05 + 08 (BCEL ສະແດງ 08 ເປັນ ລາຍລະອຽດ). ທາງເລືອກແບບ A/B/C ຂອງ v2.85 ເຫຼືອ ເປີດ/ປິດ ຄ່າເລີ່ມຕົ້ນ = ເປີດ (QR ທ້າຍໃບບິນໂອນມີເລກບິນ). ປິດໄດ້ໃນໜ້າຕ່າງ 📱 QR.
+const APP_VERSION = 'v2.86';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -8033,8 +8034,10 @@ function buildDynamicLaoQr(staticPayload, amount, ref, refSub){
   const fields = qrParseEmvTlv(staticPayload).filter(f => f[0] !== '54' && f[0] !== '63');
   if (ref && refSub){
     const i = fields.findIndex(f => f[0] === '62');
-    const subs = (i >= 0 ? qrParseEmvTlv(fields[i][1]) : []).filter(x => x[0] !== refSub);
-    subs.push([refSub, String(ref).replace(/[^\x20-\x7E]/g,'').slice(0,25)]);
+    const wanted = Array.isArray(refSub) ? refSub : [refSub];
+    const subs = (i >= 0 ? qrParseEmvTlv(fields[i][1]) : []).filter(x => !wanted.includes(x[0]));
+    const refTxt = String(ref).replace(/[^\x20-\x7E]/g,'').slice(0,25);
+    wanted.forEach(w => subs.push([w, refTxt]));
     subs.sort((a,b) => a[0] < b[0] ? -1 : 1);
     const v = subs.map(([t,x]) => t + String(x.length).padStart(2,'0') + x).join('');
     if (i >= 0) fields[i] = ['62', v];
@@ -8054,8 +8057,9 @@ function qrImageDataUrl(text){
   const q = qrcode(0, 'M'); q.addData(text); q.make();
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }));
 }
-const QR_REF_MODES = [ {key:'off', label:'ປິດ (ຄືເກົ່າ)', sub:null}, {key:'A', label:'ແບບ A · ຈຸດປະສົງ', sub:'08'}, {key:'B', label:'ແບບ B · ເລກອ້າງອີງ', sub:'05'}, {key:'C', label:'ແບບ C · ເລກບິນ', sub:'01'} ];
-function qrRefMode(){ let k='off'; try{ k = localStorage.getItem('pos_qr_ref_mode') || 'off'; }catch(e){} return QR_REF_MODES.find(m => m.key === k) || QR_REF_MODES[0]; }
+// v2.86: ໃຊ້ວິທີດຽວກັບເວັບຮ້ານອອນລາຍທີ່ໃຊ້ງານຈິງ — ໃສ່ເລກບິນ 2 ຊ່ອງໃນ tag 62: 05 (ເລກອ້າງອີງ) + 08 (ຈຸດປະສົງ → BCEL ສະແດງເປັນ "ລາຍລະອຽດ")
+const QR_REF_MODES = [ {key:'on', label:'ເປີດ (ໃສ່ເລກບິນ)', sub:['05','08']}, {key:'off', label:'ປິດ', sub:null} ];
+function qrRefMode(){ let k='on'; try{ k = localStorage.getItem('pos_qr_ref_mode') || 'on'; }catch(e){} return QR_REF_MODES.find(m => m.key === k) || QR_REF_MODES[0]; }
 function setQrRefMode(k){ try{ localStorage.setItem('pos_qr_ref_mode', k); }catch(e){} renderTransferQr(); }
 const QR_PRINT_SIZES = [ {px:140, label:'ນ້ອຍ'}, {px:170, label:'ກາງ'}, {px:200, label:'ໃຫຍ່'}, {px:260, label:'ໃຫຍ່ຫຼາຍ'} ];
 function qrPrintPx(){
@@ -8128,7 +8132,7 @@ function renderTransferQr(){
   const refMode = qrRefMode();
   document.getElementById('tqRefRow').innerHTML = '<span style="font-size:13px;color:var(--text-muted)">ເລກບິນໃນ QR:</span>' + QR_REF_MODES.map(m =>
     `<button class="btn" style="padding:4px 10px;font-size:13px;${m.key===refMode.key ? 'background:var(--accent);color:#fff;border-color:var(--accent)' : ''}" onclick="setQrRefMode('${m.key}')">${m.label}</button>`).join('');
-  document.getElementById('tqRefNote').textContent = refMode.sub ? 'ກຳລັງທົດສອບ: QR ເທິງໜ້າຈໍນີ້ໃສ່ເລກຕົວຢ່າງ POS-TEST (ສະແກນຈາກໜ້າຈໍໄດ້). ໃບ QR ແຍກທີ່ພິມຈາກປຸ່ມນີ້ ບໍ່ມີເລກບິນ; QR ທ້າຍໃບບິນຈະໃສ່ເລກບິນຈິງ' : '';
+  document.getElementById('tqRefNote').textContent = refMode.sub ? 'QR ເທິງໜ້າຈໍນີ້ໃສ່ເລກຕົວຢ່າງ POS-TEST (ສະແກນຈາກໜ້າຈໍເພື່ອທົດສອບໄດ້). ໃບ QR ແຍກທີ່ພິມຈາກປຸ່ມນີ້ ບໍ່ມີເລກບິນ; QR ທ້າຍໃບບິນໃສ່ເລກບິນຈິງ' : '';
   const box = document.getElementById('tqQrBox'), acct = document.getElementById('tqAcct');
   if (!cur || tqAmountVal <= 0){
     box.innerHTML = '<span style="color:var(--text-muted)">ໃສ່ຍອດເງິນເພື່ອສ້າງ QR</span>'; acct.textContent = ''; return;

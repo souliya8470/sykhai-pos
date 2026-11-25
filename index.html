@@ -1144,6 +1144,7 @@
         </div>
         <div id="llImportInfo" style="font-size:14px;margin-bottom:8px"></div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+          <button class="btn primary" id="llImpBtn" style="display:none" onclick="llPrint('imp')">🖨️ ພິມສະເພາະທີ່ນຳເຂົ້າລ່າສຸດ <b id="llImpCount"></b></button>
           <button class="btn primary" onclick="llPrint('new')">🖨️ ພິມສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ <b id="llNewCount"></b></button>
           <button class="btn" onclick="llPrint('sel')">🖨️ ພິມທີ່ເລືອກ <b id="llSelCount"></b></button>
           <button class="btn" onclick="llPrint('all')">🖨️ ພິມທັງໝົດ</button>
@@ -1181,6 +1182,7 @@
             <option value="all">ທັງໝົດ</option>
             <option value="new">ຍັງບໍ່ໄດ້ພິມ</option>
             <option value="sel">ທີ່ເລືອກ</option>
+            <option value="imp">ນຳເຂົ້າລ່າສຸດ</option>
           </select>
           <span class="btn" onclick="llMarkAllPrinted()">ໝາຍທັງໝົດວ່າພິມແລ້ວ</span>
         </div>
@@ -2091,7 +2093,8 @@ async function liveSetCurrent(productId){
 // v2.85 (Tar 2026-11-15, ຢາກໃຫ້ QR ທີ່ແນບກັບບິນໂອນ ມີ description/ເລກບິນ ໃຫ້ເຫັນໃນແອັບທະນາຄານ): ເພີ່ມທາງເລືອກ "ເລກບິນໃນ QR" (ປິດ / ແບບ A ຈຸດປະສົງ tag62.08 / ແບບ B ເລກອ້າງອີງ tag62.05 / ແບບ C ເລກບິນ tag62.01) ໃນໜ້າຕ່າງ 📱 QR ເກັບຕໍ່ເຄື່ອງ ຄ່າເລີ່ມຕົ້ນ = ປິດ (QR ຄືເກົ່າ). ເປີດແລ້ວ QR ທ້າຍໃບບິນໃສ່ເລກບິນຈິງ; ໜ້າຕ່າງ QR ສະແດງເລກຕົວຢ່າງ POS-TEST ໃຫ້ສະແກນທົດສອບໂດຍບໍ່ເສຍເຈ້ຍ.
 // v2.86 (Tar 2026-11-15: ເວັບຮ້ານອອນລາຍມີການຝັງເລກອໍເດີໃນ QR ແລ້ວ ໃຊ້ງານຈິງ — ກວດຖານຂໍ້ມູນຢືນຢັນ: online_order_no_reservations 119 ເລກ): POS ປ່ຽນມາໃຊ້ວິທີດຽວກັນ — ໃສ່ເລກບິນໃນ tag 62 ສອງຊ່ອງ 05 + 08 (BCEL ສະແດງ 08 ເປັນ ລາຍລະອຽດ). ທາງເລືອກແບບ A/B/C ຂອງ v2.85 ເຫຼືອ ເປີດ/ປິດ ຄ່າເລີ່ມຕົ້ນ = ເປີດ (QR ທ້າຍໃບບິນໂອນມີເລກບິນ). ປິດໄດ້ໃນໜ້າຕ່າງ 📱 QR.
 // v2.87 (Tar 2026-11-25, ໜ້າປ້າຍ Live: ຢາກດາວໂຫຼດແບບຟອມ Excel ໃຫ້ພະນັກງານໄປກອກນອກລະບົບ ແລ້ວອັບໂຫຼດຄືນເພື່ອພິມປ້າຍ ບໍ່ຕ້ອງພິມທີລະແຖວໃນໂປຣແກຣມ): ເພີ່ມປຸ່ມ 📄 ດາວໂຫຼດແບບຟອມ Excel — ໄຟລ໌ 3 ແຜ່ນ: ແບບຟອມ (ລະຫັດ Live/ບາໂຄດ/ຊື່ສິນຄ້າ/ລາຄາຂາຍ 2/ຈຳນວນປ້າຍ ເປັນໂຕອ່ານດຽວກັບ ນຳເຂົ້າຈາກ Excel), ວິທີໃຊ້, ສິນຄ້າໃນ POS (ໃຫ້ຄັດລອກບາໂຄດ/ຊື່). ບໍ່ມີຕົ້ນທຶນໃນໄຟລ໌. ບໍ່ແກ້ຕົວນຳເຂົ້າ.
-const APP_VERSION = 'v2.87';
+// v2.88 (Tar 2026-11-25, ນຳເຂົ້າແບບຟອມ 64 ແຖວ ແຕ່ລາຍການຮວມກັບຂອງເກົ່າເປັນ 851 ແຖວ ຫາສິນຄ້າໃໝ່ຍາກ): ຫຼັງນຳເຂົ້າຈາກ Excel ລະບົບຈື່ແຖວທີ່ຫາກໍນຳເຂົ້າ (ເກັບຕໍ່ເຄື່ອງ) ແລ້ວປ່ຽນຕົວກອງເປັນ "ນຳເຂົ້າລ່າສຸດ" ທັນທີ — ສະແດງສະເພາະຊຸດນັ້ນ ເລືອກ/ແກ້/ພິມໄດ້. ເພີ່ມປຸ່ມ 🖨️ ພິມສະເພາະທີ່ນຳເຂົ້າລ່າສຸດ ແລະ ຕົວກອງ ນຳເຂົ້າລ່າສຸດ. ແຖວເກົ່າບໍ່ຖືກລຶບ/ບໍ່ປ່ຽນ.
+const APP_VERSION = 'v2.88';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7322,6 +7325,9 @@ function printQuickBarcode(){
    ໂຫຼດຂໍ້ມູນຕອນເປີດໜ້າຄັ້ງທຳອິດ ແລະ ເມື່ອກົດ "ໂຫຼດໃໝ່" ເທົ່ານັ້ນ (ບໍ່ມີ polling)
    ============================================================ */
 const LL = { rows: [], loaded: false, loading: false, sel: new Set(), page: 1, pageSize: 50, justPrinted: [] };
+// v2.88: ແຖວທີ່ນຳເຂົ້າຈາກ Excel ຄັ້ງລ່າສຸດ (ເກັບຕໍ່ເຄື່ອງ) — ໃຫ້ເບິ່ງ/ພິມສະເພາະຊຸດນີ້ ບໍ່ປົນກັບແຖວເກົ່າ
+try{ LL.impIds = new Set(JSON.parse(localStorage.getItem('pos_ll_last_import') || '[]')); }catch(e){ LL.impIds = new Set(); }
+function llSaveImpIds(){ try{ localStorage.setItem('pos_ll_last_import', JSON.stringify(Array.from(LL.impIds))); }catch(e){} }
 function llMapRow(r){
   return { id: r.id, productId: r.product_id || null, name: r.name || '', code: r.code || '', price: r.price == null ? null : Number(r.price), qty: Number(r.qty) || 1, printedAt: r.printed_at || null, createdAt: r.created_at };
 }
@@ -7335,6 +7341,7 @@ async function llLoad(){
     LL.loaded = true;
     const ids = new Set(LL.rows.map(r => r.id));
     LL.sel.forEach(id => { if (!ids.has(id)) LL.sel.delete(id); });
+    LL.impIds.forEach(id => { if (!ids.has(id)) LL.impIds.delete(id); });
   }catch(e){
     if (info) info.innerHTML = `<span style="color:var(--danger)">⚠️ ໂຫຼດລາຍການບໍ່ໄດ້: ${posEsc(e.message || '')}</span>`;
   }
@@ -7392,6 +7399,7 @@ function llFilteredRows(){
   return llSortedRows().filter(r => {
     if (f === 'new' && r.printedAt) return false;
     if (f === 'sel' && !LL.sel.has(r.id)) return false;
+    if (f === 'imp' && !LL.impIds.has(r.id)) return false;
     if (!q) return true;
     const p = llProduct(r);
     return bcNorm(r.code).includes(q) || (p && (bcNorm(p.name).includes(q) || bcNorm(p.barcode).includes(q)));
@@ -7406,6 +7414,8 @@ function llRender(){
   const s = id => document.getElementById(id);
   s('llNewCount').textContent = newCount ? `(${newCount})` : '';
   s('llSelCount').textContent = LL.sel.size ? `(${LL.sel.size})` : '';
+  s('llImpCount').textContent = LL.impIds.size ? `(${LL.impIds.size})` : '';
+  s('llImpBtn').style.display = LL.impIds.size ? '' : 'none';
   s('llSummary').textContent = `ທັງໝົດ ${LL.rows.length} ແຖວ · ຍັງບໍ່ໄດ້ພິມ ${newCount} · ເລືອກ ${LL.sel.size}` + (rows.length !== LL.rows.length ? ` · ກົງເງື່ອນໄຂ ${rows.length}` : '');
   const pages = Math.max(1, Math.ceil(rows.length / LL.pageSize));
   LL.page = Math.min(LL.page, pages);
@@ -7635,6 +7645,13 @@ function llImportExcel(ev){
       }
       await llLoad();
       LL.page = 1;
+      { // v2.88: ຈື່ແຖວທີ່ຫາກໍນຳເຂົ້າ ແລ້ວສະແດງສະເພາະຊຸດນີ້ທັນທີ
+        const impProd = new Set(uniq.map(x => x.id)), impFree = new Set(freeRows.map(x => bcNorm(x.name)));
+        LL.impIds = new Set(LL.rows.filter(r => r.productId ? impProd.has(r.productId) : impFree.has(bcNorm(r.name))).map(r => r.id));
+        llSaveImpIds();
+        const fsel = document.getElementById('ll-filter'); if (fsel) fsel.value = 'imp';
+        const ss = document.getElementById('ll-search'); if (ss) ss.value = '';
+      }
       const li = arr => `<ol style="margin:4px 0 0;padding-left:26px;max-height:200px;overflow:auto;color:var(--text)">${arr.map(n => `<li>${posEsc(n)}</li>`).join('')}</ol>`;
       const parts = [`ນຳເຂົ້າສຳເລັດ: ສິນຄ້າໃນ POS ${uniq.length} (ເພີ່ມໃໝ່ ${uniq.length - nUpdate} · ອັບເດດ ${nUpdate})` + (freeRows.length ? ` · ສິນຄ້ານອກ POS ${freeRows.length} (ເພີ່ມໃໝ່ ${freeRows.length - nFreeUpdate} · ອັບເດດ ${nFreeUpdate})` : '')];
       if (!res.hasCodeCol) parts.push('<span style="color:var(--danger)">ບໍ່ພົບຖັນ "ລະຫັດ" ໃນໄຟລ໌</span>');
@@ -7654,6 +7671,7 @@ function llPrint(mode){
   let rows = llSortedRows();
   if (mode === 'new') rows = rows.filter(r => !r.printedAt);
   else if (mode === 'sel') rows = rows.filter(r => LL.sel.has(r.id));
+  else if (mode === 'imp'){ rows = rows.filter(r => LL.impIds.has(r.id)); if (!rows.length){ showToast('ບໍ່ມີແຖວທີ່ນຳເຂົ້າລ່າສຸດ'); return; } }
   if (!rows.length){ showToast(mode === 'new' ? 'ບໍ່ມີແຖວທີ່ຍັງບໍ່ໄດ້ພິມ' : mode === 'sel' ? 'ຍັງບໍ່ໄດ້ເລືອກແຖວ' : 'ຍັງບໍ່ມີລາຍການ'); return; }
   const labels = []; const used = [];
   rows.forEach(r => {

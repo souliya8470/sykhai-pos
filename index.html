@@ -1184,6 +1184,7 @@
             <option value="sel">ທີ່ເລືອກ</option>
             <option value="imp">ນຳເຂົ້າລ່າສຸດ</option>
           </select>
+          <span class="btn" onclick="llSetQtyAll()">🔢 ຕັ້ງຈຳນວນປ້າຍທຸກແຖວທີ່ກອງຢູ່</span>
           <span class="btn" onclick="llMarkAllPrinted()">ໝາຍທັງໝົດວ່າພິມແລ້ວ</span>
         </div>
         <p id="llSummary" style="font-size:15px;margin:0 0 8px;color:var(--text);font-weight:600"></p>
@@ -2096,7 +2097,8 @@ async function liveSetCurrent(productId){
 // v2.88 (Tar 2026-11-25, ນຳເຂົ້າແບບຟອມ 64 ແຖວ ແຕ່ລາຍການຮວມກັບຂອງເກົ່າເປັນ 851 ແຖວ ຫາສິນຄ້າໃໝ່ຍາກ): ຫຼັງນຳເຂົ້າຈາກ Excel ລະບົບຈື່ແຖວທີ່ຫາກໍນຳເຂົ້າ (ເກັບຕໍ່ເຄື່ອງ) ແລ້ວປ່ຽນຕົວກອງເປັນ "ນຳເຂົ້າລ່າສຸດ" ທັນທີ — ສະແດງສະເພາະຊຸດນັ້ນ ເລືອກ/ແກ້/ພິມໄດ້. ເພີ່ມປຸ່ມ 🖨️ ພິມສະເພາະທີ່ນຳເຂົ້າລ່າສຸດ ແລະ ຕົວກອງ ນຳເຂົ້າລ່າສຸດ. ແຖວເກົ່າບໍ່ຖືກລຶບ/ບໍ່ປ່ຽນ.
 // v2.89 (Tar 2026-11-25, ກົດພິມປ້າຍ Live ແລ້ວ Chrome ຄ້າງ ໜ້າບໍ່ຕອບສະໜອງ — ສາເຫດ: ໄຟລ໌ນຳເຂົ້າໃສ່ຈຳນວນປ້າຍຫຼາຍ (ແຖວລະ 100 ຫາ 500) ລວມ 5,866 ປ້າຍ ພິມເທື່ອດຽວ): ກັນໄວ້ 2 ບ່ອນ — (1) ຕອນນຳເຂົ້າ Excel ຖ້າລວມເກີນ 300 ປ້າຍ ເຕືອນໃຫ້ກວດຖັນ ຈຳນວນປ້າຍ; (2) ຕອນກົດພິມ ຖ້າເກີນ 300 ປ້າຍ ຖາມຢືນຢັນ, ເກີນ 1,500 ປ້າຍ ບໍ່ໃຫ້ພິມ. ບໍ່ແກ້ຂໍ້ມູນໃນຖານຂໍ້ມູນ.
 // v2.90 (Tar 2026-11-25, ເຄື່ອງ A ນຳເຂົ້າ 66 ແຖວ ແຕ່ເຄື່ອງ B ຕົວກອງ ນຳເຂົ້າລ່າສຸດ ບໍ່ເຫັນ — ເພາະ v2.88 ເກັບຊຸດນຳເຂົ້າຕໍ່ເຄື່ອງ): ເກັບຊຸດນຳເຂົ້າໃນຖານຂໍ້ມູນ (ຖັນ pos_live_labels.import_batch, ເພີ່ມໃໝ່ + ຕື່ມຍ້ອນຫຼັງ 66 ແຖວຂອງມື້ນີ້). ນຳເຂົ້າລ່າສຸດ = ຊຸດທີ່ໃໝ່ສຸດ ທຸກເຄື່ອງເຫັນຄືກັນ. ເປີດໜ້າປ້າຍ Live ໃໝ່ ຈະໂຫຼດຈາກຖານຂໍ້ມູນຄືນຖ້າເກີນ 20 ວິ.
-const APP_VERSION = 'v2.90';
+// v2.91 (Tar 2026-11-25, ເລືອກ 66 ແຖວ ແຕ່ຂຶ້ນເຕືອນວ່າຈະພິມ 5,081 ປ້າຍ ເຂົ້າໃຈວ່າລະບົບຜິດ): ຂໍ້ຄວາມເຕືອນອະທິບາຍໃຫ້ຊັດ (ແຖວທີ່ຫຼາຍສຸດ A898 = 500 ...) + ເພີ່ມປຸ່ມ 🔢 ຕັ້ງຈຳນວນປ້າຍທຸກແຖວທີ່ກອງຢູ່ (ເຊັ່ນ ຕັ້ງເປັນ 1 ທຸກແຖວທີ່ນຳເຂົ້າລ່າສຸດ) ແທນການແກ້ທີລະແຖວ.
+const APP_VERSION = 'v2.91';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7675,6 +7677,26 @@ function llImportExcel(ev){
   };
   reader.readAsArrayBuffer(file);
 }
+/* v2.91: ຕັ້ງຈຳນວນປ້າຍຂອງທຸກແຖວທີ່ກອງຢູ່ເປັນຄ່າດຽວກັນ (ເຊັ່ນ 1) — ແທນການແກ້ທີລະແຖວ */
+async function llSetQtyAll(){
+  const rows = llFilteredRows();
+  if (!rows.length){ showToast('ບໍ່ມີແຖວໃຫ້ແກ້'); return; }
+  const raw = prompt(`ຕັ້ງຈຳນວນປ້າຍຂອງ ${rows.length} ແຖວທີ່ກອງຢູ່ ເປັນເທົ່າໃດ? (1 ຫາ 500)`, '1');
+  if (raw === null) return;
+  const q = parseInt(String(raw).trim(), 10);
+  if (!(q >= 1 && q <= 500)){ showToast('ໃສ່ຕົວເລກ 1 ຫາ 500'); return; }
+  if (!confirm(`ຕັ້ງຈຳນວນປ້າຍ = ${q} ໃຫ້ ${rows.length} ແຖວທີ່ກອງຢູ່ (ຈຳນວນລວມຈະເປັນ ${q * rows.length} ປ້າຍ). ຢືນຢັນ?`)) return;
+  try{
+    const ids = rows.map(r => r.id);
+    for (let i = 0; i < ids.length; i += 100){
+      const { error } = await sb.from('pos_live_labels').update({ qty: q, updated_at: new Date().toISOString() }).in('id', ids.slice(i, i + 100));
+      if (error) throw error;
+    }
+    rows.forEach(r => { r.qty = q; });
+    llRender();
+    showToast(`ຕັ້ງຈຳນວນປ້າຍ = ${q} ໃຫ້ ${rows.length} ແຖວແລ້ວ`);
+  }catch(err){ showToast('⚠️ ແກ້ບໍ່ສຳເລັດ: ' + (err.message || '')); }
+}
 /* ---- ພິມ ---- */
 function llPrint(mode){
   let rows = llSortedRows();
@@ -7692,8 +7714,9 @@ function llPrint(mode){
   });
   if (!labels.length){ showToast('ບໍ່ພົບສິນຄ້າໃນ POS'); return; }
   // v2.89: ພິມຫຼາຍພັນປ້າຍໃນເທື່ອດຽວ Chrome ຈະຄ້າງ ("ໜ້າບໍ່ຕອບສະໜອງ") — ກັນໄວ້
-  if (labels.length > 1500){ alert(`ຈະພິມ ${labels.length} ປ້າຍ ຫຼາຍເກີນໄປ (ກຳນົດສູງສຸດ 1,500 ປ້າຍຕໍ່ເທື່ອ) — Chrome ຈະຄ້າງ.\nແນະນຳ: ແກ້ "ຈຳນວນປ້າຍ" ໃຫ້ເໝາະສົມ ຫຼື ເລືອກພິມທີ່ລະຊຸດ.`); return; }
-  if (labels.length > 300 && !confirm(`ຈະພິມ ${labels.length} ປ້າຍ (${used.length} ແຖວ) — ຫຼາຍກວ່າປົກກະຕິ ອາດຊ້າ ຫຼື ຄ້າງ.\nກວດ "ຈຳນວນປ້າຍ" ແລ້ວບໍ?\n\nOK = ພິມຕໍ່ · Cancel = ຍົກເລີກ`)) return;
+  const bigTxt = rows.slice().sort((a, b) => b.qty - a.qty).slice(0, 3).map(r => `${r.code || '-'} = ${r.qty}`).join(', ');
+  if (labels.length > 1500){ alert(`ຖ້າພິມ ${used.length} ແຖວທີ່ເລືອກ ຈະໄດ້ ${labels.length} ປ້າຍ — ຫຼາຍເກີນໄປ (ສູງສຸດ 1,500 ປ້າຍຕໍ່ເທື່ອ) ບໍ່ແມ່ນລະບົບຜິດ.\nເຫດຜົນ: ແຕ່ລະແຖວມີ "ຈຳນວນປ້າຍ" ຫຼາຍ (ແຖວທີ່ຫຼາຍສຸດ: ${bigTxt}).\nວິທີແກ້: ກົດປຸ່ມ 🔢 ຕັ້ງຈຳນວນປ້າຍທຸກແຖວທີ່ກອງຢູ່ ແລ້ວຕັ້ງເປັນ 1 ຫຼື ຈຳນວນທີ່ຕ້ອງການ ກ່ອນພິມ.`); return; }
+  if (labels.length > 300 && !confirm(`ຈະພິມ ${labels.length} ປ້າຍ (${used.length} ແຖວ) — ຫຼາຍກວ່າປົກກະຕິ ອາດຊ້າ ຫຼື ຄ້າງ.\nແຖວທີ່ຫຼາຍສຸດ: ${bigTxt}\nກວດ "ຈຳນວນປ້າຍ" ແລ້ວບໍ?\n\nOK = ພິມຕໍ່ · Cancel = ຍົກເລີກ`)) return;
   const slotEl = document.getElementById('ll-start');
   const start = slotEl && slotEl.style.display !== 'none' ? parseInt(slotEl.value, 10) || 1 : 1;
   bcPrintLabels(labels, start);

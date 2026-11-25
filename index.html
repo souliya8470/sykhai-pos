@@ -1132,6 +1132,7 @@
       <h2 class="page-title">ປ້າຍ Live</h2>
       <div class="panel" style="margin-bottom:12px">
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
+          <span class="btn" onclick="llDownloadTemplate()">📄 ດາວໂຫຼດແບບຟອມ Excel</span>
           <label class="btn" style="cursor:pointer">📥 ນຳເຂົ້າຈາກ Excel<input type="file" id="ll-import-file" accept=".xls,.xlsx,.csv" style="display:none" onchange="llImportExcel(event)"></label>
           <span class="btn" onclick="llReload()">🔄 ໂຫຼດໃໝ່</span>
           <select id="ll-preset" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px" onchange="llPresetChanged()">
@@ -2089,7 +2090,8 @@ async function liveSetCurrent(productId){
 // v2.84 (Tar 2026-11-11, QR ໂອນເງິນຜ່ານເຄື່ອງພິມໃຊ້ໄດ້ແລ້ວ — ຢາກໃຫ້ອອກທ້າຍໃບບິນ ແລະ ທົດລອງຫຼຸດຂະໜາດ QR ເພື່ອປະຢັດເຈ້ຍ): ໃບເສັດຂອງບິນທີ່ມີຍອດຈ່າຍຊ່ອງ ໂອນ ມີ QR ທ້າຍບິນ (ຍອດ = ສ່ວນທີ່ໂອນ; ເງິນສົດ/ເຄດິດລ້ວນບໍ່ອອກ). ຂະໜາດ QR ຕອນພິມເລືອກໄດ້ 4 ລະດັບ (ນ້ອຍ 140 / ກາງ 170 ຄ່າເລີ່ມຕົ້ນ / ໃຫຍ່ 200 / ໃຫຍ່ຫຼາຍ 260 = ຂະໜາດເກົ່າ) ໃນໜ້າຕ່າງ 📱 QR, ເກັບຕໍ່ເຄື່ອງ. ຍັງບໍ່ໃສ່ເລກບິນໃນ QR (ລໍທົດສອບກັບແອັບທະນາຄານກ່ອນ).
 // v2.85 (Tar 2026-11-15, ຢາກໃຫ້ QR ທີ່ແນບກັບບິນໂອນ ມີ description/ເລກບິນ ໃຫ້ເຫັນໃນແອັບທະນາຄານ): ເພີ່ມທາງເລືອກ "ເລກບິນໃນ QR" (ປິດ / ແບບ A ຈຸດປະສົງ tag62.08 / ແບບ B ເລກອ້າງອີງ tag62.05 / ແບບ C ເລກບິນ tag62.01) ໃນໜ້າຕ່າງ 📱 QR ເກັບຕໍ່ເຄື່ອງ ຄ່າເລີ່ມຕົ້ນ = ປິດ (QR ຄືເກົ່າ). ເປີດແລ້ວ QR ທ້າຍໃບບິນໃສ່ເລກບິນຈິງ; ໜ້າຕ່າງ QR ສະແດງເລກຕົວຢ່າງ POS-TEST ໃຫ້ສະແກນທົດສອບໂດຍບໍ່ເສຍເຈ້ຍ.
 // v2.86 (Tar 2026-11-15: ເວັບຮ້ານອອນລາຍມີການຝັງເລກອໍເດີໃນ QR ແລ້ວ ໃຊ້ງານຈິງ — ກວດຖານຂໍ້ມູນຢືນຢັນ: online_order_no_reservations 119 ເລກ): POS ປ່ຽນມາໃຊ້ວິທີດຽວກັນ — ໃສ່ເລກບິນໃນ tag 62 ສອງຊ່ອງ 05 + 08 (BCEL ສະແດງ 08 ເປັນ ລາຍລະອຽດ). ທາງເລືອກແບບ A/B/C ຂອງ v2.85 ເຫຼືອ ເປີດ/ປິດ ຄ່າເລີ່ມຕົ້ນ = ເປີດ (QR ທ້າຍໃບບິນໂອນມີເລກບິນ). ປິດໄດ້ໃນໜ້າຕ່າງ 📱 QR.
-const APP_VERSION = 'v2.86';
+// v2.87 (Tar 2026-11-25, ໜ້າປ້າຍ Live: ຢາກດາວໂຫຼດແບບຟອມ Excel ໃຫ້ພະນັກງານໄປກອກນອກລະບົບ ແລ້ວອັບໂຫຼດຄືນເພື່ອພິມປ້າຍ ບໍ່ຕ້ອງພິມທີລະແຖວໃນໂປຣແກຣມ): ເພີ່ມປຸ່ມ 📄 ດາວໂຫຼດແບບຟອມ Excel — ໄຟລ໌ 3 ແຜ່ນ: ແບບຟອມ (ລະຫັດ Live/ບາໂຄດ/ຊື່ສິນຄ້າ/ລາຄາຂາຍ 2/ຈຳນວນປ້າຍ ເປັນໂຕອ່ານດຽວກັບ ນຳເຂົ້າຈາກ Excel), ວິທີໃຊ້, ສິນຄ້າໃນ POS (ໃຫ້ຄັດລອກບາໂຄດ/ຊື່). ບໍ່ມີຕົ້ນທຶນໃນໄຟລ໌. ບໍ່ແກ້ຕົວນຳເຂົ້າ.
+const APP_VERSION = 'v2.87';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7536,6 +7538,42 @@ async function llAddFree(){
   g('ll-free-code').value = llNextCode();
   g('ll-free-name').focus();
   llRender();
+}
+/* ---- v2.87: ດາວໂຫຼດແບບຟອມ Excel ໃຫ້ພະນັກງານກອກນອກລະບົບ ແລ້ວອັບໂຫຼດຄືນດ້ວຍ "ນຳເຂົ້າຈາກ Excel" ----
+   ຫົວຖັນຕ້ອງກົງກັບຕົວອ່ານ bcParseImportRows: ລະຫັດ Live / ບາໂຄດ / ຊື່ສິນຄ້າ / ລາຄາຂາຍ 2 / ຈຳນວນປ້າຍ (ຕົວອ່ານອ່ານສະເພາະແຜ່ນທຳອິດ) */
+function llDownloadTemplate(){
+  if (typeof XLSX === 'undefined'){ showToast('⚠️ ຕ້ອງການອິນເຕີເນັດເພື່ອໂຫຼດຕົວສ້າງ Excel — ລອງໃໝ່'); return; }
+  try{
+    const ws = XLSX.utils.aoa_to_sheet([['ລະຫັດ Live', 'ບາໂຄດ', 'ຊື່ສິນຄ້າ', 'ລາຄາຂາຍ 2', 'ຈຳນວນປ້າຍ']]);
+    for (let r = 2; r <= 501; r++){ ws['A' + r] = { t: 's', v: '', z: '@' }; ws['B' + r] = { t: 's', v: '', z: '@' }; } // ຖັນລະຫັດ + ບາໂຄດ ເປັນຂໍ້ຄວາມ (ກັນ Excel ປ່ຽນເປັນເລກວິທະຍາສາດ)
+    ws['!ref'] = 'A1:E501';
+    ws['!cols'] = [{ wch: 14 }, { wch: 18 }, { wch: 50 }, { wch: 14 }, { wch: 13 }];
+    const howto = [
+      ['ວິທີໃຊ້ແບບຟອມປ້າຍ Live'],
+      [''],
+      ['1. ກອກຂໍ້ມູນໃນແຜ່ນ "ແບບຟອມ" ຕັ້ງແຕ່ແຖວທີ 2 ລົງໄປ. ຫ້າມລຶບ ຫຼື ປ່ຽນຊື່ຫົວຖັນໃນແຖວທີ 1.'],
+      ['2. ບາໂຄດ ຫຼື ຊື່ສິນຄ້າ: ໃສ່ຢ່າງໃດຢ່າງໜຶ່ງກໍໄດ້. ລະບົບຈັບຄູ່ກັບສິນຄ້າໃນ POS ດ້ວຍບາໂຄດກ່ອນ, ຖ້າບໍ່ມີບາໂຄດຈຶ່ງໃຊ້ຊື່.'],
+      ['3. ຄັດລອກບາໂຄດ ແລະ ຊື່ຈາກແຜ່ນ "ສິນຄ້າໃນ POS" ມາວາງ ຈະຖືກຕ້ອງທີ່ສຸດ. ຖ້າພິມຊື່ຜິດ ລະບົບຈະຖືວ່າເປັນສິນຄ້ານອກ POS.'],
+      ['4. ລະຫັດ Live: ເຊັ່ນ A1, A2, A3 ... ຫ້າມຊ້ຳກັນ.'],
+      ['5. ລາຄາຂາຍ 2: ເວັ້ນຫວ່າງໄດ້ ຖ້າເວັ້ນຫວ່າງ ລະບົບໃຊ້ລາຄາຈາກ POS.'],
+      ['6. ຈຳນວນປ້າຍ: ເວັ້ນຫວ່າງ = 1 ປ້າຍ.'],
+      ['7. ສິນຄ້ານອກ POS (ເຊັ່ນ ສິນຄ້າເຄື່ອງເຊວ): ໃສ່ຊື່ສິນຄ້າ ແລະ ຕ້ອງໃສ່ລາຄາຂາຍ 2 ນຳ ເວັ້ນບາໂຄດໄວ້ຫວ່າງ.'],
+      ['8. ບັນທຶກເປັນ .xlsx ແລ້ວກັບໄປໜ້າ "ປ້າຍ Live" ກົດ "ນຳເຂົ້າຈາກ Excel" ເລືອກໄຟລ໌ນີ້.'],
+      ['9. ຫຼັງນຳເຂົ້າ ກົດ "ພິມສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ" ເພື່ອພິມປ້າຍ.'],
+      ['ໝາຍເຫດ: ຖ້າສິນຄ້າໃດມີໃນລາຍການແລ້ວ ການນຳເຂົ້າຈະແທນລະຫັດ/ລາຄາ ແລະ ປ່ຽນສະຖານະກັບເປັນ "ຍັງບໍ່ໄດ້ພິມ".']
+    ];
+    const wsHow = XLSX.utils.aoa_to_sheet(howto);
+    wsHow['!cols'] = [{ wch: 120 }];
+    const prods = PRODUCTS.slice().sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'lo'));
+    const wsP = XLSX.utils.aoa_to_sheet([['ບາໂຄດ', 'ຊື່ສິນຄ້າ', 'ລາຄາ Live ໃນ POS']].concat(prods.map(p => [String(p.barcode || ''), p.name || '', llDefaultPrice(p) || ''])));
+    wsP['!cols'] = [{ wch: 18 }, { wch: 60 }, { wch: 16 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'ແບບຟອມ');
+    XLSX.utils.book_append_sheet(wb, wsHow, 'ວິທີໃຊ້');
+    XLSX.utils.book_append_sheet(wb, wsP, 'ສິນຄ້າໃນ POS');
+    XLSX.writeFile(wb, 'live-labels-template.xlsx');
+    showToast('ດາວໂຫຼດແບບຟອມແລ້ວ');
+  }catch(err){ showToast('⚠️ ສ້າງແບບຟອມບໍ່ສຳເລັດ: ' + (err.message || '')); }
 }
 /* ---- ນຳເຂົ້າ Excel (ໄຟລ໌ທີ່ທີມ Live ແກ້ໄຂ) ---- */
 function llImportExcel(ev){

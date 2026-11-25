@@ -2095,7 +2095,8 @@ async function liveSetCurrent(productId){
 // v2.87 (Tar 2026-11-25, ໜ້າປ້າຍ Live: ຢາກດາວໂຫຼດແບບຟອມ Excel ໃຫ້ພະນັກງານໄປກອກນອກລະບົບ ແລ້ວອັບໂຫຼດຄືນເພື່ອພິມປ້າຍ ບໍ່ຕ້ອງພິມທີລະແຖວໃນໂປຣແກຣມ): ເພີ່ມປຸ່ມ 📄 ດາວໂຫຼດແບບຟອມ Excel — ໄຟລ໌ 3 ແຜ່ນ: ແບບຟອມ (ລະຫັດ Live/ບາໂຄດ/ຊື່ສິນຄ້າ/ລາຄາຂາຍ 2/ຈຳນວນປ້າຍ ເປັນໂຕອ່ານດຽວກັບ ນຳເຂົ້າຈາກ Excel), ວິທີໃຊ້, ສິນຄ້າໃນ POS (ໃຫ້ຄັດລອກບາໂຄດ/ຊື່). ບໍ່ມີຕົ້ນທຶນໃນໄຟລ໌. ບໍ່ແກ້ຕົວນຳເຂົ້າ.
 // v2.88 (Tar 2026-11-25, ນຳເຂົ້າແບບຟອມ 64 ແຖວ ແຕ່ລາຍການຮວມກັບຂອງເກົ່າເປັນ 851 ແຖວ ຫາສິນຄ້າໃໝ່ຍາກ): ຫຼັງນຳເຂົ້າຈາກ Excel ລະບົບຈື່ແຖວທີ່ຫາກໍນຳເຂົ້າ (ເກັບຕໍ່ເຄື່ອງ) ແລ້ວປ່ຽນຕົວກອງເປັນ "ນຳເຂົ້າລ່າສຸດ" ທັນທີ — ສະແດງສະເພາະຊຸດນັ້ນ ເລືອກ/ແກ້/ພິມໄດ້. ເພີ່ມປຸ່ມ 🖨️ ພິມສະເພາະທີ່ນຳເຂົ້າລ່າສຸດ ແລະ ຕົວກອງ ນຳເຂົ້າລ່າສຸດ. ແຖວເກົ່າບໍ່ຖືກລຶບ/ບໍ່ປ່ຽນ.
 // v2.89 (Tar 2026-11-25, ກົດພິມປ້າຍ Live ແລ້ວ Chrome ຄ້າງ ໜ້າບໍ່ຕອບສະໜອງ — ສາເຫດ: ໄຟລ໌ນຳເຂົ້າໃສ່ຈຳນວນປ້າຍຫຼາຍ (ແຖວລະ 100 ຫາ 500) ລວມ 5,866 ປ້າຍ ພິມເທື່ອດຽວ): ກັນໄວ້ 2 ບ່ອນ — (1) ຕອນນຳເຂົ້າ Excel ຖ້າລວມເກີນ 300 ປ້າຍ ເຕືອນໃຫ້ກວດຖັນ ຈຳນວນປ້າຍ; (2) ຕອນກົດພິມ ຖ້າເກີນ 300 ປ້າຍ ຖາມຢືນຢັນ, ເກີນ 1,500 ປ້າຍ ບໍ່ໃຫ້ພິມ. ບໍ່ແກ້ຂໍ້ມູນໃນຖານຂໍ້ມູນ.
-const APP_VERSION = 'v2.89';
+// v2.90 (Tar 2026-11-25, ເຄື່ອງ A ນຳເຂົ້າ 66 ແຖວ ແຕ່ເຄື່ອງ B ຕົວກອງ ນຳເຂົ້າລ່າສຸດ ບໍ່ເຫັນ — ເພາະ v2.88 ເກັບຊຸດນຳເຂົ້າຕໍ່ເຄື່ອງ): ເກັບຊຸດນຳເຂົ້າໃນຖານຂໍ້ມູນ (ຖັນ pos_live_labels.import_batch, ເພີ່ມໃໝ່ + ຕື່ມຍ້ອນຫຼັງ 66 ແຖວຂອງມື້ນີ້). ນຳເຂົ້າລ່າສຸດ = ຊຸດທີ່ໃໝ່ສຸດ ທຸກເຄື່ອງເຫັນຄືກັນ. ເປີດໜ້າປ້າຍ Live ໃໝ່ ຈະໂຫຼດຈາກຖານຂໍ້ມູນຄືນຖ້າເກີນ 20 ວິ.
+const APP_VERSION = 'v2.90';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7327,10 +7328,15 @@ function printQuickBarcode(){
    ============================================================ */
 const LL = { rows: [], loaded: false, loading: false, sel: new Set(), page: 1, pageSize: 50, justPrinted: [] };
 // v2.88: ແຖວທີ່ນຳເຂົ້າຈາກ Excel ຄັ້ງລ່າສຸດ (ເກັບຕໍ່ເຄື່ອງ) — ໃຫ້ເບິ່ງ/ພິມສະເພາະຊຸດນີ້ ບໍ່ປົນກັບແຖວເກົ່າ
-try{ LL.impIds = new Set(JSON.parse(localStorage.getItem('pos_ll_last_import') || '[]')); }catch(e){ LL.impIds = new Set(); }
-function llSaveImpIds(){ try{ localStorage.setItem('pos_ll_last_import', JSON.stringify(Array.from(LL.impIds))); }catch(e){} }
+// v2.90: ຊຸດນຳເຂົ້າລ່າສຸດເກັບໃນຖານຂໍ້ມູນ (ຖັນ import_batch) — ທຸກເຄື່ອງເຫັນຄືກັນ (ເມື່ອກ່ອນເກັບຕໍ່ເຄື່ອງ)
+LL.impIds = new Set(); LL.loadedAt = 0;
+function llComputeImpIds(){
+  let latest = null;
+  LL.rows.forEach(r => { if (r.importBatch && (!latest || r.importBatch > latest)) latest = r.importBatch; });
+  LL.impIds = new Set(latest ? LL.rows.filter(r => r.importBatch === latest).map(r => r.id) : []);
+}
 function llMapRow(r){
-  return { id: r.id, productId: r.product_id || null, name: r.name || '', code: r.code || '', price: r.price == null ? null : Number(r.price), qty: Number(r.qty) || 1, printedAt: r.printed_at || null, createdAt: r.created_at };
+  return { id: r.id, productId: r.product_id || null, name: r.name || '', code: r.code || '', price: r.price == null ? null : Number(r.price), qty: Number(r.qty) || 1, printedAt: r.printed_at || null, createdAt: r.created_at, importBatch: r.import_batch || null };
 }
 async function llLoad(){
   if (LL.loading) return;
@@ -7342,7 +7348,8 @@ async function llLoad(){
     LL.loaded = true;
     const ids = new Set(LL.rows.map(r => r.id));
     LL.sel.forEach(id => { if (!ids.has(id)) LL.sel.delete(id); });
-    LL.impIds.forEach(id => { if (!ids.has(id)) LL.impIds.delete(id); });
+    llComputeImpIds();
+    LL.loadedAt = Date.now();
   }catch(e){
     if (info) info.innerHTML = `<span style="color:var(--danger)">⚠️ ໂຫຼດລາຍການບໍ່ໄດ້: ${posEsc(e.message || '')}</span>`;
   }
@@ -7354,7 +7361,7 @@ async function initLiveLabelsView(){
   llFillPresetSelect();
   llFilterAddSelect();
   llRender();
-  if (!LL.loaded){ await llLoad(); llRender(); llFilterAddSelect(); }
+  if (!LL.loaded || Date.now() - (LL.loadedAt || 0) > 20000){ await llLoad(); llRender(); llFilterAddSelect(); } // v2.90: ເປີດໜ້າໃໝ່ ໂຫຼດຈາກຖານຂໍ້ມູນຄືນ ຖ້າເກີນ 20 ວິ — ເຄື່ອງອື່ນນຳເຂົ້າ ເຄື່ອງນີ້ກໍເຫັນ
   const fc = document.getElementById('ll-free-code'); if (fc && !fc.value) fc.value = llNextCode();
 }
 function llFillPresetSelect(){ const pr = document.getElementById('ll-preset'); if (pr) pr.value = bcPresetKey(bcLoadCfg()); }
@@ -7623,7 +7630,7 @@ function llImportExcel(ev){
       const who = currentUser ? currentUser.displayName : null;
       if (uniq.length){
         const payload = uniq.map(x => {
-          const o = { shop_id: SHOP_ID, product_id: x.id, qty: x.qty, printed_at: null, updated_at: now, created_by: who };
+          const o = { shop_id: SHOP_ID, product_id: x.id, qty: x.qty, printed_at: null, updated_at: now, created_by: who, import_batch: now };
           o.code = res.hasCodeCol ? x.code : (LL.rows.find(r => r.productId === x.id) || {}).code || '';
           o.price = res.hasPriceCol && x.price > 0 ? x.price : null;
           return o;
@@ -7636,13 +7643,13 @@ function llImportExcel(ev){
       // ສິນຄ້ານອກ POS: ແຖວໃໝ່ insert ເປັນຊຸດ, ແຖວທີ່ມີແລ້ວ update ຕາມ id
       const freeNew = freeRows.filter(x => !freeExisting.has(bcNorm(x.name)));
       for (let i = 0; i < freeNew.length; i += 200){
-        const chunk = freeNew.slice(i, i + 200).map(x => ({ shop_id: SHOP_ID, product_id: null, name: x.name, code: res.hasCodeCol ? x.code : '', price: res.hasPriceCol && x.price > 0 ? x.price : null, qty: x.qty, printed_at: null, updated_at: now, created_by: who }));
+        const chunk = freeNew.slice(i, i + 200).map(x => ({ shop_id: SHOP_ID, product_id: null, name: x.name, code: res.hasCodeCol ? x.code : '', price: res.hasPriceCol && x.price > 0 ? x.price : null, qty: x.qty, printed_at: null, updated_at: now, created_by: who, import_batch: now }));
         const { error } = await sb.from('pos_live_labels').insert(chunk);
         if (error) throw error;
       }
       for (const x of freeRows.filter(x => freeExisting.has(bcNorm(x.name)))){
         const row = freeExisting.get(bcNorm(x.name));
-        const upd = { qty: x.qty, printed_at: null, updated_at: now };
+        const upd = { qty: x.qty, printed_at: null, updated_at: now, import_batch: now };
         if (res.hasCodeCol) upd.code = x.code;
         if (res.hasPriceCol) upd.price = x.price > 0 ? x.price : null;
         const { error } = await sb.from('pos_live_labels').update(upd).eq('id', row.id);
@@ -7650,10 +7657,7 @@ function llImportExcel(ev){
       }
       await llLoad();
       LL.page = 1;
-      { // v2.88: ຈື່ແຖວທີ່ຫາກໍນຳເຂົ້າ ແລ້ວສະແດງສະເພາະຊຸດນີ້ທັນທີ
-        const impProd = new Set(uniq.map(x => x.id)), impFree = new Set(freeRows.map(x => bcNorm(x.name)));
-        LL.impIds = new Set(LL.rows.filter(r => r.productId ? impProd.has(r.productId) : impFree.has(bcNorm(r.name))).map(r => r.id));
-        llSaveImpIds();
+      { // v2.88/v2.90: ສະແດງສະເພາະຊຸດທີ່ຫາກໍນຳເຂົ້າທັນທີ (ຊຸດຖືກເກັບໃນຖານຂໍ້ມູນ ທຸກເຄື່ອງເຫັນ)
         const fsel = document.getElementById('ll-filter'); if (fsel) fsel.value = 'imp';
         const ss = document.getElementById('ll-search'); if (ss) ss.value = '';
       }

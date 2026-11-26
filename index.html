@@ -2240,7 +2240,8 @@ async function liveSetCurrent(productId){
 // v2.98 (Tar 2026-11-26, ພະນັກງານກຳລັງແກ້ລາຍການປ້າຍ Live ແລະມີການຂາຍ — ຢາກໃຫ້ໜ້າ ສິນຄ້າໄລ້ສົດ ປ່ຽນຕາມ): ເປີດໜ້າ ສິນຄ້າໄລ້ສົດ ແລ້ວໂຫຼດລາຍການປ້າຍ Live ໃໝ່ຖ້າເກົ່າກວ່າ 20 ວິ (ແຕ່ກ່ອນໂຫຼດເທື່ອດຽວ); ທຸກຄັ້ງທີ່ສະຕັອກ POS ປ່ຽນ (realtime) ແຕ້ມໜ້າໃໝ່ + ໂຫຼດຍອດຈອງ/ເຫຼືອຂອງ Live ໃໝ່ (ຈຳກັດ 5 ວິ/ເທື່ອ); ເພີ່ມປຸ່ມ 🔄 ໂຫຼດໃໝ່. ສະຕັອກຂອງ POS ຍັງມາຈາກສະຕັອກ POS ຕົວຈິງ.
 // v2.99 (Tar 2026-11-26, ແກ້ລາຄາໃນໜ້າປ້າຍ Live ແລ້ວ ໜ້າ ສິນຄ້າໄລ້ສົດ ລາຄາບໍ່ປ່ຽນ): ຖັນລາຄາໃນໜ້າ ສິນຄ້າໄລ້ສົດ ສະແດງລາຄາຕາມປ້າຍ Live (ລາຄາທີ່ແກ້ໃນໜ້າປ້າຍ ຫຼື ລາຄາຂາຍ 2 ຖ້າບໍ່ໄດ້ແກ້) ແທນລາຄາ POS; ຖ້າຕ່າງຈາກລາຄາ POS ສະແດງລາຄາ POS ເປັນຕົວນ້ອຍລຸ່ມ. ລາຄາຂາຍຈິງຂອງ CF ຍັງມາຈາກ POS.
 // v3.00 (Tar 2026-11-26, ໄລ້ສົດໃຊ້ລາຄາປ້າຍ Live ແລະ POS ຫນ້າຮ້ານໃຊ້ລາຄາ POS): ລະບົບ CF ໃນຖານຂໍ້ມູນ (cf_create_item / cf_session_products ຜ່ານ cf_live_price) ໃຊ້ລາຄາປ້າຍ Live (ແກ້ເອງ ຫຼື ລາຄາຂາຍ 2); ລາຄາປ້າຍຕ່ຳກວ່າ 1,000 ຖືວ່າພິມຜິດ ບໍ່ໃຊ້ (ໃຊ້ລາຄາຂາຍ 2 ແທນ). ໜ້າ ສິນຄ້າໄລ້ສົດ ສະແດງຕາມກົດດຽວກັນ. ລາຄາຂາຍຫນ້າຮ້ານ POS ບໍ່ປ່ຽນ.
-const APP_VERSION = 'v3.00';
+// v3.01 (Tar 2026-11-26, ແກ້ລາຄາ/ຈຳນວນໃນໜ້າປ້າຍ Live ແລ້ວບໍ່ມີຫຍັງບອກວ່າສຳເລັດ): ບັນທຶກສຳເລັດແລ້ວ ມີແຖບສີຂຽວມຸມລຸ່ມ (ເຊັ່ນ ✅ A287 ລາຄາ 99,000 ບັນທຶກແລ້ວ) + ຊ່ອງທີ່ແກ້ກະພິບສີຂຽວ; ຖ້າລາຄາຕ່ຳກວ່າ 1,000 ຂຶ້ນແຖບສີສົ້ມເຕືອນວ່າ CF ຈະບໍ່ໃຊ້ລາຄານີ້; ຖ້າບັນທຶກບໍ່ໄດ້ ຂຶ້ນແຖບສີແດງ.
+const APP_VERSION = 'v3.01';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7650,6 +7651,23 @@ function llToggleAll(on){
   rows.forEach(r => { if (on) LL.sel.add(r.id); else LL.sel.delete(r.id); });
   llRender();
 }
+function llSavedToast(msg, kind){
+  let t = document.getElementById('llSavedToast');
+  if (!t){ t = document.createElement('div'); t.id = 'llSavedToast'; document.body.appendChild(t); }
+  const bg = kind === 'warn' ? '#e8890c' : (kind === 'err' ? '#d93025' : '#1e9e4a');
+  t.style.cssText = `position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99999;background:${bg};color:#fff;padding:12px 20px;border-radius:10px;font-size:16px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.25);max-width:92vw;text-align:center`;
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(window._llSavedTimer);
+  window._llSavedTimer = setTimeout(() => { t.style.display = 'none'; }, kind === 'warn' ? 4500 : 2500);
+}
+function llFlashSaved(id, field){
+  try{
+    const el = document.querySelector(`#llTable [onchange^="llEdit('${id}','${field}'"]`);
+    if (!el) return;
+    el.style.transition = 'none'; el.style.background = '#b9f0c8'; el.style.boxShadow = '0 0 0 3px #1e9e4a';
+    setTimeout(() => { el.style.transition = 'background .8s, box-shadow .8s'; el.style.background = ''; el.style.boxShadow = ''; }, 700);
+  }catch(e){}
+}
 async function llEdit(id, field, raw){
   const r = LL.rows.find(x => x.id === id);
   if (!r) return;
@@ -7669,12 +7687,21 @@ async function llEdit(id, field, raw){
     upd.qty = Math.max(1, Math.min(500, parseInt(raw, 10) || 1));
   }
   const { error } = await sb.from('pos_live_labels').update(upd).eq('id', id);
-  if (error){ showToast('⚠️ ບັນທຶກບໍ່ສຳເລັດ: ' + (error.message || '')); llRender(); return; }
+  if (error){ llSavedToast('⚠️ ບັນທຶກບໍ່ສຳເລັດ: ' + (error.message || ''), 'err'); llRender(); return; }
   if (upd.code !== undefined) r.code = upd.code;
   if (upd.name !== undefined) r.name = upd.name;
   if ('price' in upd) r.price = upd.price;
   if (upd.qty !== undefined) r.qty = upd.qty;
   llRender();
+  const lbl = { code: 'ລະຫັດ', name: 'ຊື່', price: 'ລາຄາ', qty: 'ຈຳນວນປ້າຍ' }[field] || field;
+  let val = upd[field];
+  if (field === 'price'){
+    if (val == null) llSavedToast(`✅ ${r.code} ລ້າງລາຄາແລ້ວ (ໃຊ້ລາຄາຂາຍ 2)`);
+    else if (val < 1000) llSavedToast(`⚠️ ${r.code} ບັນທຶກລາຄາ ${fmt(val)} ແລ້ວ ແຕ່ຕ່ຳກວ່າ 1,000 — CF ຈະບໍ່ໃຊ້ລາຄານີ້`, 'warn');
+    else llSavedToast(`✅ ${r.code} ລາຄາ ${fmt(val)} ບັນທຶກແລ້ວ`);
+  } else if (field === 'qty') llSavedToast(`✅ ${r.code} ຈຳນວນປ້າຍ ${val} ບັນທຶກແລ້ວ`);
+  else llSavedToast(`✅ ບັນທຶກ${lbl}ແລ້ວ: ${val}`);
+  llFlashSaved(id, field);
 }
 async function llDelete(id){
   const r = LL.rows.find(x => x.id === id);

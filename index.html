@@ -1148,6 +1148,7 @@
           <button class="btn primary" onclick="llPrint('new')">🖨️ ພິມສະເພາະທີ່ຍັງບໍ່ໄດ້ພິມ <b id="llNewCount"></b></button>
           <button class="btn" onclick="llPrint('sel')">🖨️ ພິມທີ່ເລືອກ <b id="llSelCount"></b></button>
           <button class="btn" onclick="llPrint('all')">🖨️ ພິມທັງໝົດ</button>
+          <button class="btn" onclick="llClearSel()">⬜ ລ້າງຕິກທີ່ເລືອກ</button>
         </div>
         <div id="llPrintedBanner" style="display:none;margin-top:10px;padding:8px 10px;border:1px solid #f0c48a;background:#fff7ec;border-radius:var(--radius);font-size:15px"></div>
       </div>
@@ -1184,12 +1185,22 @@
             <option value="sel">ທີ່ເລືອກ</option>
             <option value="imp">ນຳເຂົ້າລ່າສຸດ</option>
           </select>
+          <span class="btn" onclick="llSelectFiltered()">☑️ ເລືອກທັງໝົດທີ່ກອງຢູ່</span>
+          <span class="btn" onclick="llClearSel()">⬜ ລ້າງຕິກທັງໝົດ</span>
           <span class="btn" onclick="llSetQtyAll()">🔢 ຕັ້ງຈຳນວນປ້າຍທຸກແຖວທີ່ກອງຢູ່</span>
           <span class="btn" onclick="llMarkAllPrinted()">ໝາຍທັງໝົດວ່າພິມແລ້ວ</span>
         </div>
         <p id="llSummary" style="font-size:15px;margin:0 0 8px;color:var(--text);font-weight:600"></p>
         <div id="llTable" style="overflow-x:auto"></div>
-        <div id="llPager" style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:10px"></div>
+        <div class="pagination-bar" style="margin-top:10px">
+          <span>ສະແດງ</span>
+          <select id="llPageSize" onchange="llSetPageSize(this.value)">
+            <option value="10">10</option><option value="20">20</option><option value="50" selected>50</option>
+            <option value="100">100</option><option value="500">500</option><option value="1000">1,000</option>
+          </select>
+          <span>ແຖວຕໍ່ໜ້າ</span>
+        </div>
+        <div id="llPager" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;margin-top:10px"></div>
       </div>
     </div>
 
@@ -2098,7 +2109,8 @@ async function liveSetCurrent(productId){
 // v2.89 (Tar 2026-11-25, ກົດພິມປ້າຍ Live ແລ້ວ Chrome ຄ້າງ ໜ້າບໍ່ຕອບສະໜອງ — ສາເຫດ: ໄຟລ໌ນຳເຂົ້າໃສ່ຈຳນວນປ້າຍຫຼາຍ (ແຖວລະ 100 ຫາ 500) ລວມ 5,866 ປ້າຍ ພິມເທື່ອດຽວ): ກັນໄວ້ 2 ບ່ອນ — (1) ຕອນນຳເຂົ້າ Excel ຖ້າລວມເກີນ 300 ປ້າຍ ເຕືອນໃຫ້ກວດຖັນ ຈຳນວນປ້າຍ; (2) ຕອນກົດພິມ ຖ້າເກີນ 300 ປ້າຍ ຖາມຢືນຢັນ, ເກີນ 1,500 ປ້າຍ ບໍ່ໃຫ້ພິມ. ບໍ່ແກ້ຂໍ້ມູນໃນຖານຂໍ້ມູນ.
 // v2.90 (Tar 2026-11-25, ເຄື່ອງ A ນຳເຂົ້າ 66 ແຖວ ແຕ່ເຄື່ອງ B ຕົວກອງ ນຳເຂົ້າລ່າສຸດ ບໍ່ເຫັນ — ເພາະ v2.88 ເກັບຊຸດນຳເຂົ້າຕໍ່ເຄື່ອງ): ເກັບຊຸດນຳເຂົ້າໃນຖານຂໍ້ມູນ (ຖັນ pos_live_labels.import_batch, ເພີ່ມໃໝ່ + ຕື່ມຍ້ອນຫຼັງ 66 ແຖວຂອງມື້ນີ້). ນຳເຂົ້າລ່າສຸດ = ຊຸດທີ່ໃໝ່ສຸດ ທຸກເຄື່ອງເຫັນຄືກັນ. ເປີດໜ້າປ້າຍ Live ໃໝ່ ຈະໂຫຼດຈາກຖານຂໍ້ມູນຄືນຖ້າເກີນ 20 ວິ.
 // v2.91 (Tar 2026-11-25, ເລືອກ 66 ແຖວ ແຕ່ຂຶ້ນເຕືອນວ່າຈະພິມ 5,081 ປ້າຍ ເຂົ້າໃຈວ່າລະບົບຜິດ): ຂໍ້ຄວາມເຕືອນອະທິບາຍໃຫ້ຊັດ (ແຖວທີ່ຫຼາຍສຸດ A898 = 500 ...) + ເພີ່ມປຸ່ມ 🔢 ຕັ້ງຈຳນວນປ້າຍທຸກແຖວທີ່ກອງຢູ່ (ເຊັ່ນ ຕັ້ງເປັນ 1 ທຸກແຖວທີ່ນຳເຂົ້າລ່າສຸດ) ແທນການແກ້ທີລະແຖວ.
-const APP_VERSION = 'v2.91';
+// v2.92 (Tar 2026-11-26, ໜ້າປ້າຍ Live: (1) ປຸ່ມ ລ້າງຕິກທັງໝົດ ຫຼັງພິມ ບໍ່ຕ້ອງກົດເລືອກທັງໝົດກ່ອນ + ປຸ່ມເລືອກທັງໝົດທີ່ກອງຢູ່; (2) ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000; (3) ປຸ່ມເລກໜ້າ 1-10 … ໜ້າສຸດທ້າຍ ແທນການກົດ ‹ › ທີລະໜ້າ).
+const APP_VERSION = 'v2.92';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7455,8 +7467,32 @@ function llRender(){
         <td style="padding:4px">${r.printedAt ? '<span class="badge ok">ພິມແລ້ວ</span>' : '<span class="badge warn">ໃໝ່</span>'}</td>
         <td style="padding:4px"><span class="btn" style="padding:2px 8px" onclick="llDelete('${r.id}')">✕</span></td></tr>`;
     }).join('') + '</tbody></table>';
-  s('llPager').innerHTML = pages > 1
-    ? `<span class="btn" onclick="llGoPage(${LL.page - 1})">‹</span><span style="font-size:15px">ໜ້າ ${LL.page} / ${pages}</span><span class="btn" onclick="llGoPage(${LL.page + 1})">›</span>` : '';
+  s('llPager').innerHTML = llPagerHtml(LL.page, pages);
+}
+function llPagerHtml(cur, pages){
+  if (pages <= 1) return '';
+  const btn = (n, label, on) => `<span class="btn${on ? ' primary' : ''}" style="min-width:34px;text-align:center;padding:4px 8px" onclick="llGoPage(${n})">${label}</span>`;
+  const dots = '<span style="padding:0 4px;color:var(--text-muted)">…</span>';
+  let out = btn(Math.max(1, cur - 1), '‹', false);
+  const W = 10;
+  let a = 1, b = Math.min(pages, W);
+  if (pages > W){ a = Math.min(Math.max(1, cur - 4), pages - W + 1); b = a + W - 1; }
+  if (a > 1){ out += btn(1, '1', cur === 1); if (a > 2) out += dots; }
+  for (let n = (a > 1 ? a : 1); n <= b; n++){ if (a > 1 && n === 1) continue; out += btn(n, String(n), n === cur); }
+  if (b < pages){ if (b < pages - 1) out += dots; out += btn(pages, String(pages), cur === pages); }
+  out += btn(Math.min(pages, cur + 1), '›', false);
+  out += `<span style="font-size:14px;color:var(--text-muted);margin-left:8px">ໜ້າ ${cur} / ${pages}</span>`;
+  return out;
+}
+function llSetPageSize(v){ const n = parseInt(v, 10); LL.pageSize = n > 0 ? n : 50; LL.page = 1; llRender(); }
+/* v2.92: ເລືອກທັງໝົດທີ່ກອງຢູ່ / ລ້າງຕິກທັງໝົດ (ຂ້າມທຸກໜ້າ) */
+function llSelectFiltered(){ llFilteredRows().forEach(r => LL.sel.add(r.id)); llRender(); }
+function llClearSel(){
+  const n = LL.sel.size;
+  LL.sel.clear();
+  if ((document.getElementById('ll-filter') || {}).value === 'sel') LL.page = 1;
+  llRender();
+  showToast(n ? `ລ້າງຕິກ ${n} ແຖວແລ້ວ` : 'ບໍ່ມີແຖວທີ່ຕິກຢູ່');
 }
 function llGoPage(n){ LL.page = Math.max(1, n); llRender(); }
 function llToggleSel(id, on){ if (on) LL.sel.add(id); else LL.sel.delete(id); llRender(); }

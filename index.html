@@ -750,15 +750,23 @@
                 <select id="liveSessionSelect" onchange="liveTabSelectSession(this.value)" style="flex:1;min-width:220px;padding:8px"></select>
                 <button class="btn" onclick="renderLiveProductTab()">🔄 ໂຫຼດຄືນ</button>
                 <button class="btn" onclick="livePrintLabels()">▤ ພິມປ້າຍ Live</button>
+                <button class="btn" onclick="liveImportFromLabels()">📥 ເອົາສິນຄ້າຈາກລາຍການປ້າຍ Live (Excel) ເຂົ້າ Live ນີ້</button>
                 <a class="btn primary" href="https://marketing.touktashop.online/#liveCf" target="_blank" rel="noopener" style="text-decoration:none">🔴 ເປີດໜ້າ Live CF</a>
               </div>
               <p id="liveTabInfo" style="font-size:14px;color:var(--text-muted);margin:0 0 10px"></p>
               <div id="liveTabBody">
-                <div class="search-box" style="margin-bottom:8px"><span>🔍</span><input id="liveProductSearch" placeholder="ຄົ້ນຫາຊື່ ຫຼື ບາໂຄດ" oninput="renderLiveProductRows()"></div>
-                <label style="display:inline-flex;gap:6px;align-items:center;font-size:14px;margin-bottom:10px"><input type="checkbox" id="liveOnlySelected" onchange="renderLiveProductRows()"> ສະແດງສະເພາະທີ່ເລືອກແລ້ວ</label>
+                <div class="search-box" style="margin-bottom:8px"><span>🔍</span><input id="liveProductSearch" placeholder="ຄົ້ນຫາຊື່ / ບາໂຄດ / ລະຫັດ Live" oninput="liveFilterChanged()"></div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px">
+                  <select id="liveSourceFilter" onchange="liveFilterChanged()" style="height:36px;border:1px solid var(--border);border-radius:var(--radius);padding:0 8px">
+                    <option value="all">ທັງໝົດ (POS + ນອກ POS)</option>
+                    <option value="pos">ສະເພາະສິນຄ້າ POS</option>
+                    <option value="free">ສະເພາະສິນຄ້ານອກ POS</option>
+                  </select>
+                  <label style="display:inline-flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="liveOnlySelected" onchange="liveFilterChanged()"> ສະແດງສະເພາະທີ່ເລືອກແລ້ວ</label>
+                </div>
                 <div style="overflow-x:auto">
                 <table class="table-bordered">
-                  <thead><tr><th style="width:56px">ເລືອກ</th><th style="width:96px">ລະຫັດ Live</th><th style="width:60px">ຮູບ</th><th>ບາໂຄດ</th><th>ສິນຄ້າ</th><th>ສະຕ໊ອກ</th><th>ລາຄາ</th><th>ຈອງ / ເຫຼືອຂາຍ</th><th style="width:120px">ກຳລັງຂາຍ</th></tr></thead>
+                  <thead><tr><th style="width:56px">ເລືອກ</th><th style="width:96px">ລະຫັດ Live</th><th style="width:60px">ຮູບ</th><th>ບາໂຄດ</th><th>ສິນຄ້າ</th><th>ສະຕ໊ອກ</th><th>ລາຄາ</th><th class="live-cost-th">ຕົ້ນທຶນ</th><th>ຈອງ / ເຫຼືອຂາຍ</th><th style="width:120px">ກຳລັງຂາຍ</th></tr></thead>
                   <tbody id="liveProductBody"></tbody>
                 </table>
                 </div>
@@ -1971,6 +1979,7 @@ async function renderLiveProductTab(){
     if (bodyWrap) bodyWrap.style.display = '';
     await liveReloadLsp();
     renderLiveProductRows();
+    try{ if (typeof LL !== 'undefined' && !LL.loaded){ await llLoad(); renderLiveProductRows(); } }catch(e){ /* ສິນຄ້ານອກ POS ເປັນຂໍ້ມູນເສີມ */ }
   }catch(e){
     console.error('renderLiveProductTab failed:', e);
     if (info) info.textContent = '⚠️ ໂຫຼດບໍ່ສຳເລັດ: ' + (e.message || e);
@@ -1980,20 +1989,58 @@ function liveTabSelectSession(id){
   LIVE_TAB.sessionId = id;
   liveReloadLsp().then(renderLiveProductRows).catch(e => showToast('⚠️ ' + (e.message || e)));
 }
+/* v2.95: ໜ້າ "ສິນຄ້າໄລ້ສົດ" ສະແດງສິນຄ້າ POS ກ່ອນ (ມີຮູບ/ຕົ້ນທຶນ/ລາຄາ) ແລ້ວຕໍ່ທ້າຍດ້ວຍສິນຄ້ານອກ POS ຈາກລາຍການປ້າຍ Live (Excel) + ຕົວກອງ ທັງໝົດ/POS/ນອກ POS */
+function liveFilterChanged(){ LIVE_TAB.limit = 150; renderLiveProductRows(); }
+function liveShowMore(){ LIVE_TAB.limit = (LIVE_TAB.limit || 150) + 300; renderLiveProductRows(); }
+function liveCodeNum(c){ const m = /^[A-Za-z]*?(\d+)/.exec(String(c||'')); return m ? parseInt(m[1], 10) : 1e9; }
 function renderLiveProductRows(){
   const body = document.getElementById('liveProductBody');
   const info = document.getElementById('liveTabInfo');
   if (!body) return;
   const q = (document.getElementById('liveProductSearch')?.value || '').trim().toLowerCase();
   const onlySel = !!document.getElementById('liveOnlySelected')?.checked;
+  const src = document.getElementById('liveSourceFilter')?.value || 'all';
+  const costVis = canSeeCost();
+  document.querySelectorAll('.live-cost-th').forEach(e => { e.style.display = costVis ? '' : 'none'; });
+  const colspan = costVis ? 10 : 9;
   const selCount = Object.keys(LIVE_TAB.lsp).length;
   const ses = LIVE_TAB.sessions.find(s => s.id === LIVE_TAB.sessionId);
-  if (info) info.innerHTML = `ເລືອກໄວ້ແລ້ວ <b>${selCount}</b> ລາຍການ${ses ? ' · ' + (ses.status==='live' ? '🔴 ກຳລັງ Live' : '⚪ ຮ່າງ (ຍັງບໍ່ເຊື່ອມ Live)') : ''}`;
-  let list = PRODUCTS.filter(p => !onlySel || LIVE_TAB.lsp[p.id]);
-  if (q) list = list.filter(p => p.name.toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q));
-  list = list.slice().sort((a,b) => (LIVE_TAB.lsp[b.id]?1:0) - (LIVE_TAB.lsp[a.id]?1:0) || a.name.localeCompare(b.name,'lo'));
-  const LIMIT = 150; const total = list.length; list = list.slice(0, LIMIT);
-  body.innerHTML = list.length ? list.map(p => {
+  const freeAll = (typeof LL !== 'undefined' && LL.rows) ? LL.rows.filter(r => !r.productId) : [];
+  if (info) info.innerHTML = `ເລືອກໄວ້ແລ້ວ <b>${selCount}</b> ລາຍການ${ses ? ' · ' + (ses.status==='live' ? '🔴 ກຳລັງ Live' : '⚪ ຮ່າງ (ຍັງບໍ່ເຊື່ອມ Live)') : ''} · ສິນຄ້ານອກ POS <b>${freeAll.length}</b> ລາຍການ (ສະແດງຕໍ່ທ້າຍ)`;
+  let posList = [];
+  if (src !== 'free'){
+    posList = PRODUCTS.filter(p => !onlySel || LIVE_TAB.lsp[p.id]);
+    if (q) posList = posList.filter(p => p.name.toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q) || String((LIVE_TAB.lsp[p.id] || {}).code || '').toLowerCase().includes(q));
+    posList = posList.slice().sort((a,b) => {
+      const ra = LIVE_TAB.lsp[a.id], rb = LIVE_TAB.lsp[b.id];
+      if (ra && rb) return liveCodeNum(ra.code) - liveCodeNum(rb.code);
+      return (rb?1:0) - (ra?1:0) || a.name.localeCompare(b.name,'lo');
+    });
+  }
+  let freeList = [];
+  if (src !== 'pos' && (!onlySel || src === 'free')){
+    freeList = freeAll.slice();
+    if (q) freeList = freeList.filter(r => String(r.name||'').toLowerCase().includes(q) || String(r.code||'').toLowerCase().includes(q));
+    freeList.sort((a,b) => liveCodeNum(a.code) - liveCodeNum(b.code));
+  }
+  const items = posList.map(p => ({ k: 'pos', p })).concat(freeList.map(r => ({ k: 'free', r })));
+  const LIMIT = LIVE_TAB.limit || 150; const total = items.length; const shown = items.slice(0, LIMIT);
+  body.innerHTML = shown.length ? shown.map(it => {
+    if (it.k === 'free'){
+      const r = it.r;
+      return `<tr style="background:#f3f6fb">
+      <td style="text-align:center"><span style="color:var(--text-muted)">—</span></td>
+      <td><b>${liveEsc(r.code)}</b></td>
+      <td style="text-align:center"></td>
+      <td><span class="badge warn">ນອກ POS</span></td>
+      <td>${liveEsc(r.name)}</td>
+      <td style="text-align:center">—</td>
+      <td style="text-align:right">${r.price ? fmt(r.price) : '—'}</td>
+      <td class="live-cost-td" style="${costVis ? '' : 'display:none'}"></td>
+      <td style="text-align:center;color:var(--text-muted);font-size:13px" colspan="2">ບໍ່ມີສະຕ໊ອກໃນ POS (ໃຊ້ CF ບໍ່ໄດ້)</td>
+    </tr>`;
+    }
+    const p = it.p;
     const r = LIVE_TAB.lsp[p.id];
     const price = p.onlinePrice || p.p1 || 0;
     const left = r ? Math.max((Number(r.stock_qty)||0) - (Number(r.reserved_all)||0), 0) : 0;
@@ -2005,11 +2052,47 @@ function renderLiveProductRows(){
       <td>${liveEsc(p.name)}</td>
       <td style="text-align:center">${fmt(p.stock)}</td>
       <td style="text-align:right">${price ? fmt(price) : '<span style="color:var(--danger)">ບໍ່ມີລາຄາ</span>'}</td>
+      <td class="live-cost-td" style="text-align:right;${costVis ? '' : 'display:none'}">${p.avgCost ? fmt(p.avgCost) : ''}</td>
       <td style="text-align:center">${r ? `${fmt(r.reserved_all)} / <b>${fmt(left)}</b>` : ''}</td>
       <td style="text-align:center">${r ? (r.is_current ? '<b>🎯 ກຳລັງຂາຍ</b>' : `<span class="btn" style="padding:4px 8px;white-space:nowrap" onclick="liveSetCurrent('${p.id}')">ຕັ້ງ</span>`) : ''}</td>
     </tr>`;
-  }).join('') + (total > LIMIT ? `<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">ສະແດງ ${LIMIT} ຈາກ ${total} ລາຍການ — ພິມຄົ້ນຫາເພື່ອຫາຕື່ມ</td></tr>` : '')
-    : '<tr><td colspan="9" style="text-align:center;color:var(--text-muted)">ບໍ່ພົບສິນຄ້າ</td></tr>';
+  }).join('') + (total > LIMIT ? `<tr><td colspan="${colspan}" style="text-align:center"><span class="btn" onclick="liveShowMore()">ສະແດງເພີ່ມ (ສະແດງ ${LIMIT} ຈາກ ${total} ລາຍການ)</span></td></tr>` : '')
+    : `<tr><td colspan="${colspan}" style="text-align:center;color:var(--text-muted)">ບໍ່ພົບສິນຄ້າ</td></tr>`;
+}
+/* v2.95: ເອົາສິນຄ້າ POS ທັງໝົດໃນລາຍການປ້າຍ Live (ທີ່ມາຈາກ Excel) ເຂົ້າ Live ທີ່ເລືອກ ດ້ວຍລະຫັດ A.. ເດີມ (ຂ້າມລະຫັດຊ້ຳ). ສິນຄ້ານອກ POS ເຂົ້າ CF ບໍ່ໄດ້ (live_session_products ຕ້ອງມີສິນຄ້າ POS) */
+async function liveImportFromLabels(){
+  if (!LIVE_TAB.sessionId){ showToast('ເລືອກ Live ກ່ອນ'); return; }
+  try{ if (typeof LL !== 'undefined' && !LL.loaded) await llLoad(); }catch(e){ showToast('⚠️ ໂຫຼດລາຍການປ້າຍບໍ່ສຳເລັດ: ' + (e.message || e)); return; }
+  const okCode = c => /^[A-Z0-9][A-Z0-9\-_.]{0,19}$/.test(c) && (/[A-Z]/.test(c) || /^\d{3,}$/.test(c));
+  const rows = (LL.rows || []).filter(r => r.productId && PRODUCTS.find(p => p.id === r.productId));
+  const freeN = (LL.rows || []).filter(r => !r.productId).length;
+  if (!rows.length){ showToast('ບໍ່ມີລາຍການປ້າຍ Live ທີ່ເຊື່ອມກັບສິນຄ້າ POS'); return; }
+  const used = new Map(Object.values(LIVE_TAB.lsp).map(x => [String(x.code).toUpperCase(), x.product_id]));
+  const toAdd = [], already = [], conflict = [];
+  rows.forEach(r => {
+    const code = String(r.code || '').trim().toUpperCase();
+    if (LIVE_TAB.lsp[r.productId]) already.push(r);
+    else if (!okCode(code) || used.has(code)) conflict.push(r);
+    else { used.set(code, r.productId); toAdd.push({ productId: r.productId, code }); }
+  });
+  const ses = LIVE_TAB.sessions.find(s => s.id === LIVE_TAB.sessionId);
+  const msg = `ເພີ່ມສິນຄ້າຈາກລາຍການປ້າຍ Live ເຂົ້າ Live: ${ses ? ses.title : ''}\n\n`
+    + `• ຈະເພີ່ມໃໝ່: ${toAdd.length} ລາຍການ (ໃຊ້ລະຫັດ A.. ຕາມ Excel)\n`
+    + `• ຢູ່ໃນ Live ແລ້ວ: ${already.length} ລາຍການ (ຂ້າມ)\n`
+    + `• ລະຫັດຊ້ຳ ຫຼື ໃຊ້ບໍ່ໄດ້: ${conflict.length} ລາຍການ (ຂ້າມ)\n`
+    + `• ສິນຄ້ານອກ POS: ${freeN} ລາຍການ (ເພີ່ມເຂົ້າ CF ບໍ່ໄດ້ — ສະແດງຕໍ່ທ້າຍໃນລາຍການເທົ່ານັ້ນ)\n\nຢືນຢັນເພີ່ມບໍ?`;
+  if (!toAdd.length){ showToast(`ບໍ່ມີອັນໃໝ່ທີ່ຈະເພີ່ມ (ຢູ່ແລ້ວ ${already.length}, ຊ້ຳ ${conflict.length})`); return; }
+  if (!await showConfirmModal(msg, '📥 ເພີ່ມສິນຄ້າເຂົ້າ Live')) return;
+  let ok = 0, dup = 0, fail = 0;
+  for (let i = 0; i < toAdd.length; i += 8){
+    const chunk = toAdd.slice(i, i + 8);
+    const res = await Promise.all(chunk.map(x => sb.rpc('cf_session_add_product', { p_session_id: LIVE_TAB.sessionId, p_product_id: x.productId, p_code: x.code }).then(r => r, e => ({ error: e }))));
+    res.forEach(r => { if (r.error || !r.data) fail++; else if (r.data.status === 'ok') ok++; else if (r.data.status === 'exists' || r.data.status === 'dup_code') dup++; else fail++; });
+    showToast(`ກຳລັງເພີ່ມ ${Math.min(i + 8, toAdd.length)} / ${toAdd.length}...`);
+  }
+  try{ await liveReloadLsp(); }catch(e){}
+  renderLiveProductRows();
+  showToast(`ເພີ່ມສຳເລັດ ${ok} ລາຍການ` + (dup ? ` · ຂ້າມ ${dup}` : '') + (fail ? ` · ⚠️ ລົ້ມເຫລວ ${fail}` : ''));
 }
 // v2.67: ສົ່ງສິນຄ້າທີ່ເລືອກໄວ້ໃນ Live ນີ້ (ລຽງຕາມລະຫັດ A1, A2...) ໄປໜ້າ "ສ້າງບາໂຄດ" ເພື່ອພິມປ້າຍ: ຊື່ + ລະຫັດ Live + ລາຄາ + ບາໂຄດ
 function livePrintLabels(){
@@ -2114,7 +2197,8 @@ async function liveSetCurrent(productId){
 // v2.92 (Tar 2026-11-26, ໜ້າປ້າຍ Live: (1) ປຸ່ມ ລ້າງຕິກທັງໝົດ ຫຼັງພິມ ບໍ່ຕ້ອງກົດເລືອກທັງໝົດກ່ອນ + ປຸ່ມເລືອກທັງໝົດທີ່ກອງຢູ່; (2) ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000; (3) ປຸ່ມເລກໜ້າ 1-10 … ໜ້າສຸດທ້າຍ ແທນການກົດ ‹ › ທີລະໜ້າ).
 // v2.93 (Tar 2026-11-26, A351 ຖືກພະນັກງານກົດ ✕ ລຶບໂດຍບໍ່ຕັ້ງໃຈ ຕອນຢາກເອົາຕິກອອກ): ຂໍ້ຄວາມຢືນຢັນກ່ອນລຶບແຖວປ້າຍ Live ຊັດເຈນຂຶ້ນ (ບອກວ່າເປັນການລຶບສິນຄ້າ ບໍ່ແມ່ນເອົາຕິກອອກ) + ບັນທຶກຊື່ບັນຊີ/ເວລາ/ລະຫັດທີ່ລຶບໃນ pos_activity_log (action live_label_delete) ເບິ່ງໄດ້ໃນໜ້າປະຫວັດກິດຈະກຳ.
 // v2.94 (Tar 2026-11-26, ໜ້າປ້າຍ Live ທຸກແຖວຂຶ້ນ \"ບໍ່ພົບສິນຄ້າໃນ POS\" ໃນຄອມຮ້ານ): ຖ້າລາຍການສິນຄ້າຍັງບໍ່ໂຫຼດ ສະແດງ 'ກຳລັງໂຫຼດສິນຄ້າ...' ແລ້ວໂຫຼດເອງ (ລອງໃໝ່ທຸກ 8 ວິ) + ທຸກຄັ້ງທີ່ loadProducts ສຳເລັດ ແຕ້ມໜ້າປ້າຍໃໝ່ອັດຕະໂນມັດ.
-const APP_VERSION = 'v2.94';
+// v2.95 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ສະແດງຕາມ Excel ລາຍການປ້າຍ Live): ສິນຄ້າ POS ກ່ອນ (ຮູບ/ຕົ້ນທຶນ/ລາຄາ) ແລ້ວຕໍ່ທ້າຍດ້ວຍສິນຄ້ານອກ POS + ຕົວກອງ ທັງໝົດ/POS/ນອກ POS + ປຸ່ມ 📥 ເອົາສິນຄ້າຈາກລາຍການປ້າຍ Live ເຂົ້າ Live (ຂ້າມລະຫັດຊ້ຳ) + ສະແດງເພີ່ມແທນຈຳກັດ 150 ແຖວ.
+const APP_VERSION = 'v2.95';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];

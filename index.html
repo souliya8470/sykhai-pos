@@ -2002,12 +2002,15 @@ function liveTabSelectSession(id){
 function liveFilterChanged(){ LIVE_TAB.page = 1; renderLiveProductRows(); }
 function liveSetPageSize(v){ const n = parseInt(v, 10); LIVE_TAB.pageSize = n > 0 ? n : 50; LIVE_TAB.page = 1; renderLiveProductRows(); }
 function liveGoPage(n){ LIVE_TAB.page = Math.max(1, n); renderLiveProductRows(); }
+function codeKey(v){ return String(v == null ? '' : v).normalize('NFKC').replace(/[\u200b-\u200d\ufeff\s]+/g, '').toLowerCase(); }
 function liveCodeNum(c){ const m = /^[A-Za-z]*?(\d+)/.exec(String(c||'')); return m ? parseInt(m[1], 10) : 1e9; }
 function renderLiveProductRows(){
   const body = document.getElementById('liveProductBody');
   const info = document.getElementById('liveTabInfo');
   if (!body) return;
   const q = (document.getElementById('liveProductSearch')?.value || '').trim().toLowerCase();
+  const qk = codeKey(q);
+  const llCodeByPid = {}; if (typeof LL !== 'undefined' && LL.rows) LL.rows.forEach(r => { if (r.productId && r.code) llCodeByPid[r.productId] = r.code; });
   const onlySel = !!document.getElementById('liveOnlySelected')?.checked;
   const src = document.getElementById('liveSourceFilter')?.value || 'all';
   const costVis = canSeeCost();
@@ -2020,7 +2023,7 @@ function renderLiveProductRows(){
   let posList = [];
   if (src !== 'free'){
     posList = PRODUCTS.filter(p => !onlySel || LIVE_TAB.lsp[p.id]);
-    if (q) posList = posList.filter(p => p.name.toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q) || String((LIVE_TAB.lsp[p.id] || {}).code || '').toLowerCase().includes(q));
+    if (q) posList = posList.filter(p => p.name.toLowerCase().includes(q) || String(p.barcode||'').toLowerCase().includes(q) || String((LIVE_TAB.lsp[p.id] || {}).code || '').toLowerCase().includes(q) || codeKey((LIVE_TAB.lsp[p.id] || {}).code).includes(qk) || codeKey(llCodeByPid[p.id]).includes(qk));
     posList = posList.slice().sort((a,b) => {
       const ra = LIVE_TAB.lsp[a.id], rb = LIVE_TAB.lsp[b.id];
       if (ra && rb) return liveCodeNum(ra.code) - liveCodeNum(rb.code);
@@ -2030,7 +2033,7 @@ function renderLiveProductRows(){
   let freeList = [];
   if (src !== 'pos' && (!onlySel || src === 'free')){
     freeList = freeAll.slice();
-    if (q) freeList = freeList.filter(r => String(r.name||'').toLowerCase().includes(q) || String(r.code||'').toLowerCase().includes(q));
+    if (q) freeList = freeList.filter(r => String(r.name||'').toLowerCase().includes(q) || String(r.code||'').toLowerCase().includes(q) || codeKey(r.code).includes(qk));
     freeList.sort((a,b) => liveCodeNum(a.code) - liveCodeNum(b.code));
   }
   const items = posList.map(p => ({ k: 'pos', p })).concat(freeList.map(r => ({ k: 'free', r })));
@@ -2214,7 +2217,8 @@ async function liveSetCurrent(productId){
 // v2.94 (Tar 2026-11-26, ໜ້າປ້າຍ Live ທຸກແຖວຂຶ້ນ \"ບໍ່ພົບສິນຄ້າໃນ POS\" ໃນຄອມຮ້ານ): ຖ້າລາຍການສິນຄ້າຍັງບໍ່ໂຫຼດ ສະແດງ 'ກຳລັງໂຫຼດສິນຄ້າ...' ແລ້ວໂຫຼດເອງ (ລອງໃໝ່ທຸກ 8 ວິ) + ທຸກຄັ້ງທີ່ loadProducts ສຳເລັດ ແຕ້ມໜ້າປ້າຍໃໝ່ອັດຕະໂນມັດ.
 // v2.95 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ສະແດງຕາມ Excel ລາຍການປ້າຍ Live): ສິນຄ້າ POS ກ່ອນ (ຮູບ/ຕົ້ນທຶນ/ລາຄາ) ແລ້ວຕໍ່ທ້າຍດ້ວຍສິນຄ້ານອກ POS + ຕົວກອງ ທັງໝົດ/POS/ນອກ POS + ປຸ່ມ 📥 ເອົາສິນຄ້າຈາກລາຍການປ້າຍ Live ເຂົ້າ Live (ຂ້າມລະຫັດຊ້ຳ) + ສະແດງເພີ່ມແທນຈຳກັດ 150 ແຖວ.
 // v2.96 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ແບ່ງໜ້າຄືໜ້າສະຕັອກ): ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000 + ປຸ່ມເລກໜ້າ ແທນປຸ່ມ ສະແດງເພີ່ມ (ເອົາການຈຳກັດ 150 ແຖວອອກ).
-const APP_VERSION = 'v2.96';
+// v2.97 (Tar 2026-11-26, ພິມຄົ້ນຫາ A287 ບາງເທື່ອບໍ່ເຫັນ ແຕ່ພິມແຕ່ເລກເຫັນ — ຄີບອດໃສ່ຍະຫວ່າງ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ເຊັ່ນ 'A 287'): ຄົ້ນຫາລະຫັດບໍ່ສົນໃຈຍະຫວ່າງ/ຕົວພິມໃຫຍ່-ນ້ອຍ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ໃນໜ້າປ້າຍ Live ແລະ ໜ້າ ສິນຄ້າໄລ້ສົດ; ໜ້າ ສິນຄ້າໄລ້ສົດ ຄົ້ນຫາລະຫັດຈາກລາຍການປ້າຍ Live ໄດ້ນຳ.
+const APP_VERSION = 'v2.97';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7522,6 +7526,7 @@ function llNextCode(){
 }
 function llFilteredRows(){
   const q = bcNorm((document.getElementById('ll-search') || {}).value || '');
+  const qk = codeKey(q);
   const f = (document.getElementById('ll-filter') || {}).value || 'all';
   return llSortedRows().filter(r => {
     if (f === 'new' && r.printedAt) return false;
@@ -7529,7 +7534,7 @@ function llFilteredRows(){
     if (f === 'imp' && !LL.impIds.has(r.id)) return false;
     if (!q) return true;
     const p = llProduct(r);
-    return bcNorm(r.code).includes(q) || (p && (bcNorm(p.name).includes(q) || bcNorm(p.barcode).includes(q)));
+    return bcNorm(r.code).includes(q) || (qk && codeKey(r.code).includes(qk)) || (p && (bcNorm(p.name).includes(q) || bcNorm(p.barcode).includes(q)));
   });
 }
 function llSearchChanged(){ LL.page = 1; llRender(); }

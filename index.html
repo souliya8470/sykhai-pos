@@ -2026,7 +2026,7 @@ function renderLiveProductRows(){
   if (!body) return;
   const q = (document.getElementById('liveProductSearch')?.value || '').trim().toLowerCase();
   const qk = codeKey(q);
-  const llCodeByPid = {}; if (typeof LL !== 'undefined' && LL.rows) LL.rows.forEach(r => { if (r.productId && r.code) llCodeByPid[r.productId] = r.code; });
+  const llCodeByPid = {}, llRowByPid = {}; if (typeof LL !== 'undefined' && LL.rows) LL.rows.forEach(r => { if (r.productId){ llRowByPid[r.productId] = r; if (r.code) llCodeByPid[r.productId] = r.code; } });
   const onlySel = !!document.getElementById('liveOnlySelected')?.checked;
   const src = document.getElementById('liveSourceFilter')?.value || 'all';
   const costVis = canSeeCost();
@@ -2076,7 +2076,10 @@ function renderLiveProductRows(){
     }
     const p = it.p;
     const r = LIVE_TAB.lsp[p.id];
-    const price = p.onlinePrice || p.p1 || 0;
+    const posPrice = p.onlinePrice || p.p1 || 0;
+    const lr = llRowByPid[p.id];
+    const price = lr ? ((lr.price > 0 ? lr.price : llDefaultPrice(p)) || posPrice) : posPrice;
+    const priceTxt = price ? fmt(price) + (posPrice && posPrice !== price ? `<div style="font-size:11px;color:var(--text-muted)">POS: ${fmt(posPrice)}</div>` : '') : '<span style="color:var(--danger)">ບໍ່ມີລາຄາ</span>';
     const left = r ? Math.max((Number(r.stock_qty)||0) - (Number(r.reserved_all)||0), 0) : 0;
     return `<tr${r?' style="background:#fff7ec"':''}>
       <td style="text-align:center"><input type="checkbox" style="width:20px;height:20px" ${r?'checked':''} onchange="liveToggleProduct('${p.id}',this.checked)"></td>
@@ -2085,7 +2088,7 @@ function renderLiveProductRows(){
       <td>${liveEsc(p.barcode)}</td>
       <td>${liveEsc(p.name)}</td>
       <td style="text-align:center">${fmt(p.stock)}</td>
-      <td style="text-align:right">${price ? fmt(price) : '<span style="color:var(--danger)">ບໍ່ມີລາຄາ</span>'}</td>
+      <td style="text-align:right">${priceTxt}</td>
       <td class="live-cost-td" style="text-align:right;${costVis ? '' : 'display:none'}">${p.avgCost ? fmt(p.avgCost) : ''}</td>
       <td style="text-align:center">${r ? `${fmt(r.reserved_all)} / <b>${fmt(left)}</b>` : ''}</td>
       <td style="text-align:center">${r ? (r.is_current ? '<b>🎯 ກຳລັງຂາຍ</b>' : `<span class="btn" style="padding:4px 8px;white-space:nowrap" onclick="liveSetCurrent('${p.id}')">ຕັ້ງ</span>`) : ''}</td>
@@ -2235,7 +2238,8 @@ async function liveSetCurrent(productId){
 // v2.96 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ແບ່ງໜ້າຄືໜ້າສະຕັອກ): ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000 + ປຸ່ມເລກໜ້າ ແທນປຸ່ມ ສະແດງເພີ່ມ (ເອົາການຈຳກັດ 150 ແຖວອອກ).
 // v2.97 (Tar 2026-11-26, ພິມຄົ້ນຫາ A287 ບາງເທື່ອບໍ່ເຫັນ ແຕ່ພິມແຕ່ເລກເຫັນ — ຄີບອດໃສ່ຍະຫວ່າງ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ເຊັ່ນ 'A 287'): ຄົ້ນຫາລະຫັດບໍ່ສົນໃຈຍະຫວ່າງ/ຕົວພິມໃຫຍ່-ນ້ອຍ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ໃນໜ້າປ້າຍ Live ແລະ ໜ້າ ສິນຄ້າໄລ້ສົດ; ໜ້າ ສິນຄ້າໄລ້ສົດ ຄົ້ນຫາລະຫັດຈາກລາຍການປ້າຍ Live ໄດ້ນຳ.
 // v2.98 (Tar 2026-11-26, ພະນັກງານກຳລັງແກ້ລາຍການປ້າຍ Live ແລະມີການຂາຍ — ຢາກໃຫ້ໜ້າ ສິນຄ້າໄລ້ສົດ ປ່ຽນຕາມ): ເປີດໜ້າ ສິນຄ້າໄລ້ສົດ ແລ້ວໂຫຼດລາຍການປ້າຍ Live ໃໝ່ຖ້າເກົ່າກວ່າ 20 ວິ (ແຕ່ກ່ອນໂຫຼດເທື່ອດຽວ); ທຸກຄັ້ງທີ່ສະຕັອກ POS ປ່ຽນ (realtime) ແຕ້ມໜ້າໃໝ່ + ໂຫຼດຍອດຈອງ/ເຫຼືອຂອງ Live ໃໝ່ (ຈຳກັດ 5 ວິ/ເທື່ອ); ເພີ່ມປຸ່ມ 🔄 ໂຫຼດໃໝ່. ສະຕັອກຂອງ POS ຍັງມາຈາກສະຕັອກ POS ຕົວຈິງ.
-const APP_VERSION = 'v2.98';
+// v2.99 (Tar 2026-11-26, ແກ້ລາຄາໃນໜ້າປ້າຍ Live ແລ້ວ ໜ້າ ສິນຄ້າໄລ້ສົດ ລາຄາບໍ່ປ່ຽນ): ຖັນລາຄາໃນໜ້າ ສິນຄ້າໄລ້ສົດ ສະແດງລາຄາຕາມປ້າຍ Live (ລາຄາທີ່ແກ້ໃນໜ້າປ້າຍ ຫຼື ລາຄາຂາຍ 2 ຖ້າບໍ່ໄດ້ແກ້) ແທນລາຄາ POS; ຖ້າຕ່າງຈາກລາຄາ POS ສະແດງລາຄາ POS ເປັນຕົວນ້ອຍລຸ່ມ. ລາຄາຂາຍຈິງຂອງ CF ຍັງມາຈາກ POS.
+const APP_VERSION = 'v2.99';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];

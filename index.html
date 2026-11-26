@@ -2112,7 +2112,9 @@ async function liveSetCurrent(productId){
 // v2.90 (Tar 2026-11-25, ເຄື່ອງ A ນຳເຂົ້າ 66 ແຖວ ແຕ່ເຄື່ອງ B ຕົວກອງ ນຳເຂົ້າລ່າສຸດ ບໍ່ເຫັນ — ເພາະ v2.88 ເກັບຊຸດນຳເຂົ້າຕໍ່ເຄື່ອງ): ເກັບຊຸດນຳເຂົ້າໃນຖານຂໍ້ມູນ (ຖັນ pos_live_labels.import_batch, ເພີ່ມໃໝ່ + ຕື່ມຍ້ອນຫຼັງ 66 ແຖວຂອງມື້ນີ້). ນຳເຂົ້າລ່າສຸດ = ຊຸດທີ່ໃໝ່ສຸດ ທຸກເຄື່ອງເຫັນຄືກັນ. ເປີດໜ້າປ້າຍ Live ໃໝ່ ຈະໂຫຼດຈາກຖານຂໍ້ມູນຄືນຖ້າເກີນ 20 ວິ.
 // v2.91 (Tar 2026-11-25, ເລືອກ 66 ແຖວ ແຕ່ຂຶ້ນເຕືອນວ່າຈະພິມ 5,081 ປ້າຍ ເຂົ້າໃຈວ່າລະບົບຜິດ): ຂໍ້ຄວາມເຕືອນອະທິບາຍໃຫ້ຊັດ (ແຖວທີ່ຫຼາຍສຸດ A898 = 500 ...) + ເພີ່ມປຸ່ມ 🔢 ຕັ້ງຈຳນວນປ້າຍທຸກແຖວທີ່ກອງຢູ່ (ເຊັ່ນ ຕັ້ງເປັນ 1 ທຸກແຖວທີ່ນຳເຂົ້າລ່າສຸດ) ແທນການແກ້ທີລະແຖວ.
 // v2.92 (Tar 2026-11-26, ໜ້າປ້າຍ Live: (1) ປຸ່ມ ລ້າງຕິກທັງໝົດ ຫຼັງພິມ ບໍ່ຕ້ອງກົດເລືອກທັງໝົດກ່ອນ + ປຸ່ມເລືອກທັງໝົດທີ່ກອງຢູ່; (2) ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000; (3) ປຸ່ມເລກໜ້າ 1-10 … ໜ້າສຸດທ້າຍ ແທນການກົດ ‹ › ທີລະໜ້າ).
-// v2.93 (Tar 2026-11-26, A351 ຖືກພະນັກງານກົດ ✕ ລຶບໂດຍບໍ່ຕັ້ງໃຈ ຕອນຢາກເອົາຕິກອອກ): ຂໍ້ຄວາມຢືນຢັນກ່ອນລຶບແຖວປ້າຍ Live ຊັດເຈນຂຶ້ນ (ບອກວ່າເປັນການລຶບສິນຄ້າ ບໍ່ແມ່ນເອົາຕິກອອກ) + ບັນທຶກຊື່ບັນຊີ/ເວລາ/ລະຫັດທີ່ລຶບໃນ pos_activity_log (action live_label_delete) ເບິ່ງໄດ້ໃນໜ້າປະຫວັດກິດຈະກຳ.\nconst APP_VERSION = 'v2.93';
+// v2.93 (Tar 2026-11-26, A351 ຖືກພະນັກງານກົດ ✕ ລຶບໂດຍບໍ່ຕັ້ງໃຈ ຕອນຢາກເອົາຕິກອອກ): ຂໍ້ຄວາມຢືນຢັນກ່ອນລຶບແຖວປ້າຍ Live ຊັດເຈນຂຶ້ນ (ບອກວ່າເປັນການລຶບສິນຄ້າ ບໍ່ແມ່ນເອົາຕິກອອກ) + ບັນທຶກຊື່ບັນຊີ/ເວລາ/ລະຫັດທີ່ລຶບໃນ pos_activity_log (action live_label_delete) ເບິ່ງໄດ້ໃນໜ້າປະຫວັດກິດຈະກຳ.
+// v2.94 (Tar 2026-11-26, ໜ້າປ້າຍ Live ທຸກແຖວຂຶ້ນ \"ບໍ່ພົບສິນຄ້າໃນ POS\" ໃນຄອມຮ້ານ): ຖ້າລາຍການສິນຄ້າຍັງບໍ່ໂຫຼດ ສະແດງ 'ກຳລັງໂຫຼດສິນຄ້າ...' ແລ້ວໂຫຼດເອງ (ລອງໃໝ່ທຸກ 8 ວິ) + ທຸກຄັ້ງທີ່ loadProducts ສຳເລັດ ແຕ້ມໜ້າປ້າຍໃໝ່ອັດຕະໂນມັດ.
+const APP_VERSION = 'v2.94';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -2534,6 +2536,7 @@ function reportRangeIso(){
 async function loadProducts(){
   const data = await fetchAllRows((from,to) => sb.from('pos_products').select('*').eq('shop_id', SHOP_ID).eq('is_active', true).order('created_at').order('id').range(from,to));
   PRODUCTS = (data||[]).map(mapProductRow);
+  llOnProductsLoaded(); // v2.94: ຖ້າເປີດໜ້າປ້າຍ Live ຢູ່ ໃຫ້ແຕ້ມໃໝ່ທັນທີທີ່ສິນຄ້າມາ
   try{
     const { data: lots } = await sb.from('pos_product_lots').select('product_id, expiry_date').eq('shop_id', SHOP_ID).not('expiry_date','is',null).gt('remaining_qty',0);
     const nearest = {};
@@ -7450,6 +7453,8 @@ function llRender(){
     return;
   }
   const allChecked = slice.every(r => LL.sel.has(r.id));
+  const prodNotLoaded = PRODUCTS.length === 0 && LL.rows.some(r => r.productId);
+  if (prodNotLoaded) llReloadProducts();
   tbl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:15px">
     <thead><tr style="text-align:left;color:var(--text-soft);border-bottom:1px solid var(--border)">
       <th style="padding:4px"><input type="checkbox" ${allChecked ? 'checked' : ''} onchange="llToggleAll(this.checked)"></th>
@@ -7458,7 +7463,7 @@ function llRender(){
       <th style="padding:4px;width:70px">ສະຖານະ</th><th style="padding:4px;width:40px"></th></tr></thead><tbody>` +
     slice.map(r => {
       const p = llProduct(r);
-      const name = p ? posEsc(p.name) : '<span style="color:var(--danger)">(ບໍ່ພົບສິນຄ້າໃນ POS)</span>';
+      const name = p ? posEsc(p.name) : (prodNotLoaded ? '<span style="color:var(--text-muted)">ກຳລັງໂຫຼດສິນຄ້າ...</span>' : '<span style="color:var(--danger)">(ບໍ່ພົບສິນຄ້າໃນ POS)</span>');
       const ph = p ? fmt(llDefaultPrice(p)) : '';
       return `<tr style="border-bottom:1px solid var(--border)">
         <td style="padding:4px"><input type="checkbox" ${LL.sel.has(r.id) ? 'checked' : ''} onchange="llToggleSel('${r.id}', this.checked)"></td>
@@ -7495,6 +7500,19 @@ function llClearSel(){
   if ((document.getElementById('ll-filter') || {}).value === 'sel') LL.page = 1;
   llRender();
   showToast(n ? `ລ້າງຕິກ ${n} ແຖວແລ້ວ` : 'ບໍ່ມີແຖວທີ່ຕິກຢູ່');
+}
+/* v2.94: ຄອມບາງເຄື່ອງ ສິນຄ້າຍັງບໍ່ທັນໂຫຼດ → ທຸກແຖວຂຶ້ນ 'ບໍ່ພົບສິນຄ້າໃນ POS' ທັງທີ່ມີ. ໃຫ້ໂຫຼດເອງ ແລ້ວແຕ້ມໃໝ່ */
+function llOnProductsLoaded(){
+  try{
+    const t = document.getElementById('llTable');
+    if (t && t.offsetParent !== null && LL.loaded){ llRender(); llFilterAddSelect(); }
+  }catch(e){ /* ບໍ່ໃຫ້ກະທົບການໂຫຼດສິນຄ້າ */ }
+}
+let _llProdReloading = 0;
+function llReloadProducts(){
+  if (Date.now() - _llProdReloading < 8000) return;
+  _llProdReloading = Date.now();
+  loadProducts().catch(e => { console.error('llReloadProducts', e); });
 }
 function llGoPage(n){ LL.page = Math.max(1, n); llRender(); }
 function llToggleSel(id, on){ if (on) LL.sel.add(id); else LL.sel.delete(id); llRender(); }

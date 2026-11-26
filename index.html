@@ -2078,7 +2078,7 @@ function renderLiveProductRows(){
     const r = LIVE_TAB.lsp[p.id];
     const posPrice = p.onlinePrice || p.p1 || 0;
     const lr = llRowByPid[p.id];
-    const price = lr ? ((lr.price > 0 ? lr.price : llDefaultPrice(p)) || posPrice) : posPrice;
+    const price = lr ? ((lr.price >= 1000 ? lr.price : (p.p2 > 0 ? p.p2 : 0)) || posPrice) : posPrice;
     const priceTxt = price ? fmt(price) + (posPrice && posPrice !== price ? `<div style="font-size:11px;color:var(--text-muted)">POS: ${fmt(posPrice)}</div>` : '') : '<span style="color:var(--danger)">ບໍ່ມີລາຄາ</span>';
     const left = r ? Math.max((Number(r.stock_qty)||0) - (Number(r.reserved_all)||0), 0) : 0;
     return `<tr${r?' style="background:#fff7ec"':''}>
@@ -2239,7 +2239,8 @@ async function liveSetCurrent(productId){
 // v2.97 (Tar 2026-11-26, ພິມຄົ້ນຫາ A287 ບາງເທື່ອບໍ່ເຫັນ ແຕ່ພິມແຕ່ເລກເຫັນ — ຄີບອດໃສ່ຍະຫວ່າງ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ເຊັ່ນ 'A 287'): ຄົ້ນຫາລະຫັດບໍ່ສົນໃຈຍະຫວ່າງ/ຕົວພິມໃຫຍ່-ນ້ອຍ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ໃນໜ້າປ້າຍ Live ແລະ ໜ້າ ສິນຄ້າໄລ້ສົດ; ໜ້າ ສິນຄ້າໄລ້ສົດ ຄົ້ນຫາລະຫັດຈາກລາຍການປ້າຍ Live ໄດ້ນຳ.
 // v2.98 (Tar 2026-11-26, ພະນັກງານກຳລັງແກ້ລາຍການປ້າຍ Live ແລະມີການຂາຍ — ຢາກໃຫ້ໜ້າ ສິນຄ້າໄລ້ສົດ ປ່ຽນຕາມ): ເປີດໜ້າ ສິນຄ້າໄລ້ສົດ ແລ້ວໂຫຼດລາຍການປ້າຍ Live ໃໝ່ຖ້າເກົ່າກວ່າ 20 ວິ (ແຕ່ກ່ອນໂຫຼດເທື່ອດຽວ); ທຸກຄັ້ງທີ່ສະຕັອກ POS ປ່ຽນ (realtime) ແຕ້ມໜ້າໃໝ່ + ໂຫຼດຍອດຈອງ/ເຫຼືອຂອງ Live ໃໝ່ (ຈຳກັດ 5 ວິ/ເທື່ອ); ເພີ່ມປຸ່ມ 🔄 ໂຫຼດໃໝ່. ສະຕັອກຂອງ POS ຍັງມາຈາກສະຕັອກ POS ຕົວຈິງ.
 // v2.99 (Tar 2026-11-26, ແກ້ລາຄາໃນໜ້າປ້າຍ Live ແລ້ວ ໜ້າ ສິນຄ້າໄລ້ສົດ ລາຄາບໍ່ປ່ຽນ): ຖັນລາຄາໃນໜ້າ ສິນຄ້າໄລ້ສົດ ສະແດງລາຄາຕາມປ້າຍ Live (ລາຄາທີ່ແກ້ໃນໜ້າປ້າຍ ຫຼື ລາຄາຂາຍ 2 ຖ້າບໍ່ໄດ້ແກ້) ແທນລາຄາ POS; ຖ້າຕ່າງຈາກລາຄາ POS ສະແດງລາຄາ POS ເປັນຕົວນ້ອຍລຸ່ມ. ລາຄາຂາຍຈິງຂອງ CF ຍັງມາຈາກ POS.
-const APP_VERSION = 'v2.99';
+// v3.00 (Tar 2026-11-26, ໄລ້ສົດໃຊ້ລາຄາປ້າຍ Live ແລະ POS ຫນ້າຮ້ານໃຊ້ລາຄາ POS): ລະບົບ CF ໃນຖານຂໍ້ມູນ (cf_create_item / cf_session_products ຜ່ານ cf_live_price) ໃຊ້ລາຄາປ້າຍ Live (ແກ້ເອງ ຫຼື ລາຄາຂາຍ 2); ລາຄາປ້າຍຕ່ຳກວ່າ 1,000 ຖືວ່າພິມຜິດ ບໍ່ໃຊ້ (ໃຊ້ລາຄາຂາຍ 2 ແທນ). ໜ້າ ສິນຄ້າໄລ້ສົດ ສະແດງຕາມກົດດຽວກັນ. ລາຄາຂາຍຫນ້າຮ້ານ POS ບໍ່ປ່ຽນ.
+const APP_VERSION = 'v3.00';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];

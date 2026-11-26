@@ -763,6 +763,7 @@
                     <option value="free">ສະເພາະສິນຄ້ານອກ POS</option>
                   </select>
                   <label style="display:inline-flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="liveOnlySelected" onchange="liveFilterChanged()"> ສະແດງສະເພາະທີ່ເລືອກແລ້ວ</label>
+                  <button class="btn" type="button" style="padding:4px 10px" onclick="liveManualRefresh()">🔄 ໂຫຼດໃໝ່</button>
                 </div>
                 <div style="overflow-x:auto">
                 <table class="table-bordered">
@@ -1988,11 +1989,26 @@ async function renderLiveProductTab(){
     if (bodyWrap) bodyWrap.style.display = '';
     await liveReloadLsp();
     renderLiveProductRows();
-    try{ if (typeof LL !== 'undefined' && !LL.loaded){ await llLoad(); renderLiveProductRows(); } }catch(e){ /* ສິນຄ້ານອກ POS ເປັນຂໍ້ມູນເສີມ */ }
+    try{ if (typeof LL !== 'undefined' && (!LL.loaded || Date.now() - (LL.loadedAt || 0) > 20000)){ await llLoad(); renderLiveProductRows(); } }catch(e){ /* ສິນຄ້ານອກ POS ເປັນຂໍ້ມູນເສີມ */ }
   }catch(e){
     console.error('renderLiveProductTab failed:', e);
     if (info) info.textContent = '⚠️ ໂຫຼດບໍ່ສຳເລັດ: ' + (e.message || e);
   }finally{ LIVE_TAB.loading = false; }
+}
+let _liveAutoAt = 0;
+function liveOnProductsLoaded(){
+  try{
+    const b = document.getElementById('liveProductBody');
+    if (!b || b.offsetParent === null || !LIVE_TAB.sessionId || LIVE_TAB.loading) return;
+    renderLiveProductRows();
+    if (Date.now() - _liveAutoAt < 5000) return;
+    _liveAutoAt = Date.now();
+    liveReloadLsp().then(renderLiveProductRows).catch(() => {});
+  }catch(e){ /* ບໍ່ໃຫ້ກະທົບການໂຫຼດສິນຄ້າ */ }
+}
+async function liveManualRefresh(){
+  try{ await loadProducts(); await liveReloadLsp(); if (typeof LL !== 'undefined') await llLoad(); renderLiveProductRows(); showToast('🔄 ໂຫຼດໃໝ່ແລ້ວ'); }
+  catch(e){ showToast('⚠️ ' + (e.message || e)); }
 }
 function liveTabSelectSession(id){
   LIVE_TAB.sessionId = id;
@@ -2218,7 +2234,8 @@ async function liveSetCurrent(productId){
 // v2.95 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ສະແດງຕາມ Excel ລາຍການປ້າຍ Live): ສິນຄ້າ POS ກ່ອນ (ຮູບ/ຕົ້ນທຶນ/ລາຄາ) ແລ້ວຕໍ່ທ້າຍດ້ວຍສິນຄ້ານອກ POS + ຕົວກອງ ທັງໝົດ/POS/ນອກ POS + ປຸ່ມ 📥 ເອົາສິນຄ້າຈາກລາຍການປ້າຍ Live ເຂົ້າ Live (ຂ້າມລະຫັດຊ້ຳ) + ສະແດງເພີ່ມແທນຈຳກັດ 150 ແຖວ.
 // v2.96 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ແບ່ງໜ້າຄືໜ້າສະຕັອກ): ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000 + ປຸ່ມເລກໜ້າ ແທນປຸ່ມ ສະແດງເພີ່ມ (ເອົາການຈຳກັດ 150 ແຖວອອກ).
 // v2.97 (Tar 2026-11-26, ພິມຄົ້ນຫາ A287 ບາງເທື່ອບໍ່ເຫັນ ແຕ່ພິມແຕ່ເລກເຫັນ — ຄີບອດໃສ່ຍະຫວ່າງ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ເຊັ່ນ 'A 287'): ຄົ້ນຫາລະຫັດບໍ່ສົນໃຈຍະຫວ່າງ/ຕົວພິມໃຫຍ່-ນ້ອຍ/ຕົວອັກສອນເຕັມຄວາມກວ້າງ ໃນໜ້າປ້າຍ Live ແລະ ໜ້າ ສິນຄ້າໄລ້ສົດ; ໜ້າ ສິນຄ້າໄລ້ສົດ ຄົ້ນຫາລະຫັດຈາກລາຍການປ້າຍ Live ໄດ້ນຳ.
-const APP_VERSION = 'v2.97';
+// v2.98 (Tar 2026-11-26, ພະນັກງານກຳລັງແກ້ລາຍການປ້າຍ Live ແລະມີການຂາຍ — ຢາກໃຫ້ໜ້າ ສິນຄ້າໄລ້ສົດ ປ່ຽນຕາມ): ເປີດໜ້າ ສິນຄ້າໄລ້ສົດ ແລ້ວໂຫຼດລາຍການປ້າຍ Live ໃໝ່ຖ້າເກົ່າກວ່າ 20 ວິ (ແຕ່ກ່ອນໂຫຼດເທື່ອດຽວ); ທຸກຄັ້ງທີ່ສະຕັອກ POS ປ່ຽນ (realtime) ແຕ້ມໜ້າໃໝ່ + ໂຫຼດຍອດຈອງ/ເຫຼືອຂອງ Live ໃໝ່ (ຈຳກັດ 5 ວິ/ເທື່ອ); ເພີ່ມປຸ່ມ 🔄 ໂຫຼດໃໝ່. ສະຕັອກຂອງ POS ຍັງມາຈາກສະຕັອກ POS ຕົວຈິງ.
+const APP_VERSION = 'v2.98';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -2640,6 +2657,7 @@ function reportRangeIso(){
 async function loadProducts(){
   const data = await fetchAllRows((from,to) => sb.from('pos_products').select('*').eq('shop_id', SHOP_ID).eq('is_active', true).order('created_at').order('id').range(from,to));
   PRODUCTS = (data||[]).map(mapProductRow);
+  liveOnProductsLoaded(); // v2.98
   llOnProductsLoaded(); // v2.94: ຖ້າເປີດໜ້າປ້າຍ Live ຢູ່ ໃຫ້ແຕ້ມໃໝ່ທັນທີທີ່ສິນຄ້າມາ
   try{
     const { data: lots } = await sb.from('pos_product_lots').select('product_id, expiry_date').eq('shop_id', SHOP_ID).not('expiry_date','is',null).gt('remaining_qty',0);

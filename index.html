@@ -770,6 +770,15 @@
                   <tbody id="liveProductBody"></tbody>
                 </table>
                 </div>
+                <div class="pagination-bar" style="margin-top:10px">
+                  <span>ສະແດງ</span>
+                  <select id="livePageSize" onchange="liveSetPageSize(this.value)">
+                    <option value="10">10</option><option value="20">20</option><option value="50" selected>50</option>
+                    <option value="100">100</option><option value="500">500</option><option value="1000">1,000</option>
+                  </select>
+                  <span>ແຖວຕໍ່ໜ້າ</span>
+                </div>
+                <div id="liveTabPager" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;margin-top:10px"></div>
               </div>
             </div>
           </div>
@@ -1990,8 +1999,9 @@ function liveTabSelectSession(id){
   liveReloadLsp().then(renderLiveProductRows).catch(e => showToast('⚠️ ' + (e.message || e)));
 }
 /* v2.95: ໜ້າ "ສິນຄ້າໄລ້ສົດ" ສະແດງສິນຄ້າ POS ກ່ອນ (ມີຮູບ/ຕົ້ນທຶນ/ລາຄາ) ແລ້ວຕໍ່ທ້າຍດ້ວຍສິນຄ້ານອກ POS ຈາກລາຍການປ້າຍ Live (Excel) + ຕົວກອງ ທັງໝົດ/POS/ນອກ POS */
-function liveFilterChanged(){ LIVE_TAB.limit = 150; renderLiveProductRows(); }
-function liveShowMore(){ LIVE_TAB.limit = (LIVE_TAB.limit || 150) + 300; renderLiveProductRows(); }
+function liveFilterChanged(){ LIVE_TAB.page = 1; renderLiveProductRows(); }
+function liveSetPageSize(v){ const n = parseInt(v, 10); LIVE_TAB.pageSize = n > 0 ? n : 50; LIVE_TAB.page = 1; renderLiveProductRows(); }
+function liveGoPage(n){ LIVE_TAB.page = Math.max(1, n); renderLiveProductRows(); }
 function liveCodeNum(c){ const m = /^[A-Za-z]*?(\d+)/.exec(String(c||'')); return m ? parseInt(m[1], 10) : 1e9; }
 function renderLiveProductRows(){
   const body = document.getElementById('liveProductBody');
@@ -2024,7 +2034,12 @@ function renderLiveProductRows(){
     freeList.sort((a,b) => liveCodeNum(a.code) - liveCodeNum(b.code));
   }
   const items = posList.map(p => ({ k: 'pos', p })).concat(freeList.map(r => ({ k: 'free', r })));
-  const LIMIT = LIVE_TAB.limit || 150; const total = items.length; const shown = items.slice(0, LIMIT);
+  const PS = LIVE_TAB.pageSize || 50; const total = items.length;
+  const pages = Math.max(1, Math.ceil(total / PS));
+  LIVE_TAB.page = Math.min(Math.max(1, LIVE_TAB.page || 1), pages);
+  const shown = items.slice((LIVE_TAB.page - 1) * PS, LIVE_TAB.page * PS);
+  const pagerEl = document.getElementById('liveTabPager');
+  if (pagerEl) pagerEl.innerHTML = llPagerHtml(LIVE_TAB.page, pages, 'liveGoPage');
   body.innerHTML = shown.length ? shown.map(it => {
     if (it.k === 'free'){
       const r = it.r;
@@ -2056,7 +2071,7 @@ function renderLiveProductRows(){
       <td style="text-align:center">${r ? `${fmt(r.reserved_all)} / <b>${fmt(left)}</b>` : ''}</td>
       <td style="text-align:center">${r ? (r.is_current ? '<b>🎯 ກຳລັງຂາຍ</b>' : `<span class="btn" style="padding:4px 8px;white-space:nowrap" onclick="liveSetCurrent('${p.id}')">ຕັ້ງ</span>`) : ''}</td>
     </tr>`;
-  }).join('') + (total > LIMIT ? `<tr><td colspan="${colspan}" style="text-align:center"><span class="btn" onclick="liveShowMore()">ສະແດງເພີ່ມ (ສະແດງ ${LIMIT} ຈາກ ${total} ລາຍການ)</span></td></tr>` : '')
+  }).join('')
     : `<tr><td colspan="${colspan}" style="text-align:center;color:var(--text-muted)">ບໍ່ພົບສິນຄ້າ</td></tr>`;
 }
 /* v2.95: ເອົາສິນຄ້າ POS ທັງໝົດໃນລາຍການປ້າຍ Live (ທີ່ມາຈາກ Excel) ເຂົ້າ Live ທີ່ເລືອກ ດ້ວຍລະຫັດ A.. ເດີມ (ຂ້າມລະຫັດຊ້ຳ). ສິນຄ້ານອກ POS ເຂົ້າ CF ບໍ່ໄດ້ (live_session_products ຕ້ອງມີສິນຄ້າ POS) */
@@ -2198,7 +2213,8 @@ async function liveSetCurrent(productId){
 // v2.93 (Tar 2026-11-26, A351 ຖືກພະນັກງານກົດ ✕ ລຶບໂດຍບໍ່ຕັ້ງໃຈ ຕອນຢາກເອົາຕິກອອກ): ຂໍ້ຄວາມຢືນຢັນກ່ອນລຶບແຖວປ້າຍ Live ຊັດເຈນຂຶ້ນ (ບອກວ່າເປັນການລຶບສິນຄ້າ ບໍ່ແມ່ນເອົາຕິກອອກ) + ບັນທຶກຊື່ບັນຊີ/ເວລາ/ລະຫັດທີ່ລຶບໃນ pos_activity_log (action live_label_delete) ເບິ່ງໄດ້ໃນໜ້າປະຫວັດກິດຈະກຳ.
 // v2.94 (Tar 2026-11-26, ໜ້າປ້າຍ Live ທຸກແຖວຂຶ້ນ \"ບໍ່ພົບສິນຄ້າໃນ POS\" ໃນຄອມຮ້ານ): ຖ້າລາຍການສິນຄ້າຍັງບໍ່ໂຫຼດ ສະແດງ 'ກຳລັງໂຫຼດສິນຄ້າ...' ແລ້ວໂຫຼດເອງ (ລອງໃໝ່ທຸກ 8 ວິ) + ທຸກຄັ້ງທີ່ loadProducts ສຳເລັດ ແຕ້ມໜ້າປ້າຍໃໝ່ອັດຕະໂນມັດ.
 // v2.95 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ສະແດງຕາມ Excel ລາຍການປ້າຍ Live): ສິນຄ້າ POS ກ່ອນ (ຮູບ/ຕົ້ນທຶນ/ລາຄາ) ແລ້ວຕໍ່ທ້າຍດ້ວຍສິນຄ້ານອກ POS + ຕົວກອງ ທັງໝົດ/POS/ນອກ POS + ປຸ່ມ 📥 ເອົາສິນຄ້າຈາກລາຍການປ້າຍ Live ເຂົ້າ Live (ຂ້າມລະຫັດຊ້ຳ) + ສະແດງເພີ່ມແທນຈຳກັດ 150 ແຖວ.
-const APP_VERSION = 'v2.95';
+// v2.96 (Tar 2026-11-26, ໜ້າ ສິນຄ້າໄລ້ສົດ ໃຫ້ແບ່ງໜ້າຄືໜ້າສະຕັອກ): ເລືອກຈຳນວນແຖວຕໍ່ໜ້າ 10/20/50/100/500/1,000 + ປຸ່ມເລກໜ້າ ແທນປຸ່ມ ສະແດງເພີ່ມ (ເອົາການຈຳກັດ 150 ແຖວອອກ).
+const APP_VERSION = 'v2.96';
 const posEsc = v => String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 // v2.65: ຕົ້ນທຶນ/ກຳໄລ ເຫັນໄດ້ສະເພາະ Owner ແລະ Manager
 const COST_ROLES = ['Owner','Manager'];
@@ -7560,9 +7576,10 @@ function llRender(){
     }).join('') + '</tbody></table>';
   s('llPager').innerHTML = llPagerHtml(LL.page, pages);
 }
-function llPagerHtml(cur, pages){
+function llPagerHtml(cur, pages, fn){
+  fn = fn || 'llGoPage';
   if (pages <= 1) return '';
-  const btn = (n, label, on) => `<span class="btn${on ? ' primary' : ''}" style="min-width:34px;text-align:center;padding:4px 8px" onclick="llGoPage(${n})">${label}</span>`;
+  const btn = (n, label, on) => `<span class="btn${on ? ' primary' : ''}" style="min-width:34px;text-align:center;padding:4px 8px" onclick="${fn}(${n})">${label}</span>`;
   const dots = '<span style="padding:0 4px;color:var(--text-muted)">…</span>';
   let out = btn(Math.max(1, cur - 1), '‹', false);
   const W = 10;
